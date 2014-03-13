@@ -1,10 +1,10 @@
-*.frozen
-
-#####
-
-# Ruby
+### Ruby
 *.gem
 
-# YARD artifacts
+### YARD artifacts
 .yardoc
 doc/
+
+#####
+*.draft
+*.frozen

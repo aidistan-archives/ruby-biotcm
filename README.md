@@ -3,15 +3,12 @@ BioTCM [![Gem Version](https://badge.fury.io/rb/biotcm.png)](http://badge.fury.i
 
 Written for working in Shao lab (BioTCM).
 
-
-## Links
-
+* Documents on RubyDoc
+	* [http://rubydoc.info/gems/biotcm/frames](http://rubydoc.info/gems/biotcm/frames)
 * Release version on RubyGems:
 	* [http://rubygems.org/gems/biotcm](http://rubygems.org/gems/biotcm)
 * Developing version on Github:
 	* [http://aidistan.github.io/biotcm](http://aidistan.github.io/biotcm)
-* Documents on RubyDoc
-	* [http://rubydoc.info/gems/biotcm/frames](http://rubydoc.info/gems/biotcm/frames)
 
 
 ## Getting Started
@@ -25,6 +22,14 @@ and guides you need on [RubyDoc](http://rubydoc.info/gems/biotcm/frames).
 
 
 ## Getting Involved
+
+We develop this gem under some philosophies and some styles. Feel free to 
+send pull requests, then we could communicate through comments.
+
+### Design Philosophies
+
+* self-explanatory coding
+* convention over configuration
 
 ### Coding Style
 
