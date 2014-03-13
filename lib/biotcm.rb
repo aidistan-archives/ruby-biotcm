@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # encoding: UTF-8
 
 # Top level namespace of BioTCM
@@ -14,19 +13,23 @@
 #   require 'biotcm'
 #
 module BioTCM
-  # autoloaders - modules
-  self.autoload(:Modules, "biotcm/modules")
-  self.autoload(:Databases, "biotcm/databases")
-
+  # autoloaders
+  autoload(:Modules, "biotcm/modules")
+  autoload(:Databases, "biotcm/databases")
+  # mannual-loaders
+  require 'biotcm/modules/utility'
+  
   # Current version of BioTCM
   VERSION = '0.0.0'
 
+  extend Modules::Utility
+
   # Run BioTCM in irb
-  def irb
+  def console
     system "irb -I #{File.dirname(__FILE__)} -r biotcm -r irb/completion --simple-prompt"
   end
   # Default initialization
-  # @return [BioTCM] the BioTCM module itself
+  # @return [BioTCM]
   def init
     return self
   end

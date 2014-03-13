@@ -1,8 +1,5 @@
-#!/usr/bin/env ruby
 # encoding: UTF-8
-require 'test/unit'
-require 'shoulda-context'
-require 'biotcm'
+require 'test_helper'
 
 class BioTCM_Test < Test::Unit::TestCase
   context "BioTCM module" do
