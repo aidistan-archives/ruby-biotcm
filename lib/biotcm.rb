@@ -12,25 +12,34 @@
 # not affect your final result.
 #   require 'biotcm'
 #
+#   BioTCM.wd = "/home/aidistan/biotcm"
+#
 module BioTCM
   # autoloaders
   autoload(:Modules, "biotcm/modules")
   autoload(:Databases, "biotcm/databases")
-  # mannual-loaders
+  # load mannually
   require 'biotcm/modules/utility'
-  
-  # Current version of BioTCM
-  VERSION = '0.0.0'
+  require 'biotcm/modules/workingdir'
 
   extend Modules::Utility
+  extend Modules::WorkingDir
+  
+  # Current version number
+  VERSION = '0.0.0'
+  # Default working directory
+  DEFAULT_WORKING_DIRECTORY = File.expand_path("~/.gem/biotcm")
 
-  # Run BioTCM in irb
+  module_function
+
+  # Run BioTCM in console
   def console
     system "irb -I #{File.dirname(__FILE__)} -r biotcm -r irb/completion --simple-prompt"
   end
   # Default initialization
   # @return [BioTCM]
   def init
+    BioTCM.wd = BioTCM::DEFAULT_WORKING_DIRECTORY
     return self
   end
 end
@@ -39,3 +48,6 @@ end
 class String; end
 # Extention to Ruby's Core library
 class Array; end
+
+# Necessary initialization
+BioTCM.wd = BioTCM::DEFAULT_WORKING_DIRECTORY
