@@ -1,5 +1,5 @@
 # encoding: UTF-8
-require_relative '../test_helper'
+require_relative '../test-helper'
 
 class BioTCM_Modules_WorkingDir_Test < Test::Unit::TestCase
   include BioTCM::Modules::WorkingDir

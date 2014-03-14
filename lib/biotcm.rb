@@ -47,4 +47,5 @@ class String; end
 class Array; end
 
 # Necessary initialization
+require 'biotcm/table'
 BioTCM.wd = BioTCM::DEFAULT_WORKING_DIRECTORY
