@@ -51,7 +51,8 @@ class BioTCM_Tabel_Test < Test::Unit::TestCase
 
     should "have the primary key" do
       assert_equal('ID', @tab.primary_key)
-      assert_raise ArgumentError do
+      # It's OK to make primary key the same as one column
+      assert_nothing_raised ArgumentError do
         @tab.primary_key = 'A'
       end
       assert_nothing_raised ArgumentError do
@@ -152,7 +153,7 @@ class BioTCM_Tabel_Test < Test::Unit::TestCase
       assert_equal('1.9', tab.ele('3', 'C'))
     end
     
-    should "merge with another tablb" do
+    should "merge with another table" do
       assert_equal(nil, @tab.ele('4', 'A'))
       assert_equal(nil, @tab.ele('2', 'D'))
       assert_equal('6', @tab.ele('3', 'B'))
