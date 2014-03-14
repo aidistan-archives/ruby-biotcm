@@ -12,15 +12,12 @@
 # not affect your final result.
 #   require 'biotcm'
 #
-#   BioTCM.wd = "/home/aidistan/biotcm"
+#   BioTCM.wd = "/home/aidistan/.biotcm"
 #
 module BioTCM
   # autoloaders
   autoload(:Modules, "biotcm/modules")
   autoload(:Databases, "biotcm/databases")
-  # load mannually
-  require 'biotcm/modules/utility'
-  require 'biotcm/modules/workingdir'
 
   extend Modules::Utility
   extend Modules::WorkingDir

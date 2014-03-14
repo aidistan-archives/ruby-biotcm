@@ -1,5 +1,5 @@
 # encoding: UTF-8
-require 'test_helper'
+require_relative 'test_helper'
 
 class BioTCM_Test < Test::Unit::TestCase
   context "BioTCM module" do
