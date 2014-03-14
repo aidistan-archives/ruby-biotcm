@@ -11,11 +11,6 @@ Rake::TestTask.new do |t|
   # t.verbose = true
 end
 
-# benchmark
-task :bm do |t|
-  FileList["bm/**/bm_*.rb"].each { |f| load f }
-end
-
 # clear
 desc "Clean the log and temporary files"
 task :clear do

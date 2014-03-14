@@ -9,6 +9,10 @@ Benchmark.bmbm do |b|
   end
 
   b.report("BioTCM::Table#merge") do
-    @tab1.merge(@tab2)
+    @tab = @tab1.merge(@tab2)
+  end
+
+  b.report("BioTCM::Table#select") do
+    @tab.select_col(['Name', 'Fullname'])
   end
 end
