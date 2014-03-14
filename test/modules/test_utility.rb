@@ -6,7 +6,7 @@ class BioTCM_Modules_Utility_Test < Test::Unit::TestCase
 
   context "Utility module" do
     should "have a useful :get method" do
-      assert(get('http://www.google.com.hk') =~ /^<!doctype html>/)
+      assert(get('http://www.baidu.com') =~ /^<!doctype html>/i)
       assert(get('unknown').nil?)
     end
 
