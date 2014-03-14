@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.email       = ["aidistan@live.cn", "nmeter@126.com"]
   s.homepage    = "http://aidistan.github.io/biotcm/"
 
-  s.files         = FileList['lib/**/*', 'test/**/*', '.yardopts', 'rakefile', 'LICENSE', '*.md', ].to_a
+  s.files         = FileList['lib/**/*', 'test/**/*', 'bm/**/*', '.yardopts', 'rakefile', 'LICENSE', '*.md', ].to_a
   s.require_paths = ['lib']
   s.test_files    = FileList['test/**/*'].to_a
   s.executables  << 'biotcm'
