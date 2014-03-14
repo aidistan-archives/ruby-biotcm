@@ -23,7 +23,7 @@ module BioTCM
   extend Modules::WorkingDir
   
   # Current version number
-  VERSION = '0.0.0'
+  VERSION = '0.0.1'
   # Default working directory
   DEFAULT_WORKING_DIRECTORY = File.expand_path("~/.gem/biotcm")
 
