@@ -3,8 +3,6 @@ require 'net/http'
 
 # Provide some utility functions
 module BioTCM::Modules::Utility
-  module_function
-  public
   # Get an url
   # @return [String]
   def get(url)
