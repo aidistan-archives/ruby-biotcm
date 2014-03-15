@@ -24,4 +24,11 @@ module BioTCM::Modules::WorkingDir
   def path_to(relative_path)
     File.expand_path(relative_path, @wd)
   end
+  # The path will be created if not exist yet
+  # @see path_to
+  def path_to!(relative_path)
+    path = path_to(relative_path)
+    FileUtils.mkdir_p(File.dirname(path))
+    path
+  end
 end

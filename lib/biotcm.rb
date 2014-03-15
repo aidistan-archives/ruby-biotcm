@@ -39,6 +39,11 @@ module BioTCM
     BioTCM.wd = BioTCM::DEFAULT_WORKING_DIRECTORY
     return self
   end
+  # Get the instance of Logger
+  # @return [Logger]
+  def log
+    Logger.instance(path_to!("log/#{get_stamp}.log"))
+  end
 end
 
 # Extention to Ruby's Core library
@@ -48,4 +53,5 @@ class Array; end
 
 # Necessary initialization
 require 'biotcm/table'
+require 'biotcm/logger'
 BioTCM.wd = BioTCM::DEFAULT_WORKING_DIRECTORY
