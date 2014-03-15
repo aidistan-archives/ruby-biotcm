@@ -2,9 +2,10 @@ History
 ===============
 
 ### By now 2014-03-15
-* 2 major enhancement
+* 3 major enhancement
 	* Added BioTCM::Logger
 	* Added BioTCM::Databases::HGNC
+	* Added BioTCM::Databases::Cipher
 
 ### 0.0.1 2014-03-14
 * 2 major enhancement

@@ -1,8 +1,8 @@
 # encoding: UTF-8
 require_relative '../test-helper'
 
-# Orerequisite
-String.hgnc rescue BioTCM::Databases::HGNC.new.as_dictionary
+# Prerequisite
+"".hgncid2symbol rescue BioTCM::Databases::HGNC.new.as_dictionary
 
 class BioTCM_Databases_HGNC_Test < Test::Unit::TestCase
   
