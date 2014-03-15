@@ -15,7 +15,7 @@ module BioTCM::Modules::WorkingDir
   # If not exists, the method will try to mkdir one.
   # @param val [String] target working directory
   def wd=(val)
-    raise "Given working directory not exists." unless Dir.exist?(val)
+    FileUtils.mkdir_p(val)
     @wd = val
   end
   # Expand a relative path to absolute one based on _wd_
