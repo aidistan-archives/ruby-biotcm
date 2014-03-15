@@ -15,20 +15,16 @@ module BioTCM::Modules::WorkingDir
   # If not exists, the method will try to mkdir one.
   # @param val [String] target working directory
   def wd=(val)
-    FileUtils.mkdir_p(val)
+    raise "Given working directory not exists." unless Dir.exist?(val)
     @wd = val
   end
   # Expand a relative path to absolute one based on _wd_
   # @param relative_path [String]
+  # @param secure [Boolean] If true, make parent directories exist
   # @return [String] absolute path
-  def path_to(relative_path)
-    File.expand_path(relative_path, @wd)
-  end
-  # The path will be created if not exist yet
-  # @see path_to
-  def path_to!(relative_path)
-    path = path_to(relative_path)
-    FileUtils.mkdir_p(File.dirname(path))
+  def path_to(relative_path, secure = false)
+    path = File.expand_path(relative_path, @wd)
+    FileUtils.mkdir_p(File.dirname(path)) if secure
     path
   end
 end
