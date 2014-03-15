@@ -9,5 +9,9 @@ class BioTCM_Test < Test::Unit::TestCase
         BioTCM::Databases
       end
     end
+
+    should "be able to get meta" do
+      assert_equal('META file', BioTCM.get_meta('BioTCM'))
+    end
   end
 end

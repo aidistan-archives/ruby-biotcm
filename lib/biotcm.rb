@@ -1,4 +1,5 @@
 # encoding: UTF-8
+require 'json'
 
 # Top level namespace of BioTCM
 #
@@ -26,6 +27,8 @@ module BioTCM
   VERSION = '0.0.1'
   # Default working directory
   DEFAULT_WORKING_DIRECTORY = File.expand_path("~/.gem/biotcm")
+  # Default url of the meta file
+  DEFAULT_META_FILE = 'http://aidistan.github.io/biotcm/meta.json'
 
   module_function
 
@@ -42,7 +45,13 @@ module BioTCM
   # Get the instance of Logger
   # @return [Logger]
   def log
-    Logger.instance(path_to!("log/#{get_stamp}.log"))
+    Logger.instance(path_to("log/#{get_stamp}.log", true))
+  end
+  # Get meta value
+  def get_meta(key)
+    return @meta[key] if @meta
+    @meta = JSON.parse(get(DEFAULT_META_FILE))
+    @meta[key]
   end
 end
 

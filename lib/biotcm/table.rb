@@ -219,7 +219,7 @@ module BioTCM
     # @private
     # For inspection
     def inspect
-      super.split(' ').shift + " col_keys.size=#{@col_keys.size} row_keys.size=#{@row_keys.size}>"
+      "#<BioTCM::Table col_keys.size=#{@col_keys.size} row_keys.size=#{@row_keys.size}>"
     end
     # @private
     # Convert to {String}
