@@ -2,9 +2,10 @@ History
 ===============
 
 ### By now 2014-03-16
-* 2 minor enhancement
+* 3 minor enhancement
 	* Improved BioTCM::Table row insertion
 	* Improved BioTCM::Databases::Cipher performance
+	* Improved our benchmark suite
 
 ### 0.0.2 2014-03-16
 * 3 major enhancement

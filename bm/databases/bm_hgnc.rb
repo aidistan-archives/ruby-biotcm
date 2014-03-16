@@ -1,11 +1,10 @@
 # encoding: UTF-8
 require_relative '../bm-helper'
-require 'biotcm'
 
 hgnc = BioTCM::Databases::HGNC.new
 symbols = hgnc.symbol2hgncid.keys
 
-Benchmark.bmbm do |b|
+MyBenchmark.group 'HGNC' do |b|
   b.report("Load table") do
     BioTCM::Databases::HGNC.new.as_dictionary
   end

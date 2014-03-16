@@ -4,12 +4,15 @@ require 'benchmark'
 unless $:.include?(File.expand_path('../../lib', __FILE__))
   $:.unshift(File.expand_path('../../lib', __FILE__))
 end
+require 'biotcm'
 
 # Our benchmark DSL 
-def benchmark_of(title=nil, &block)
-  if title
-    puts ['=== '+ title + ' ===', '']
+module MyBenchmark
+  def self.group(title=nil, &block)
+    if title
+      puts ['=== '+ title + ' ===', '']
+    end
+    Benchmark.bmbm(&block)
+    puts
   end
-  Benchmark.bmbm(&block)
-  puts
 end
