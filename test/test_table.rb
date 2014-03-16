@@ -107,8 +107,13 @@ class BioTCM_Tabel_Test < Test::Unit::TestCase
       @tab.row('3', {'B'=>'-'})
       assert_equal('-', @tab.row('3')['B'])
       @tab.row('4', {'B'=>'-', 'D'=>'-'})
+      assert_equal('',  @tab.row('4')['A'])
       assert_equal('-', @tab.row('4')['B'])
       assert_equal(nil, @tab.row('4')['D'])
+
+      @tab.row('4', ['-', '', '-'])
+      assert_equal('-', @tab.row('4')['A'])
+      assert_equal('',  @tab.row('4')['B'])
     end
 
     should "be able to access columns" do
@@ -119,8 +124,13 @@ class BioTCM_Tabel_Test < Test::Unit::TestCase
       @tab.col('B', {'3'=>'-'})
       assert_equal('-', @tab.col('B')['3'])
       @tab.col('D', {'2'=>'-', '4'=>'-'})
+      assert_equal('',  @tab.col('D')['1'])
       assert_equal('-', @tab.col('D')['2'])
       assert_equal(nil, @tab.col('D')['4'])
+
+      @tab.col('D', ['-', '', '-'])
+      assert_equal('-', @tab.col('D')['1'])
+      assert_equal('',  @tab.col('D')['2'])
     end
     
     should "return selected rows and columns as a Table" do

@@ -1,6 +1,10 @@
 History
 ===============
 
+### By now 2014-03-16
+* 1 minor enhancement
+	* Improved BioTCM::Table row insertion
+
 ### 0.0.2 2014-03-16
 * 3 major enhancement
 	* Added BioTCM::Logger

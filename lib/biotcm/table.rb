@@ -77,16 +77,31 @@ module BioTCM
     # @param row [String]
     # @param val [Hash]
     def row(row, val=nil)
+      # Getter
       if val.nil?
         row = @row_keys[row] or return nil
         rtn = {}
         @col_keys.each { |n, i| rtn[n] = @content[row][i] }
-        rtn
-      else
-        unless row.is_a?(String) && val.is_a?(Hash)
-          raise ArgumentError, 'Illegal argument type'
-        end
+        return rtn
+      end
 
+      # Setter
+      if !row.is_a?(String) || (!val.is_a?(Hash) && !val.is_a?(Array))
+        raise ArgumentError, 'Illegal argument type' 
+      elsif val.is_a?(Array) && val.size != col_keys.size
+        raise ArgumentError, 'Column size not match' 
+      end
+
+      case val
+      when Array
+        if @row_keys[row]
+          row = @row_keys[row]
+          @content[row] = val
+        else
+          @row_keys[row] = @row_keys.size
+          @content<<val
+        end
+      when Hash
         unless @row_keys[row]
           @row_keys[row] = @row_keys.size
           @content<<([""]*@col_keys.size)
@@ -103,16 +118,31 @@ module BioTCM
     # @param col [String]
     # @param val [Hash]
     def col(col, val=nil)
+      # Getter
       if val.nil?
         col = @col_keys[col] or return nil
         rtn = {}
         @row_keys.each { |n, i| rtn[n] = @content[i][col] }
-        rtn
-      else
-        unless col.is_a?(String) && val.is_a?(Hash)
-          raise ArgumentError, 'Illegal argument type'
-        end
+        return rtn
+      end
 
+      # Setter
+      if !col.is_a?(String) || (!val.is_a?(Hash) && !val.is_a?(Array))
+        raise ArgumentError, 'Illegal argument type' 
+      elsif val.is_a?(Array) && val.size != row_keys.size
+        raise ArgumentError, 'Row size not match' 
+      end
+
+      case val
+      when Array
+        if @col_keys[col]
+          col = @col_keys[col]
+          val.each_with_index { |v, row| @content[row][col] = v }
+        else
+          col = @col_keys[col] = @col_keys.size
+          val.each_with_index { |v, row| @content[row]<<v }
+        end
+      when Hash
         unless @col_keys[col]
           @col_keys[col] = @col_keys.size
           @content.each { |arr| arr<<"" }
