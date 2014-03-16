@@ -11,7 +11,7 @@ end
 
 # Show some info
 str = 'BioTCM Console v' + BioTCM::VERSION + dev
-l   = (str.size%2 == 0 ? 60 : 59)
+l   = (str.size%2 == 0 ? 58 : 59)
 ll  = (l-str.size)/2
 puts ['-'*l, ' '*ll+str, '-'*l]
 
