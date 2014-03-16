@@ -75,7 +75,7 @@ module BioTCM
     end
     # Access a row
     # @param row [String]
-    # @param val [Hash]
+    # @param val [Hash, Array]
     def row(row, val=nil)
       # Getter
       if val.nil?
@@ -116,7 +116,7 @@ module BioTCM
     end
     # Access a column
     # @param col [String]
-    # @param val [Hash]
+    # @param val [Hash, Array]
     def col(col, val=nil)
       # Getter
       if val.nil?
