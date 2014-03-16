@@ -57,7 +57,7 @@ class BioTCM::Databases::Cipher
       @disease[col[1]] = col[0]
     end
 
-    # Load gene list
+    # Load gene list (inner_id2symbol)
     @gene = [nil]
     filename = self.class.path_to("landscape_extended_id.txt")
     File.open(filename, 'w:UTF-8').puts BioTCM.get(base_url + "/landscape_extended_id.txt") unless File.exist?(filename)
@@ -83,15 +83,15 @@ class BioTCM::Databases::Cipher
       File.open(filename, 'w:UTF-8').puts BioTCM.get(base_url + "/top1000data/#{@disease[omim_id]}.txt") unless File.exist?(filename)
 
       # Make table
-      genes_in_table = {}
-      table_string = "Approved Symbol\tCipher Rank\tCipher Score\n"
-      File.open(filename).each_with_index do |line, index|
+      tab = "Approved Symbol\tCipher Rank\tCipher Score".to_table
+      tab_genes = tab.instance_variable_get(:@row_keys)
+      File.open(filename).each_with_index do |line, line_no|
         col = line.chomp.split("\t")
         gene = @gene[col[0].to_i] or next
-        genes_in_table[gene] ? next : genes_in_table[gene] = true
-        table_string += [gene, index+1, col[1]].join("\t")+"\n"
+        next if tab_genes[gene]
+        tab.row(gene, [(line_no+1).to_s, col[1]])
       end
-      @table[omim_id] = table_string.to_table
+      @table[omim_id] = tab
     end
     
     BioTCM.log.debug("Cipher") { "New object " + self.inspect }
