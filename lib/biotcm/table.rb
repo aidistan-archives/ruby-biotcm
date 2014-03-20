@@ -7,10 +7,34 @@ module BioTCM
   class BioTCM::Table
     # Keys of rows
     attr_reader :row_keys
-    def row_keys; @row_keys.keys; end
+    def row_keys
+      @row_keys.keys
+    end
+    def row_keys=(val)
+      raise ArgumentError, "Illegal agrument type" unless val.is_a?(Array)
+      # Make size right
+      val.take(@row_keys.size)
+      val[@row_keys.size - 1] = nil if val.size < @row_keys.size
+      # Replace
+      row_keys = {}
+      val.each_with_index { |key, index| key ? row_keys[key] = index : row_keys["column_#{index+1}"] = index}
+      @row_keys = row_keys
+    end
     # Keys of columns
     attr_reader :col_keys
-    def col_keys; @col_keys.keys; end
+    def col_keys
+      @col_keys.keys
+    end
+    def col_keys=(val)
+      raise ArgumentError, "Illegal agrument type" unless val.is_a?(Array)
+      # Make size right
+      val.take(@col_keys.size)
+      val[@col_keys.size - 1] = nil if val.size < @col_keys.size
+      # Replace
+      col_keys = {}
+      val.each_with_index { |key, index| key ? col_keys[key] = index : col_keys["column_#{index+1}"] = index}
+      @col_keys = col_keys
+    end
     # Primary key used in this table
     attr_accessor :primary_key
     def primary_key; @primary_key; end
