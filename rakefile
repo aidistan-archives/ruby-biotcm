@@ -1,32 +1,37 @@
 # encoding: UTF-8
 $:.push File.expand_path("../lib", __FILE__)
+require 'biotcm'
+
+task :default => :test
 
 # test
 require 'rake/testtask'
 Rake::TestTask.new do |t|
-  t.test_files = FileList["test/**/test*.rb"]
-end
-
-# clear
-desc "Clean the log and temporary files"
-task :clear do
-  FileList["log", "tmp"].each do |d|
-    FileUtils.rm_r(d) rescue nil
-  end
+  t.libs << 'test'
+  t.test_files = FileList["test/**/test_*.rb"]
+  # t.verbose = true
 end
 
 # clean
 desc "Clean the directory"
-task :clean => :clear do
+task :clean do
   FileList[".yardoc", "doc", "*.gem"].each do |d|
     FileUtils.rm_r(d) rescue nil
   end
 end
 
-# clobber
-desc "Clean the directory and discard downloaded data"
-task :clobber => :clean do
-  FileUtils.rm_r("data") rescue nil
+# clear
+desc "Clear log files and temporary files in BioTCM.wd [Dev]"
+task :clear do
+  ["log", "tmp"].each do |d|
+    FileUtils.rm_r(BioTCM.path_to(d)) rescue nil
+  end
+end
+
+# clear all
+desc "Clear all files in BioTCM.wd [Dev]"
+task :clear_all => :clear do
+  FileUtils.rm_r(BioTCM.path_to("data")) rescue nil
 end
 
 # gem
@@ -38,7 +43,6 @@ end
 # install
 desc "Install the gem"
 task :install => :gem do
-  require 'biotcm'
   system("gem install biotcm-#{BioTCM::VERSION}.gem --no-rdoc --no-ri")
 end
 

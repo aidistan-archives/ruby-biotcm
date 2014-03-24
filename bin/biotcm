@@ -1,2 +1,18 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
+begin
+  require 'biotcm'
+  dev = ''
+rescue LoadError
+  $:.unshift(File.expand_path('../../lib', __FILE__))
+  require 'biotcm'
+  dev = ' [Dev]'
+end
+
+# Show some info
+str = 'BioTCM Console v' + BioTCM::VERSION + dev
+l   = (str.size%2 == 0 ? 58 : 59)
+ll  = (l-str.size)/2
+puts ['-'*l, ' '*ll+str, '-'*l]
+
+BioTCM.console
