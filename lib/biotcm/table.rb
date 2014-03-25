@@ -6,7 +6,7 @@ module BioTCM
   # (please refer to the test for details). 
   class BioTCM::Table
     # Keys of rows
-    attr_reader :row_keys
+    attr_accessor :row_keys
     def row_keys
       @row_keys.keys
     end
@@ -21,7 +21,7 @@ module BioTCM
       @row_keys = row_keys
     end
     # Keys of columns
-    attr_reader :col_keys
+    attr_accessor :col_keys
     def col_keys
       @col_keys.keys
     end
