@@ -16,7 +16,9 @@ class BioTCM_Network_Test < Test::Unit::TestCase
         end
         file.close!
       end
-	context "confused network type, Network"
+    end
+
+    context "confused network type, Network"
       should "raise ArgumentError" do
         file = Tempfile.new('test')
         file.write "edge\tweight\n1->2\t1\n2--3\t1\n"
@@ -26,8 +28,6 @@ class BioTCM_Network_Test < Test::Unit::TestCase
         end
         file.close!
       end
-	end
-	
+    end
   end
-  
 end

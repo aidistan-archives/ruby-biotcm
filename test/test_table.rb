@@ -13,7 +13,7 @@ class BioTCM_Tabel_Test < Test::Unit::TestCase
         file.rewind
         assert_raise ArgumentError do
           BioTCM::Table.new(file.path)
-		    end
+        end
         file.close!
       end
     end
@@ -25,7 +25,7 @@ class BioTCM_Tabel_Test < Test::Unit::TestCase
         file.rewind
         assert_raise ArgumentError do
           BioTCM::Table.new(file.path)
-		    end
+        end
         file.close!
       end
     end
@@ -37,7 +37,7 @@ class BioTCM_Tabel_Test < Test::Unit::TestCase
         file.rewind
         assert_raise ArgumentError do
           BioTCM::Table.new(file.path)
-		    end
+        end
         file.close!
       end
     end
