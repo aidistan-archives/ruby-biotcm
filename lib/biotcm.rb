@@ -62,5 +62,6 @@ class Array; end
 
 # Necessary initialization
 require 'biotcm/table'
+require 'biotcm/network'
 require 'biotcm/logger'
 BioTCM.wd = BioTCM::DEFAULT_WORKING_DIRECTORY

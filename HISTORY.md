@@ -1,7 +1,11 @@
 History
 ===============
 
-### By now 2014-03-20
+### By now 2014-03-27
+* 1 major enhancement
+	* Added BioTCM::Network
+
+### 0.0.3 2014-03-20
 * 4 minor enhancement
 	* Improved BioTCM::Table row insertion
 	* Improved BioTCM::Databases::Cipher performance
