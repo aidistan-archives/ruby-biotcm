@@ -29,9 +29,26 @@ class BioTCM_Network_Test < Test::Unit::TestCase
 
     context "basic operations, we" do
       should "be able to access the list of nodes and edges" do
-        assert_equal(["1", "2", "3"], @net.node);
-        assert_equal(["1->2", "2--3"], @net.edge);
+        assert_equal(["1", "2", "3"], @net.node)
+        assert_equal(["1->2", "2--3"], @net.edge)
+      end
+    end
+    
+    context "basic functions, we" do 
+      setup do
+        @net = BioTCM::Network.new("test_network_background.txt")
+      end
+      should "select correct network according to input nodes" do
+        assert_equal(nil, @net.select(["1", "3"]).edge)
+        expected = ["1--2", "2--3", "3--4", "4--1"]
+        actual = @net.select(["1", "2", "3", "4"]).edge
+        assert_equal(expected,  expected&actual)
+        assert_equal(expected,  expected|actual)
+      end
+      should "expand network according selected nodes" do
+        assert_equal(@net.edge, @net.select(["1", "3"]).edge.expand)
       end
     end
   end
+  
 end
