@@ -39,15 +39,20 @@ class BioTCM_Network_Test < Test::Unit::TestCase
         @net = BioTCM::Network.new("test_network_background.txt")
       end
       should "select correct network according to input nodes" do
-        assert_equal(nil, @net.select(["1", "3"]).edge)
+        assert_equal(nil, @net.select(["1", "3", "8"]).edge)
         expected = ["1--2", "2--3", "3--4", "4--1"]
         actual = @net.select(["1", "2", "3", "4"]).edge
         assert_equal(expected,  expected&actual)
         assert_equal(expected,  expected|actual)
       end
       should "expand network according selected nodes" do
-        assert_equal(@net.edge, @net.select(["1", "3"]).edge.expand)
+        assert_equal(@net.edge, @net.select(["1", "3", "8"]).edge.expand)
       end
+      should "knock down edges connected to selected nodes" do
+        expected = ["1--2", "1--5", "4--1"]
+        actual = @net.knock(["3", "8"]).edge
+        assert_equal(expected,  expected&actual)
+        assert_equal(expected,  expected|actual)
     end
   end
   
