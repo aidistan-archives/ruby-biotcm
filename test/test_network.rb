@@ -20,40 +20,28 @@ class BioTCM_Network_Test < Test::Unit::TestCase
 
   context "[Tolerant exit] As for " do
     setup do
-      file = Tempfile.new('test')
-      file.write "_source\t_interaction\t_target\tweight\n1\t->\t2\t1\n2\t--\t3\t2\n"
-      file.rewind
-      @net = BioTCM::Network.new(file.path)
-      file.close!
+      @net = BioTCM::Network.new(File.expand_path("../network_background.txt", __FILE__))
     end
 
     context "basic operations, we" do
+
       should "be able to access the list of nodes and edges" do
-        assert_equal(["1", "2", "3"], @net.node)
-        assert_equal(["1->2", "2--3"], @net.edge)
+        assert_equal(%w{1 2 3 4 5}, @net.node)
+        assert_equal(%w{1--2 2--3 3--4 4--1 1--5 5--3}, @net.edge)
       end
-    end
-    
-    context "basic functions, we" do 
-      setup do
-        @net = BioTCM::Network.new("test_network_background.txt")
+
+      should "be able to select sub-network given selected nodes" do
+        assert_equal([], @net.select(["1", "3", "8"]).edge)
+        assert_equal(["1--2", "2--3", "3--4", "4--1"], @net.select(["1", "2", "3", "4"]).edge)
       end
-      should "select correct network according to input nodes" do
-        assert_equal(nil, @net.select(["1", "3", "8"]).edge)
-        expected = ["1--2", "2--3", "3--4", "4--1"]
-        actual = @net.select(["1", "2", "3", "4"]).edge
-        assert_equal(expected,  expected&actual)
-        assert_equal(expected,  expected|actual)
+
+      should "be able to expand network given selected nodes" do
+        assert_equal(@net.edge, @net.select(["1", "3", "8"]).expand.edge)
       end
-      should "expand network according selected nodes" do
-        assert_equal(@net.edge, @net.select(["1", "3", "8"]).edge.expand)
+
+      should "be able to knock down edges connected to selected nodes" do
+        assert_equal(["1--2", "4--1", "1--5"], @net.knock_down(["3", "8"]).edge)
       end
-      should "knock down edges connected to selected nodes" do
-        expected = ["1--2", "1--5", "4--1"]
-        actual = @net.knock(["3", "8"]).edge
-        assert_equal(expected,  expected&actual)
-        assert_equal(expected,  expected|actual)
     end
   end
-  
 end

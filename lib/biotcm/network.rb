@@ -6,16 +6,14 @@ module BioTCM
   # files, developed under <b>"strict entry and tolerant exit"</b> 
   # philosophy (please refer to the test for details). 
   class BioTCM::Network
+    # Valide interaction types
+    INTERACTION_TYPES = ['--', '->']
     # List of nodes
     attr_reader :node
-    def node
-      @node || @node_table.row_keys
-    end
+    def node; @node.keys; end
     # List of edges
     attr_reader :edge
-    def edge
-      @edge || @edge_table.row_keys
-    end
+    def edge; @edge.keys; end
     # Table of all nodes
     attr_reader :node_table
     # Table of all edges
@@ -23,7 +21,7 @@ module BioTCM
     # Create a network from file(s)
     # @param edge_file [String] file path
     # @param node_file [String ]file path
-    def initialize(edge_file, node_file = nil,  # TOFIX: process node_file please
+    def initialize(edge_file = nil, node_file = nil,
         column_source_node:"_source", 
         column_interaction_type:"_interaction", 
         column_target_node:"_target"
@@ -44,12 +42,12 @@ module BioTCM
       @edge_table.primary_key = "Edge"
       col.each { |c| @edge_table.col(c, {}) }
 
-      # Read
+      # Load edge_file
       node_in_table = @node_table.instance_variable_get(:@row_keys)
-      col_size = col.size
+      col_size = @edge_table.col_keys.size
       fin.each_with_index do |line, line_no|
         col = line.chomp.split("\t")
-        raise ArgumentError, "Unrecognized interaction type: #{col[i_typ]}" unless ['--', '->'].include?(col[i_typ])
+        raise ArgumentError, "Unrecognized interaction type: #{col[i_typ]}" unless INTERACTION_TYPES.include?(col[i_typ])
         src = col[i_src]; typ = col[i_typ]; tgt = col[i_tgt];
         # Insert nodes
         @node_table.row(src, []) unless node_in_table[src]
@@ -59,6 +57,71 @@ module BioTCM
         raise ArgumentError, "Row size inconsistent in line #{line_no+2}" unless col.size == col_size
         @edge_table.row(src+typ+tgt, col)
       end
+
+      # Load node_file
+      if node_file
+        node_table = BioTCM::Table.new(node_file)
+        @node_table.primary_key = node_table.primary_key
+        @node_table = @node_table.merge(node_table)
+      end
+
+      # Set members
+      @node = @node_table.instance_variable_get(:@row_keys).clone
+      @edge = @edge_table.instance_variable_get(:@row_keys).clone
+    end
+    # Clone the network but share the same background
+    def clone
+      net = super
+      net.instance_variable_set(:@node, @node.clone)
+      net.instance_variable_set(:@edge, @edge.clone)
+      return net
+    end
+    # Get a network with selected nodes and edges between them
+    def select(list)
+      self.clone.select!(list)
+    end
+    # Leaving selected nodes and edges between them
+    def select!(list)
+      # Node
+      (@node.keys - list).each { |k| @node.delete(k) }
+      # Edge
+      regexp = Regexp.new(INTERACTION_TYPES.join("|"))
+      @edge.select! do |edge|
+        src, tgt = edge.split(regexp)
+        @node[src] && @node[tgt] ? true : false
+      end
+      return self
+    end
+    # Get a expanded network
+    def expand(step=1)
+      self.clone.expand!(step)
+    end
+    # Expand self
+    def expand!(step=1)
+      step.times { self.expand } if step > 1
+      all_node = @node_table.instance_variable_get(:@row_keys)
+      old_node = @node
+      @node = {}
+      # Edge
+      regexp = Regexp.new(INTERACTION_TYPES.join("|"))
+      @edge_table.instance_variable_get(:@row_keys).each do |edge, edge_index|
+        next if @edge[edge]
+        src, tgt = edge.split(regexp)
+        next unless old_node[src] || old_node[tgt]
+
+        @edge[edge] = edge_index
+        @node[src] = all_node[src] unless @node[src]
+        @node[tgt] = all_node[tgt] unless @node[tgt]
+      end
+      return self
+    end
+    # Get a network without given nodes
+    def knock_down(list)
+      self.clone.knock_down!(list)
+    end
+    # Knock given nodes down
+    def knock_down!(list)
+      self.select!(self.node - list)
     end
   end
 end
