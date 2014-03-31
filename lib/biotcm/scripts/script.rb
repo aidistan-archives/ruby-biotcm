@@ -13,7 +13,6 @@ class BioTCM::Scripts::Script
   # @param [String] wd Working directory of this instance
   def initialize(wd)
     self.wd = wd
-    public; yield # Support defining/overloading methods when creating
   end
   # @private
   def inspect
