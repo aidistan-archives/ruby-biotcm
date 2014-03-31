@@ -19,6 +19,7 @@ module BioTCM
   # autoloaders
   autoload(:Modules, "biotcm/modules")
   autoload(:Databases, "biotcm/databases")
+  autoload(:Scripts, "biotcm/scripts")
 
   extend Modules::Utility
   extend Modules::WorkingDir
@@ -45,7 +46,7 @@ module BioTCM
   # Get the instance of Logger
   # @return [Logger]
   def log
-    Logger.instance(path_to("log/#{get_stamp}.log", true))
+    Logger.instance(path_to("log/#{get(:stamp)}.log", true))
   end
   # Get meta value
   def get_meta(key)
