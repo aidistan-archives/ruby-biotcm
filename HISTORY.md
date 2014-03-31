@@ -2,9 +2,10 @@ History
 ===============
 
 ### By now 2014-03-31
-* 1 major enhancement
+* 3 major enhancement
 	* Added BioTCM::Network
 	* Added BioTCM::Scripts and BioTCM::Scripts::Script
+	* Added BioTCM::Databases::Medline
 
 ### 0.0.3 2014-03-20
 * 4 minor enhancement
