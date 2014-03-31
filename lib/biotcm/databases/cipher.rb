@@ -10,18 +10,20 @@ require 'fileutils'
 #   * delete ones without approved symbols
 #   * delete redundant symbols who rank lower
 #
-# == About Cipher
+# = About Cipher
 # Correlating protein Interaction network and PHEnotype network to pRedict 
 # disease genes (CIPHER), is a computational framework that integrates human 
 # protein–protein interactions, disease phenotype similarities, and known 
 # gene–phenotype associations to capture the complex relationships between 
 # phenotypes and genotypes.
 #
-# == Reference
+# = Reference
 # {http://www.nature.com/msb/journal/v4/n1/full/msb200827.html
 # Xuebing Wu, Rui Jiang, Michael Q. Zhang, Shao Li. 
 # Network-based global inference of human disease genes. 
 # Molecular Systems Biology, 2008, 4:189.}
+#
+# @note TODO: Use BioTCM::Table here
 #
 class BioTCM::Databases::Cipher
   extend BioTCM::Modules::WorkingDir

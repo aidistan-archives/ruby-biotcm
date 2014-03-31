@@ -2,8 +2,9 @@
 
 module BioTCM
   # One of the basic data models used in BioTCM to process flat files, 
-  # developed under <b>"strict entry and tolerant exit"</b> philosophy
-  # (please refer to the test for details). 
+  # developed under <b>"strict entry and tolerant exit"</b> philosophy.
+  #
+  # Please refer to the test for details. 
   class BioTCM::Table
     # Keys of rows
     attr_accessor :row_keys
@@ -16,9 +17,8 @@ module BioTCM
       val.take(@row_keys.size)
       val[@row_keys.size - 1] = nil if val.size < @row_keys.size
       # Replace
-      row_keys = {}
-      val.each_with_index { |key, index| key ? row_keys[key] = index : row_keys["column_#{index+1}"] = index}
-      @row_keys = row_keys
+      @row_keys = {}
+      val.each_with_index { |key, index| key ? @row_keys[key] = index : @row_keys["column_#{index+1}"] = index}
     end
     # Keys of columns
     attr_accessor :col_keys
@@ -31,9 +31,8 @@ module BioTCM
       val.take(@col_keys.size)
       val[@col_keys.size - 1] = nil if val.size < @col_keys.size
       # Replace
-      col_keys = {}
-      val.each_with_index { |key, index| key ? col_keys[key] = index : col_keys["column_#{index+1}"] = index}
-      @col_keys = col_keys
+      @col_keys = {}
+      val.each_with_index { |key, index| key ? @col_keys[key] = index : @col_keys["column_#{index+1}"] = index}
     end
     # Primary key used in this table
     attr_accessor :primary_key
@@ -43,16 +42,27 @@ module BioTCM
       @primary_key = val
     end
 
+    # @private
+    # Factory method
+    # @return [Table]
+    def self.build(primary_key:"_id", row_keys:{}, col_keys:{}, content:[])
+      @tab = self.new
+      @tab.instance_variable_set(:@primary_key, primary_key)
+      @tab.instance_variable_set(:@row_keys, row_keys)
+      @tab.instance_variable_set(:@col_keys, col_keys)
+      @tab.instance_variable_set(:@content, content)
+      return @tab
+    end
+
     # Create a table from a file
-    # @overload initialize(arg=nil)
-    #   @param arg [nil, String] file path
-    def initialize(arg=nil, opts={})
+    # @param arg [String, nil] filepath, or create an empty {Table} if nil
+    def initialize(arg=nil)
       case arg
-      when nil # Empty table or initialized by given values
-        @primary_key = opts[:primary_key] || "_id"
-        @row_keys = opts[:row_keys] || {}
-        @col_keys = opts[:col_keys] || {}
-        @content = opts[:content] || []
+      when nil # Empty table
+        @primary_key = "_id"
+        @row_keys = {}
+        @col_keys = {}
+        @content = []
       when String
         File.open(arg).read.to_table(self)
       else
@@ -62,16 +72,23 @@ module BioTCM
     # Clone this table
     # @return [Table]
     def clone
-      self.new(nil, 
-               primary_key:@primary_key, 
-               row_keys:@row_keys.clone,  
-               col_keys:@col_keys.clone,
-               content:@content.collect { |arr| arr.clone })
+      self.class.build(
+          primary_key:@primary_key, 
+          row_keys:@row_keys.clone, 
+          col_keys:@col_keys.clone, 
+          content:@content.collect { |arr| arr.clone }
+      )
     end
     # Access an element
-    # @param row [String]
-    # @param col [String]
-    # @param val [String]
+    # @overload ele(row, col)
+    #   Get an element
+    #   @param row [String]
+    #   @param col [String]
+    # @overload ele(row, col, val)
+    #   Set an element
+    #   @param row [String]
+    #   @param col [String]
+    #   @param val [String]
     def ele(row, col, val=nil)
       if val.nil?
         row = @row_keys[row] or return nil
@@ -98,8 +115,13 @@ module BioTCM
       end
     end
     # Access a row
-    # @param row [String]
-    # @param val [Hash, Array]
+    # @overload row(row)
+    #   Get a row
+    #   @param row [String]
+    # @overload row(row, val)
+    #   Set a row
+    #   @param row [String]
+    #   @param val [Hash, Array]
     def row(row, val=nil)
       # Getter
       if val.nil?
@@ -139,8 +161,13 @@ module BioTCM
       end
     end
     # Access a column
-    # @param col [String]
-    # @param val [Hash, Array]
+    # @overload col(col)
+    #   Get a column
+    #   @param col [String]
+    # @overload col(col, val)
+    #   Set a column
+    #   @param col [String]
+    #   @param val [Hash, Array]
     def col(col, val=nil)
       # Getter
       if val.nil?
@@ -180,14 +207,17 @@ module BioTCM
       end
     end
     # Select row(s) to build a new table
+    # @return [Table]
     def select_row(rows)
       select(rows, :all)
     end
     # Select column(s) to build a new table
+    # @return [Table]
     def select_col(cols)
       select(:all, cols)
     end
     # Select row(s) and column(s) to build a new table
+    # @return [Table]
     def select(rows, cols)
       # Prune rows
       if rows == :all
@@ -212,11 +242,12 @@ module BioTCM
       end
 
       # Create a new table
-      BioTCM::Table.new(nil, 
-         primary_key:primary_key, 
-         row_keys:row_keys,  
-         col_keys:col_keys,
-         content:content)
+      self.class.build(
+          primary_key:primary_key, 
+          row_keys:row_keys, 
+          col_keys:col_keys, 
+          content:content
+      )
     end
     # Merge with another table
     # @param tab [Table]
@@ -264,11 +295,12 @@ module BioTCM
       END_OF_DOC
 
       # Create a new table
-      BioTCM::Table.new(nil, 
-         primary_key:primary_key, 
-         row_keys:row_keys,  
-         col_keys:col_keys,
-         content:content)
+      self.class.build(
+          primary_key:primary_key, 
+          row_keys:row_keys, 
+          col_keys:col_keys, 
+          content:content
+      )
     end
     # @private
     # For inspection
@@ -281,8 +313,11 @@ module BioTCM
       @row_keys.keys.zip(@content).unshift([@primary_key, @col_keys.keys]).collect { |a| a.join("\t") }.join("\n")
     end
     # Print in a file
-    def export(file_path)
-      File.open(file_path, 'w').puts self
+    # @param filepath [String]
+    # @return [self]
+    def export(filepath)
+      File.open(filepath, 'w').puts self
+      return self
     end
   end
 end
@@ -319,11 +354,12 @@ class String
       tab.instance_variable_set(:@content, content)
       tab
     else
-      BioTCM::Table.new(nil, 
-         primary_key:primary_key, 
-         row_keys:row_keys,  
-         col_keys:col_keys,
-         content:content)
+      BioTCM::Table.build(
+          primary_key:primary_key, 
+          row_keys:row_keys, 
+          col_keys:col_keys, 
+          content:content
+      )
     end
   end
 end

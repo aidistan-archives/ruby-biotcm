@@ -5,7 +5,7 @@ module BioTCM
   # A double-output featured logger.
   # Call {instance} to return the singleton instance and use it 
   # as if it's a {http://rubydoc.info/stdlib/logger/Logger stdlib Logger}.
-  class Logger    
+  class Logger
     # Instance methods not in this list will be undefined at the beginning of
     # class definition
     PRESERVED = [:__id__, :__send__, :object_id, :respond_to?]

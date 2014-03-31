@@ -3,8 +3,8 @@ require 'json'
 
 # Top level namespace of BioTCM
 #
-# === Initialization
-# It's unnecessary to initialize BioTCM after requiring. 
+# = Initialization
+# It's unnecessary to initialize BioTCM after requiring.
 #   require 'biotcm'
 #   BioTCM.init # unnecessary but no harm
 #
@@ -12,7 +12,6 @@ require 'json'
 # according to {BioTCM.init} to make sure that anything left uninitiated will 
 # not affect your final result.
 #   require 'biotcm'
-#
 #   BioTCM.wd = "/home/aidistan/.biotcm"
 #
 module BioTCM
@@ -25,7 +24,7 @@ module BioTCM
   extend Modules::WorkingDir
   
   # Current version number
-  VERSION = '0.0.2'
+  VERSION = '0.0.4'
   # Default working directory
   DEFAULT_WORKING_DIRECTORY = File.expand_path("~/.gem/biotcm")
   # Default url of the meta file
@@ -38,10 +37,10 @@ module BioTCM
     system "irb -I #{File.dirname(__FILE__)} -r biotcm -r irb/completion --simple-prompt"
   end
   # Default initialization
-  # @return [BioTCM]
+  # @return [nil]
   def init
     BioTCM.wd = BioTCM::DEFAULT_WORKING_DIRECTORY
-    return self
+    return nil
   end
   # Get the instance of Logger
   # @return [Logger]

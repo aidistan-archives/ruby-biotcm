@@ -3,8 +3,9 @@ require 'biotcm/table'
 
 module BioTCM
   # One of the basic data models used in BioTCM to process network/graph
-  # files, developed under <b>"strict entry and tolerant exit"</b> 
-  # philosophy (please refer to the test for details). 
+  # files, developed under <b>"strict entry and tolerant exit"</b> philosophy.
+  #
+  # Please refer to the test for details. 
   class BioTCM::Network
     # Valide interaction types
     INTERACTION_TYPES = ['--', '->']
@@ -70,6 +71,7 @@ module BioTCM
       @edge = @edge_table.instance_variable_get(:@row_keys).clone
     end
     # Clone the network but share the same background
+    # @return [Network]
     def clone
       net = super
       net.instance_variable_set(:@node, @node.clone)
@@ -77,10 +79,12 @@ module BioTCM
       return net
     end
     # Get a network with selected nodes and edges between them
+    # @return [Network]
     def select(list)
       self.clone.select!(list)
     end
     # Leaving selected nodes and edges between them
+    # @return [self]
     def select!(list)
       # Node
       (@node.keys - list).each { |k| @node.delete(k) }
@@ -93,10 +97,12 @@ module BioTCM
       return self
     end
     # Get a expanded network
+    # @return [Network]
     def expand(step=1)
       self.clone.expand!(step)
     end
     # Expand self
+    # @return [self]
     def expand!(step=1)
       step.times { self.expand } if step > 1
       all_node = @node_table.instance_variable_get(:@row_keys)
@@ -116,10 +122,12 @@ module BioTCM
       return self
     end
     # Get a network without given nodes
+    # @return [Network]
     def knock_down(list)
       self.clone.knock_down!(list)
     end
     # Knock given nodes down
+    # @return [self]
     def knock_down!(list)
       self.select!(self.node - list)
     end

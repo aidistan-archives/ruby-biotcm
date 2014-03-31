@@ -15,7 +15,7 @@ module BioTCM
       #   Get a stamp string containing time and thread_id
       #   @return [String]
       #   @example
-      #   BioTCM::Modules::Utility.get(:stamp) # => "20140314_011353_1bbfd18"
+      #     BioTCM::Modules::Utility.get(:stamp) # => "20140314_011353_1bbfd18"
       def get(obj)
         case obj
         when String
