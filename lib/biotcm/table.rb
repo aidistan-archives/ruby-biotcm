@@ -93,7 +93,7 @@ module BioTCM
       if val.nil?
         row = @row_keys[row] or return nil
         col = @col_keys[col] or return nil
-        @content[row][col]
+        return @content[row][col]
       else
         unless row.is_a?(String) && col.is_a?(String) && val.is_a?(String)
           raise ArgumentError, 'Illegal argument type'
@@ -113,6 +113,8 @@ module BioTCM
         col = @col_keys[col]
         @content[row][col] = val
       end
+
+      return self
     end
     # Access a row
     # @overload row(row)
@@ -159,6 +161,8 @@ module BioTCM
           @content[row][col] = v
         end
       end
+
+      return self
     end
     # Access a column
     # @overload col(col)
@@ -205,6 +209,8 @@ module BioTCM
           @content[row][col] = v
         end
       end
+
+      return self
     end
     # Select row(s) to build a new table
     # @return [Table]
@@ -340,7 +346,7 @@ class String
     row_keys = {}
     content = []
     stuff.each_with_index do |line, line_index|
-      col = (line+"\tTAIL").split("\t"); col.pop
+      col = line.split("\t", -1)
       raise ArgumentError, "Row size inconsistent in line #{line_index+2}" unless col.size == col_keys.size+1
       raise ArgumentError, "Duplicated primary key: #{col[0]}" if row_keys[col[0]]
       row_keys[col.shift] = row_keys.size
