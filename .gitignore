@@ -6,5 +6,7 @@
 doc/
 
 #####
+data/
+log/
 *.draft
 *.frozen
