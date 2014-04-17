@@ -1,94 +1,5 @@
 # encoding: UTF-8
 
-class BioTCM::Databases::HGNC
-  #
-  # Macro definitions
-  #
-  private
-
-  def self.create_converters
-    # Define #converter_list
-    def converter_list
-      { direct:@@direct_converters, indirect:@@indirect_converters }
-    end
-    # Define converters
-    IDENTIFIERS.each_key do |src|
-      IDENTIFIERS.each_key do |dst|
-        next if src == dst
-        sym = (src.to_s + "2" + dst.to_s).to_sym
-        [src, dst].include?(:hgncid) ? create_direct_converter(sym) : create_indirect_converter(sym)
-      end
-    end
-    return nil
-  end
-
-  def self.create_direct_converter(*syms)
-    syms.each do |sym|
-      class_variable_defined?(:@@direct_converters) ? @@direct_converters<<sym : @@direct_converters=[sym]
-      class_eval %{
-        def #{sym}(obj = nil)
-          return @#{sym} unless obj
-          return @#{sym}[obj.to_s].to_s rescue raise ArgumentError, "The parameter \\"\#{obj}\\"(\#{obj.class}) can't be converted into String"
-        end
-      }
-      String.class_eval %{
-        def #{sym}
-          String.hgnc.#{sym}[self].to_s rescue raise "HGNC dictionary not given"
-        end
-        def #{sym}!
-          replace(String.hgnc.#{sym}[self].to_s) rescue raise "HGNC dictionary not given"
-        end
-      }
-      Array.class_eval %{
-        def #{sym}
-          self.collect do |item|
-            item.to_s rescue raise ArgumentError, "The element \\"\#{item}\\"(\#{item.class}) in the Array can't be converted into String"
-          end.collect { |item| item.#{sym} }
-        end
-        def #{sym}!
-          self.collect! do |item|
-            item.to_s rescue raise ArgumentError, "The element \\"\#{item}\\"(\#{item.class}) in the Array can't be converted into String"
-          end.collect! { |item| item.#{sym} }
-        end
-      }
-    end
-    return nil
-  end
-
-  def self.create_indirect_converter(*syms)
-    syms.each do |sym|
-      class_variable_defined?(:@@indirect_converters) ? @@indirect_converters<<sym : @@indirect_converters=[sym]
-      /^(?<src>[^2]+)2(?<dst>.+)$/ =~ sym.to_s
-      class_eval %{
-        def #{sym}(obj)
-          return hgncid2#{dst}(#{src}2hgncid(obj)) rescue raise ArgumentError, "The parameter \\"\#{obj}\\"(\#{obj.class}) can't be converted into String"
-        end
-      }
-      String.class_eval %{
-        def #{sym}
-          self.#{src}2hgncid.hgncid2#{dst}
-        end
-        def #{sym}!
-          replace(self.#{src}2hgncid.hgncid2#{dst})
-        end
-      }
-      Array.class_eval %{
-        def #{sym}
-          self.collect do |item|
-            item.to_s rescue raise ArgumentError, "The element \\"\#{item}\\"(\#{item.class}) in the Array can't be converted into String"
-          end.collect { |item| item.#{src}2hgncid.hgncid2#{dst} }
-        end
-        def #{sym}!
-          self.collect! do |item|
-            item.to_s rescue raise ArgumentError, "The element \\"\#{item}\\"(\#{item.class}) in the Array can't be converted into String"
-          end.collect! { |item| item.#{src}2hgncid.hgncid2#{dst} }
-        end
-      }
-    end
-    return nil
-  end
-end
-
 # HGNC object loads in any given HGNC flat file and builds 
 # hashes storing the conversion pairs, using HGNC ID as the primary key.
 #
@@ -156,6 +67,95 @@ end
 class BioTCM::Databases::HGNC
   extend BioTCM::Modules::WorkingDir
 
+  #
+  # Provide some macros to define converter methods
+  #
+  class_eval do
+    private
+    # The trigger macro
+    def self.create_converters
+      # Define #converter_list
+      def converter_list
+        { direct:@@direct_converters, indirect:@@indirect_converters }
+      end
+      # Define converters
+      IDENTIFIERS.each_key do |src|
+        IDENTIFIERS.each_key do |dst|
+          next if src == dst
+          sym = (src.to_s + "2" + dst.to_s).to_sym
+          [src, dst].include?(:hgncid) ? create_direct_converter(sym) : create_indirect_converter(sym)
+        end
+      end
+      return nil
+    end
+    # Called by create_converters
+    def self.create_direct_converter(*syms)
+      syms.each do |sym|
+        class_variable_defined?(:@@direct_converters) ? @@direct_converters<<sym : @@direct_converters=[sym]
+        class_eval %{
+          def #{sym}(obj = nil)
+            return @#{sym} unless obj
+            return @#{sym}[obj.to_s].to_s rescue raise ArgumentError, "The parameter \\"\#{obj}\\"(\#{obj.class}) can't be converted into String"
+          end
+        }
+        String.class_eval %{
+          def #{sym}
+            String.hgnc.#{sym}[self].to_s rescue raise "HGNC dictionary not given"
+          end
+          def #{sym}!
+            replace(String.hgnc.#{sym}[self].to_s) rescue raise "HGNC dictionary not given"
+          end
+        }
+        Array.class_eval %{
+          def #{sym}
+            self.collect do |item|
+              item.to_s rescue raise ArgumentError, "The element \\"\#{item}\\"(\#{item.class}) in the Array can't be converted into String"
+            end.collect { |item| item.#{sym} }
+          end
+          def #{sym}!
+            self.collect! do |item|
+              item.to_s rescue raise ArgumentError, "The element \\"\#{item}\\"(\#{item.class}) in the Array can't be converted into String"
+            end.collect! { |item| item.#{sym} }
+          end
+        }
+      end
+      return nil
+    end
+    # Called by create_converters
+    def self.create_indirect_converter(*syms)
+      syms.each do |sym|
+        class_variable_defined?(:@@indirect_converters) ? @@indirect_converters<<sym : @@indirect_converters=[sym]
+        /^(?<src>[^2]+)2(?<dst>.+)$/ =~ sym.to_s
+        class_eval %{
+          def #{sym}(obj)
+            return hgncid2#{dst}(#{src}2hgncid(obj)) rescue raise ArgumentError, "The parameter \\"\#{obj}\\"(\#{obj.class}) can't be converted into String"
+          end
+        }
+        String.class_eval %{
+          def #{sym}
+            self.#{src}2hgncid.hgncid2#{dst}
+          end
+          def #{sym}!
+            replace(self.#{src}2hgncid.hgncid2#{dst})
+          end
+        }
+        Array.class_eval %{
+          def #{sym}
+            self.collect do |item|
+              item.to_s rescue raise ArgumentError, "The element \\"\#{item}\\"(\#{item.class}) in the Array can't be converted into String"
+            end.collect { |item| item.#{src}2hgncid.hgncid2#{dst} }
+          end
+          def #{sym}!
+            self.collect! do |item|
+              item.to_s rescue raise ArgumentError, "The element \\"\#{item}\\"(\#{item.class}) in the Array can't be converted into String"
+            end.collect! { |item| item.#{src}2hgncid.hgncid2#{dst} }
+          end
+        }
+      end
+      return nil
+    end
+  end
+
   # Current version of HGNC
   VERSION = "0.2.0"
   # Meta key for the download url of default HGNC table
@@ -179,6 +179,7 @@ class BioTCM::Databases::HGNC
   #     hgnc.converter_list
   #     # => {:direct=>[:hgncid2symbol, ...], :indirect=>[:symbol2entrez, ...]}
   # @!method direct_converter(str)
+  #   Either source or target is a HGNCID identifier.
   #   @overload direct_converter(str)
   #     Convert str
   #     @param [String]
@@ -193,6 +194,7 @@ class BioTCM::Databases::HGNC
   #       hgnc.symbol2hgncid          # => {...}
   #       hgnc.symbol2hgncid["ASIC1"] # => "HGNC:100"
   # @!method indirect_converter(str)
+  #   Both source and target are not HGNCID identifier.
   #   Convert str
   #   @param [String]
   #   @return [String] "" for no result
