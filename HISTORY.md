@@ -1,6 +1,11 @@
 History
 ===============
 
+### 0.0.5 2014-04-17
+* 2 major enhancement
+	* Improved BioTCM::Databases::Medline
+	* Added BioTCM::Databases::KEGG
+
 ### 0.0.4 2014-04-01
 * 3 major enhancement
 	* Added BioTCM::Network
