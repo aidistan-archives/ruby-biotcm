@@ -37,9 +37,13 @@ class BioTCM::Databases::Medline
       BioTCM.get(
         [
           "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=#{params[:db]}",
-          "term=#{params[:term]}",
+          params[:term] ? "term=#{params[:term]}" : "",
           params[:webenv] ? "WebEnv=#{params[:webenv]}" : "",
           params[:usehistory]=="n" ? "" : "usehistory=y",
+
+          params[:retstart] ? "retstart=#{params[:retstart]}" : "",
+          params[:retmax] ? "retmax=#{params[:retmax]}" : "",
+          params[:query_key] ? "query_key=#{params[:query_key]}" : "",
         ].join("&").gsub(/&+/,"&")
       )
     end
@@ -74,7 +78,6 @@ class BioTCM::Databases::Medline
     # def einfo
     #   # http://eutils.ncbi.nlm.nih.gov/entrez/eutils/einfo.fcgi
     # end
-
     # # EPost (UID uploads)
     # # Accepts a list of UIDs from a given database, stores the set on the History Server, and responds with a query key and web environment for the uploaded dataset.
     # def epost
@@ -107,7 +110,7 @@ class BioTCM::Databases::Medline
     # end
   end
 
-  attr_reader :term, :xml, :count, :query_key, :webenv
+  attr_reader :term, :count
 
   # @private
   # WebEnv used last time
@@ -118,26 +121,8 @@ class BioTCM::Databases::Medline
   # @param webenv [String]
   def initialize(query, webenv = @@last_webenv)
     @webenv = webenv if webenv
-
-    # query = File.open(query).readlines if query =~ /.txt$/
-    # case query
-    # when Array
-    #   query.collect!{ |line| line.chomp.gsub(/\s+/, "+") }
-    #   query.delete("")
-
-    #   bar = ProgressBar.new("Searching", query.size) if BioDB.show_progressbar?
-    #   search(query.shift)
-    #   query.each do |q|
-    #     bar.inc if BioDB.show_progressbar?
-    #     self | q
-    #   end
-    #   bar.finish if BioDB.show_progressbar?
-    # else # Single query
     search(query)
-    # end
-
-    # Save current webenv
-    @@last_webenv = @webenv
+    @@last_webenv = @webenv # Save current webenv
   end
 
   # OR operation search
@@ -172,16 +157,39 @@ class BioTCM::Databases::Medline
     return self
   end
 
-  # Use efetch to download
-  # @param savepath [String]
-  # @return [nil]
-  def download(savepath)
+  # Fetch all pubmed ids
+  # @return [Array]
+  def fetch_pubmed_ids
+    rtn = []
+    retstart = 0
+    retmax = 500
+    total_count = @count
+
+    while retstart<total_count
+      rtn += EUtilities.esearch({
+        db:"pubmed",
+        retstart:retstart,
+        retmax:retmax,
+        query_key:@query_key,
+        webenv:@webenv,
+      }).scan(/<Id>(\d+)<\/Id>/).flatten
+
+      retstart += retmax
+      retstart = total_count unless retstart < total_count
+    end
+    return rtn
+  end
+
+  # Download all abstracts
+  # @param filename [String] path to expected file
+  # @return [self]
+  def download_abstracts(filename)
     retstart = 0
     retmax = 500
     total_count = @count
 
     BioTCM.log.info("Medline") { "Downloading #{total_count} medlines ..." }
-    File.open(savepath, "w") do |fout|
+    File.open(filename, "w") do |fout|
       while retstart<total_count
         fout.puts EUtilities.efetch({
           db:"pubmed",
@@ -230,7 +238,7 @@ class BioTCM::Databases::Medline
     @query_key = $2
     @webenv = $3
 
-    File.open(BioTCM.path_to("tmp/MineLiteratureInPubMed #{webenv} ##{query_key}.txt", true), 'w').puts @xml
+    File.open(BioTCM.path_to("tmp/MineLiteratureInPubMed #{@webenv} ##{@query_key}.txt", true), 'w').puts @xml
     BioTCM.log.debug("Medline") { "Object updated by searching => #{self}" }
   end
 end

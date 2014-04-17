@@ -16,10 +16,15 @@ class BioTCM_Databases_Medline_Test < Test::Unit::TestCase
       assert(@medline.count > 0)
     end
 
+    should "be able to fetch all related pubmed ids" do
+      @medline = BioTCM::Databases::Medline.new("IL-2 IBD")
+      assert(@medline.fetch_pubmed_ids.size > 150)
+    end
+
     should "be able to download the query result" do
       filename = __FILE__+'.tmp'
       assert_nothing_raised do
-        BioTCM::Databases::Medline.new("IL-2 IBD CRC").download(filename)
+        BioTCM::Databases::Medline.new("IL-2 IBD CRC").download_abstracts(filename)
       end
       File.open(filename) { |fin| assert(fin.readlines.size > 0) }
       File.delete(filename)
