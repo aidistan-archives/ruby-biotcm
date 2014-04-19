@@ -112,6 +112,8 @@ class BioTCM::Databases::Medline
 
   attr_reader :term, :count
 
+  # Current version of Medline
+  VERSION = "0.2.0"
   # @private
   # WebEnv used last time
   @@last_webenv = nil
