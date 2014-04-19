@@ -1,6 +1,11 @@
 History
 ===============
 
+### 0.0.6 2014-04-20
+* 2 major enhancement
+	* Added BioTCM::Databases::OMIM
+	* Added BioTCM::Scripts::GeneDetector
+
 ### 0.0.5 2014-04-17
 * 2 major enhancement
 	* Improved BioTCM::Databases::Medline
