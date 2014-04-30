@@ -55,16 +55,17 @@ module BioTCM
     end
 
     # Create a table from a file
-    # @param arg [String, nil] filepath, or create an empty {Table} if nil
-    def initialize(arg=nil)
-      case arg
+    # @param filepath [String, nil] create an empty {Table} if nil
+    # @param encoding [String]
+    def initialize(filepath = nil, encoding:Encoding.default_external)
+      case filepath
       when nil # Empty table
         @primary_key = "_id"
         @row_keys = {}
         @col_keys = {}
         @content = []
       when String
-        File.open(arg).read.to_table(self)
+          File.open(filepath, "r:#{encoding}").read.to_table(self)
       else
         raise ArgumentError, 'Illegal argument type for Table#new'
       end
