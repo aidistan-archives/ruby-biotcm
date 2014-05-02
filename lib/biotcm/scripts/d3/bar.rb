@@ -50,8 +50,8 @@ var svg = d3.select("body").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.tsv("data.tsv", type, function(error, data) {
-  x.domain(data.map(function(d) { return d.#{col_key}; }));
-  y.domain([0, d3.max(data, function(d) { return d.#{col_val}; })]);
+  x.domain(data.map(function(d) { return d['#{col_key}']; }));
+  y.domain([0, d3.max(data, function(d) { return d['#{col_val}']; })]);
 
   svg.append("g")
       .attr("class", "x axis")
@@ -72,15 +72,15 @@ d3.tsv("data.tsv", type, function(error, data) {
       .data(data)
     .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function(d) { return x(d.#{col_key}); })
+      .attr("x", function(d) { return x(d['#{col_key}']); })
       .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.#{col_val}); })
-      .attr("height", function(d) { return height - y(d.#{col_val}); });
+      .attr("y", function(d) { return y(d['#{col_val}']); })
+      .attr("height", function(d) { return height - y(d['#{col_val}']); });
 
 });
 
 function type(d) {
-  d.#{col_val} = +d.#{col_val};
+  d['#{col_val}'] = +d['#{col_val}'];
   return d;
 }
 

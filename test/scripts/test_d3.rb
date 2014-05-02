@@ -10,6 +10,7 @@ class BioTCM_Scripts_D3_Test < Test::Unit::TestCase
       end
 
       # BioTCM::Scripts::D3.new(Dir.mktmpdir).demo(:bar).view
+      # BioTCM::Scripts::D3.new(Dir.mktmpdir).demo(:grouped_bar).view
     end
   end
 end

@@ -6,7 +6,7 @@ class BioTCM::Scripts::D3 < BioTCM::Scripts::Script
   # Version of D3
   VERSION = '0.1.0'
   # Supported chart type
-  CHART_TYPES = [:bar]
+  CHART_TYPES = [:bar, :grouped_bar]
 
   # General method to visualize data
   # @param type [Symbol] any type in {CHART_TYPES}
