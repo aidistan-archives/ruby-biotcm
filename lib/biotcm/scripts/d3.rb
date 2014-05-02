@@ -74,4 +74,5 @@ class BioTCM::Scripts::D3 < BioTCM::Scripts::Script
   end
 end
 
-require "biotcm/scripts/d3/bar"
+# Load each type of charts
+Dir.glob(File.expand_path '../d3/*.rb', __FILE__).each { |f| require f }
