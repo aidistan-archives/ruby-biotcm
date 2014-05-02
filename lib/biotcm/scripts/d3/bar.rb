@@ -2,9 +2,9 @@
 
 class BioTCM::Scripts::D3
   # Draw bar chart
-  # @param :data [Table, String] a two column table or a String can be to_table
-  # @param :y_ticks [Fixnum]
-  # @param :y_tick_unit [String] can be '%'
+  # @param data [Table, String] a two column table or a String can be to_table
+  # @param y_ticks [Fixnum]
+  # @param y_tick_unit [String] can be '%'
   # @return [self]
   def bar(data:nil, title:'', y_ticks:10, y_tick_unit:nil)
     data = data.to_table unless data.is_a?(BioTCM::Table)
@@ -92,8 +92,8 @@ function type(d) {
     publish(title, content, index:true)
     return self
   end
+  # @private
   # Demo for bar
-  # @return [self]
   def demo_bar
     data = <<-END_OF_DOC
 letter\tfrequency

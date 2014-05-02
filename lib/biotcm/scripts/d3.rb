@@ -30,7 +30,7 @@ class BioTCM::Scripts::D3 < BioTCM::Scripts::Script
       raise ArgumentError, 'Unsupported chart type'
     end
   end
-  # Start server
+  # Show the page
   # @return [self]
   def view
     link = path_to 'index.html'
