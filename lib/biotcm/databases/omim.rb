@@ -56,7 +56,7 @@ class BioTCM::Databases::OMIM
       fout.puts BioTCM.get(self.class.url(omim_id))
       fout.close
     end
-    @content = eval(File.open(file_path).read)['omim']['entryList'][0]['entry']
+    @content = eval(File.open(file_path).read.gsub("\n", ''))['omim']['entryList'][0]['entry']
     # Find genes
     @@gene_detector = BioTCM::Scripts::GeneDetector.new unless self.class.class_variable_defined?(:@@gene_detector)
     @genes = []
