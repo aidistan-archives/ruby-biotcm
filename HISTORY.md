@@ -1,6 +1,10 @@
 History
 ===============
 
+### By now
+* 1 major enhancement
+	* Introduced in D3.js to implement data visualization
+
 ### 0.0.6 2014-04-20
 * 2 major enhancement
 	* Added BioTCM::Databases::OMIM
