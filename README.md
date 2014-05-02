@@ -31,7 +31,7 @@ send pull requests, then we could communicate through comments.
 
 ### Coding Style
 
-Practically follow [ruby-style-guide](http://aidistan.github.io/ruby-style-guide/)
+Practically follow [ruby-style-guide](https://github.com/bbatsov/ruby-style-guide)
 , a community-driven ruby coding style guide.
 
 Following is a incomplete list of __some__ __possible__ __differences__.
