@@ -80,7 +80,7 @@ d3.tsv("data.tsv", function(error, data) {
       .data(data)
     .enter().append("g")
       .attr("class", "g")
-      .attr("transform", function(d) { return "translate(" + x0(d.State) + ",0)"; });
+      .attr("transform", function(d) { return "translate(" + x0(d['#{data.primary_key}']) + ",0)"; });
 
   state.selectAll("rect")
       .data(function(d) { return d.cols; })
