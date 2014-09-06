@@ -6,7 +6,7 @@ Written for working in Shao lab (BioTCM).
 * Release version on RubyGems:
 	[Homepage](http://rubygems.org/gems/biotcm) | [Documents](http://rubydoc.info/gems/biotcm/frames)
 * Development version on Github:
-	[Homepage](http://aidistan.github.io/biotcm) | [Documents](http://aidistan.github.io/biotcm/doc/frames.html)
+	[Homepage](http://biotcm.github.io/biotcm) | [Documents](http://biotcm.github.io/biotcm/doc/frames.html)
 
 
 ## Getting Started
@@ -84,4 +84,4 @@ design purpose more easily.
 
 ## License
 
-Copyright 2013 Shao Lab under the MIT license.
+Copyright 2014 BioTCM group under the MIT license.
