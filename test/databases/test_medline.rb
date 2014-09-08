@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require_relative '../test-helper'
 
 class BioTCM_Databases_Medline_Test < Test::Unit::TestCase

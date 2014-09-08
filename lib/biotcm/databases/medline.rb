@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'fileutils'
 
 # Class for retrieving medlines in PubMed

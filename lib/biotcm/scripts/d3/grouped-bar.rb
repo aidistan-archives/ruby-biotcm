@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 class BioTCM::Scripts::D3
   # Draw bar chart
   # @param data [Table, String] a two column table or a String can be to_table

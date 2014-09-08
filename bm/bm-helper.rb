@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'benchmark'
 
 unless $:.include?(File.expand_path('../../lib', __FILE__))

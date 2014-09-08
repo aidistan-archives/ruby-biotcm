@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require_relative '../test-helper'
 
 class BioTCM_Scripts_Script_Test < Test::Unit::TestCase

@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'json'
 
 # Top level namespace of BioTCM

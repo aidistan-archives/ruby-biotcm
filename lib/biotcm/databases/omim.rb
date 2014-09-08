@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 # Class for retrieving OMIM entries
 class BioTCM::Databases::OMIM
   extend BioTCM::Modules::WorkingDir

@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require_relative 'bm-helper'
 
 MyBenchmark.group "Table initialization" do |b|

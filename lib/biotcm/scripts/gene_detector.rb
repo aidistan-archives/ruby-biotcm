@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 # For gene detection
 class BioTCM::Scripts::GeneDetector < BioTCM::Scripts::Script
   # Version of GeneDetector

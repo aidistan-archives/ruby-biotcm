@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 # Superclass of all script class
 class BioTCM::Scripts::Script
   include BioTCM::Modules::WorkingDir

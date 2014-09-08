@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require_relative '../bm-helper'
 
 hgnc = BioTCM::Databases::HGNC.new

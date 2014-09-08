@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 module BioTCM
   # One of the basic data models used in BioTCM to process flat files, 
   # developed under <b>"strict entry and tolerant exit"</b> philosophy.

@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 # HGNC object loads in any given HGNC flat file and builds 
 # hashes storing the conversion pairs, using HGNC ID as the primary key.
 #

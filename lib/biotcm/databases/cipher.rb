@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'fileutils'
 
 # Cipher object gets top 1000 genes for each phenotype, 

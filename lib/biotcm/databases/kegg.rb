@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'rexml/document'
 
 # KEGG class is designed to build ppi networks based on KEGG pathways.
