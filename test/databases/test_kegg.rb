@@ -2,7 +2,7 @@ require_relative '../test_helper'
 
 describe BioTCM::Databases::KEGG do
   it "must raise error if given pathway not exists" do
-    assert_raises(ArgumentError) { BioTCM::Databases::KEGG.get_pathway("00000") }
+    assert_raises(RuntimeError) { BioTCM::Databases::KEGG.get_pathway("00000") }
   end
 
   it "must download KGMLs" do

@@ -21,7 +21,7 @@ class BioTCM::Databases::OMIM
   end
   # Create a batch of OMIM objects
   # @param omim_ids [Array]
-  # @return [Array]
+  # @return [Hash]
   def self.batch(omim_ids)
     raise ArgumentError unless omim_ids.is_a?(Array)
     rtn = {}

@@ -10,6 +10,7 @@ module BioTCM
       #   @param url [String]
       #   @return [String] if success, the content
       #   @return [nil] if cannot recognize the scheme
+      #   @raise ArgumentError if return status is not 404
       # @overload get(:stamp)
       #   Get a stamp string containing time and thread_id
       #   @return [String]
@@ -21,7 +22,9 @@ module BioTCM
           uri = URI(obj)
           case uri.scheme
           when 'http'
-            Net::HTTP.get(uri)
+            res = Net::HTTP.get_response(uri)
+            raise "HTTP status #{res.code} returned when #{uri} sent" unless res.is_a?(Net::HTTPOK)
+            res.body
           else
             nil
           end

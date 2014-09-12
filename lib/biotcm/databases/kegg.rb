@@ -116,7 +116,7 @@ class BioTCM::Databases::KEGG
   # Get the pathway specified by pathway_id
   # @param pathway_id [String] KEGG pathway id (using {DEFAULT_ORGANISM} if not specified)
   # @return [Pathway]
-  # @raise ArgumentError if pathway_id not exist
+  # @raise RuntimeError if pathway_id not exist
   def self.get_pathway(pathway_id)
     raise ArgumentError, "Invalid pathway_id" unless pathway_id = validate_pathway_id(pathway_id)
 
@@ -124,7 +124,6 @@ class BioTCM::Databases::KEGG
     unless File.exist?(file_path)
       BioTCM.log.info("KEGG") { "Downloading the KGML of pathway #{pathway_id.inspect} from KEGG" }
       content = BioTCM.get(URLS[:pathway_kgml].call(pathway_id))
-      raise ArgumentError if content == ""
       fout = File.open(file_path, 'w')
       fout.puts(content)
       fout.close
