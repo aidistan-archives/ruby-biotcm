@@ -1,11 +1,9 @@
-require_relative '../test-helper'
+require_relative '../test_helper'
 
-class BioTCM_Scripts_Script_Test < Test::Unit::TestCase
-  context "Script object" do
-    should "raise NotImplementedError" do
-      assert_raise NotImplementedError do
-        BioTCM::Scripts::Script.new(File.dirname(__FILE__)).run
-      end
+describe BioTCM::Scripts::Script do
+  it "must raise NotImplementedError" do
+    assert_raises(NotImplementedError) do
+      BioTCM::Scripts::Script.new(File.dirname(__FILE__)).run
     end
   end
 end

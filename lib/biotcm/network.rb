@@ -20,8 +20,8 @@ module BioTCM
     attr_reader :edge_table
     # Create a network from file(s)
     # @param edge_file [String] file path
-    # @param node_file [String ]file path
-    def initialize(edge_file = nil, node_file = nil,
+    # @param node_file [String] file path
+    def initialize(edge_file, node_file = nil,
         column_source_node:"_source", 
         column_interaction_type:"_interaction", 
         column_target_node:"_target"

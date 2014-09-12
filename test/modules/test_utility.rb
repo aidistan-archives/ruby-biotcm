@@ -1,18 +1,16 @@
-require_relative '../test-helper'
+require_relative '../test_helper'
 
-class BioTCM_Modules_Utility_Test < Test::Unit::TestCase
-  include BioTCM::Modules::Utility
+include BioTCM::Modules::Utility
 
-  context "Utility module" do
-    should "get web pages" do
-      assert(get('http://www.baidu.com') =~ /^<!doctype html>/i)
-      assert(get('unknown').nil?)
-    end
+describe BioTCM::Modules::Utility do
+  it "must get web pages" do
+    assert_match(/^<!doctype html>/i, get('http://biotcm.github.io/biotcm/'))
+    assert_nil(get('unknown'))
+  end
 
-    should "generate stamps" do
-      stamp = get(:stamp)
-      assert_not_match(/[^0-9a-zA-z\-_]/, stamp, 'Containing illegal character.')
-      Thread.new { assert_not_equal(stamp, get(:stamp), 'Same stamps in different threads.') }.join.exit
-    end
+  it "must generate time stamps" do
+    stamp = get(:stamp)
+    refute_match(/[^0-9a-zA-z\-_]/, stamp, 'Containing illegal character.')
+    Thread.new { refute_equal(stamp, get(:stamp), 'Same stamps in different threads.') }.join.exit
   end
 end

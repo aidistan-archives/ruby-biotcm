@@ -30,7 +30,7 @@ class BioTCM::Databases::Cipher
   # Current version of Cipher
   VERSION = "0.1.0"
   # The url of Cipher website
-  META_KEY = "CIPHER_WEBSITE"
+  META_KEY = "CIPHER_WEBSITE_URL"
 
   # Initialize the Cipher object
   # @param omim_id [String, Array] omim id(s)
@@ -39,7 +39,7 @@ class BioTCM::Databases::Cipher
   #   # => #<BioTCM::Databases::Cipher @genes.keys=["137280"]>
   def initialize(omim_id)
     # Ensurance
-    "".hgncid2symbol rescue BioTCM::Databases::HGNC.new.as_dictionary
+    BioTCM::Databases::HGNC.ensure
     base_url = BioTCM.get_meta(META_KEY)
 
     # Handle with omim_id

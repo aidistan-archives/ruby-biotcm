@@ -4,11 +4,13 @@ class BioTCM::Databases::OMIM
 
   # Current version of OMIM
   VERSION = "0.1.0"
+  # Meta key of API key
+  META_KEY = "OMIM_API_KEY"
   # Public API key
   # (change it to your private key if in need)
-  API_KEY = "37464682F6F02BB4757ACB2BAFDBA6E0BBFE3ABF"
+  API_KEY = BioTCM.get_meta(META_KEY)
   # Url of the mim2gene.txt
-  MIM2GENE_URL = 'http://aidistan.github.io/biotcm/omim_mim2gene.txt'
+  MIM2GENE_URL = 'http://biotcm.github.io/biotcm/meta/OMIM/mim2gene.txt'
 
   attr_reader :id, :genes
 
@@ -36,7 +38,7 @@ class BioTCM::Databases::OMIM
   # @raise ArgumentError if omim_id not exists
   def initialize(omim_id)
     # Check
-    "".symbol2hgncid rescue BioTCM::Databases::HGNC.new.as_dictionary
+    BioTCM::Databases::HGNC.ensure
     # Get the list of mimNumber
     file_path = self.class.path_to "mim2gene.txt"
     unless File.exists?(file_path)

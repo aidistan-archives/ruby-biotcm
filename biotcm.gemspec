@@ -21,5 +21,5 @@ Gem::Specification.new do |s|
   s.executables  << 'biotcm'
 
   s.add_development_dependency "yard", ">= 0.8.6"
-  s.add_development_dependency "shoulda-context", ">= 1.1.5" # for tests
+  s.add_development_dependency "minitest", "~> 5.4.0" # for tests
 end

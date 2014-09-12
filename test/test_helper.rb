@@ -1,5 +1,4 @@
-require 'test/unit'
-require 'shoulda-context'
+require 'minitest/autorun'
 
 unless $:.include?(File.expand_path('../../lib', __FILE__))
   $:.unshift(File.expand_path('../../lib', __FILE__))

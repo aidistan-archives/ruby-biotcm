@@ -36,8 +36,7 @@ module BioTCM
     end
     #
     def respond_to?(sym)
-      return true if super(sym)
-      return @screen_logger.respond_to?(sym)
+      return super(sym) ? true : @screen_logger.respond_to?(sym)
     end
 
     private

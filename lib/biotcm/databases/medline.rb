@@ -239,7 +239,7 @@ class BioTCM::Databases::Medline
     @query_key = $2
     @webenv = $3
 
-    File.open(BioTCM.path_to("tmp/MineLiteratureInPubMed #{@webenv} ##{@query_key}.txt", true), 'w').puts @xml
+    File.open(BioTCM.path_to("tmp/MineLiteratureInPubMed #{@webenv} ##{@query_key}.txt", secure:true), 'w').puts @xml
     BioTCM.log.debug("Medline") { "Object updated by searching => #{self}" }
   end
 end

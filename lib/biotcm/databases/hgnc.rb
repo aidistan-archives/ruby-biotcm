@@ -155,7 +155,7 @@ class BioTCM::Databases::HGNC
   end
 
   # Current version of HGNC
-  VERSION = "0.2.0"
+  VERSION = "0.2.1"
   # Meta key for the download url of default HGNC table
   META_KEY = "HGNC_DOWNLOAD_URL"
   # Identifers available in BioTCM::Databases::HGNC by now mapped to headline in HGNC table.
@@ -202,6 +202,11 @@ class BioTCM::Databases::HGNC
   create_converters
   # @!endgroup
 
+  # Make sure methods in String are working
+  def self.ensure
+    self.new.as_dictionary unless String.hgnc
+  end
+
   # Create a new HGNC object based on the given flat file or a downloaded one
   # if file_path is nil.
   # @param file_path [String] the path of your HGNC table files if default not used
@@ -230,6 +235,10 @@ class BioTCM::Databases::HGNC
   # @return [self]
   def as_dictionary
     String.hgnc = self
+  end
+  # Formalize the gene symbol
+  def formalize(symbol)
+    hgncid2symbol[symbol2hgncid[symbol] || (return nil)]
   end
   # Returns true if rescue symbol
   # @return [Boolean]

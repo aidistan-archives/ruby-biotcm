@@ -3,13 +3,16 @@ require 'json'
 # Top level namespace of BioTCM
 #
 # = Initialization
-# It's unnecessary to initialize BioTCM after requiring.
-#   require 'biotcm'
-#   BioTCM.init # unnecessary but no harm
+# {BioTCM.init} is called automatically when {BioTCM} is required.
+#   # in biotcm.rb
+#   module BioTCM
+#     # ...
+#   end
+#   BioTCM.init
 #
-# Sometimes custom initialization fits your need better. Write the process 
-# according to {BioTCM.init} to make sure that anything left uninitiated will 
-# not affect your final result.
+# Sometimes custom initialization fits your need better. Override configs 
+# according to {BioTCM.init}, right immediately after you require {BioTCM}, 
+# to make sure that nothing will not affect your final result.
 #   require 'biotcm'
 #   BioTCM.wd = "/home/aidistan/.biotcm"
 #
@@ -27,7 +30,7 @@ module BioTCM
   # Default working directory
   DEFAULT_WORKING_DIRECTORY = File.expand_path("~/.gem/biotcm")
   # Default url of the meta file
-  DEFAULT_META_FILE = 'http://aidistan.github.io/biotcm/meta.json'
+  DEFAULT_META_FILE = 'http://biotcm.github.io/biotcm/meta.json'
 
   module_function
 
@@ -38,13 +41,16 @@ module BioTCM
   # Default initialization
   # @return [nil]
   def init
+    require 'biotcm/logger'
+    require 'biotcm/table'
+    require 'biotcm/network'
     BioTCM.wd = BioTCM::DEFAULT_WORKING_DIRECTORY
     return nil
   end
   # Get the instance of Logger
   # @return [Logger]
   def log
-    Logger.instance(path_to("log/#{get(:stamp)}.log", true))
+    Logger.instance(path_to("log/#{get(:stamp)}.log", secure:true))
   end
   # Get meta value
   def get_meta(key)
@@ -60,7 +66,4 @@ class String; end
 class Array; end
 
 # Necessary initialization
-require 'biotcm/table'
-require 'biotcm/network'
-require 'biotcm/logger'
-BioTCM.wd = BioTCM::DEFAULT_WORKING_DIRECTORY
+BioTCM.init

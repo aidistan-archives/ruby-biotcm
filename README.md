@@ -75,8 +75,7 @@ Following is a incomplete list of __some__ __possible__ __differences__.
 
 Having no explicit map of our gem, we just add new Script or Module when we 
 need it, which make the popular test suite _RSepc_ doesn't suit our need 
-quite well. In such case, we choose to write our tests with the std-lib 
-__test/unit__ and __shoulda-context__ gem.
+quite well. In such case, we choose to write our tests with __minitest__ gem.
 
 Better to write some tests for you module/class to make others understand the 
 design purpose more easily.

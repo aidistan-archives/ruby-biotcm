@@ -55,7 +55,8 @@ module BioTCM
     # Create a table from a file
     # @param filepath [String, nil] create an empty {Table} if nil
     # @param encoding [String]
-    def initialize(filepath = nil, encoding:Encoding.default_external)
+    # @param seperator [String]
+    def initialize(filepath = nil, encoding:Encoding.default_external, seperator:"\t")
       case filepath
       when nil # Empty table
         @primary_key = "_id"
@@ -63,7 +64,7 @@ module BioTCM
         @col_keys = {}
         @content = []
       when String
-          File.open(filepath, "r:#{encoding}").read.to_table(self)
+          File.open(filepath, "r:#{encoding}").read.to_table(self, seperator:seperator)
       else
         raise ArgumentError, 'Illegal argument type for Table#new'
       end
@@ -330,11 +331,12 @@ end
 class String
   # Create a {BioTCM::Table} based on a String or fill the given table
   # @param tab [nil, BioTCM::Table] a table to fill
-  def to_table(tab=nil)
+  # @param seperator [String]
+  def to_table(tab=nil, seperator:"\t")
     stuff = self.split(/\r\n|\n/)
     
     # Headline
-    col_keys = stuff.shift.split("\t")
+    col_keys = stuff.shift.split(seperator)
     raise ArgumentError, "Duplicated column names" unless col_keys.uniq!.nil?
     primary_key = col_keys.shift
     col_keys_hash = {}
@@ -345,7 +347,7 @@ class String
     row_keys = {}
     content = []
     stuff.each_with_index do |line, line_index|
-      col = line.split("\t", -1)
+      col = line.split(seperator, -1)
       raise ArgumentError, "Row size inconsistent in line #{line_index+2}" unless col.size == col_keys.size+1
       raise ArgumentError, "Duplicated primary key: #{col[0]}" if row_keys[col[0]]
       row_keys[col.shift] = row_keys.size
