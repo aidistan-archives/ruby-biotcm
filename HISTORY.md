@@ -1,14 +1,12 @@
 History
 ===============
 
-### By now
-* 3 major enhancement
-	* Introduced in D3.js to implement data visualization
+### 0.0.7 2014-09-12
+* 2 major enhancement
 	* Ownership was transfered to [biotcm](http://github.com/biotcm)
 	* Rewrote all tests with Minitest
-* 2 minor enhancement
+* 1 minor enhancement
   * Made BioTCM::Databases::HGNC easier to use
-  * Removed BioTCM::Scripts::D3
 
 ### 0.0.6 2014-04-20
 * 2 major enhancement
