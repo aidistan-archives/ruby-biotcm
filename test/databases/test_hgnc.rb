@@ -33,8 +33,10 @@ describe BioTCM::Databases::HGNC do
   end
 
   it "could formalize gene symbols" do
-    assert_nil(@hgnc.formalize('Not a symbol'))
-    assert_equal('TP53', @hgnc.formalize('p53'))
+    assert_equal('', @hgnc.formalize('Not a symbol'))
+    assert_equal('TP53', @hgnc.formalize('p-53'))
+    assert_equal(['TP53', 'TP53'], @hgnc.formalize(['p-53', 'p-53']))
+    assert_raises(RuntimeError) { @hgnc.formalize(53) }
   end
 
   it "also would try to resuce unrecognized symbols" do

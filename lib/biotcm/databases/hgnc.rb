@@ -236,9 +236,17 @@ class BioTCM::Databases::HGNC
   def as_dictionary
     String.hgnc = self
   end
-  # Formalize the gene symbol
-  def formalize(symbol)
-    hgncid2symbol[symbol2hgncid[symbol] || (return nil)]
+  # Formalize the gene symbol(s)
+  # @return "" if fails to formalize
+  def formalize(obj)
+    case obj
+    when String
+      rescue_symbol(obj).symbol2hgncid.hgncid2symbol
+    when Array
+      obj.collect { |sym| rescue_symbol(sym).symbol2hgncid.hgncid2symbol }
+    else
+      raise "Unkwown object to formalize"
+    end
   end
   # Returns true if rescue symbol
   # @return [Boolean]
