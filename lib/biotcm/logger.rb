@@ -7,7 +7,7 @@ module BioTCM
   class Logger
     # Instance methods not in this list will be undefined at the beginning of
     # class definition
-    PRESERVED = [:__id__, :__send__, :object_id, :respond_to?]
+    PRESERVED = [:__id__, :__send__, :object_id, :respond_to?, :class]
     instance_methods.each do |m|
       next if PRESERVED.include?(m)
       undef_method m

@@ -49,7 +49,7 @@ module BioTCM
   end
   # Get the instance of Logger
   # @return [Logger]
-  def log
+  def logger
     Logger.instance(path_to("log/#{get(:stamp)}.log", secure:true))
   end
   # Get meta value

@@ -223,13 +223,13 @@ class BioTCM::Databases::HGNC
       # Load the default HGNC table (may download if in need)
       file_path = self.class.path_to("hgnc_set.txt")
       unless File.exists?(file_path)
-        BioTCM.log.info("HGNC") { "Since default HGNC table not exists, trying to download one... (This may cost several minutes.)" }
+        BioTCM.logger.info("HGNC") { "Since default HGNC table not exists, trying to download one... (This may cost several minutes.)" }
         File.open(file_path, 'w:UTF-8').puts BioTCM.get(BioTCM.get_meta(META_KEY))
       end
     end    
     load_hgnc_table(File.open(file_path))
     
-    BioTCM.log.debug("HGNC") { "New object " + self.inspect }
+    BioTCM.logger.debug("HGNC") { "New object " + self.inspect }
   end
   # Use self as the dictionary for String & Array extention
   # @return [self]
@@ -359,7 +359,7 @@ class BioTCM::Databases::HGNC
       end
       # Record
       unless rehearsal
-        BioTCM.log.warn("HGNC") { "Unrecognized symbol \"#{symbol}\", \"#{auto_rescue}\" used instead" }
+        BioTCM.logger.warn("HGNC") { "Unrecognized symbol \"#{symbol}\", \"#{auto_rescue}\" used instead" }
         @@rescue_history[symbol] = auto_rescue
       end
       return auto_rescue

@@ -189,7 +189,7 @@ class BioTCM::Databases::Medline
     retmax = 500
     total_count = @count
 
-    BioTCM.log.info("Medline") { "Downloading #{total_count} medlines ..." }
+    BioTCM.logger.info("Medline") { "Downloading #{total_count} medlines ..." }
     File.open(filename, "w") do |fout|
       while retstart<total_count
         fout.puts EUtilities.efetch({
@@ -205,7 +205,7 @@ class BioTCM::Databases::Medline
         retstart += retmax
         retstart = total_count unless retstart < total_count
 
-        BioTCM.log.info("Medline") { "#{retstart}/#{total_count}" }
+        BioTCM.logger.info("Medline") { "#{retstart}/#{total_count}" }
       end
     end
     return self
@@ -240,6 +240,6 @@ class BioTCM::Databases::Medline
     @webenv = $3
 
     File.open(BioTCM.path_to("tmp/MineLiteratureInPubMed #{@webenv} ##{@query_key}.txt", secure:true), 'w').puts @xml
-    BioTCM.log.debug("Medline") { "Object updated by searching => #{self}" }
+    BioTCM.logger.debug("Medline") { "Object updated by searching => #{self}" }
   end
 end

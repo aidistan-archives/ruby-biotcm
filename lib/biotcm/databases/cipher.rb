@@ -75,7 +75,7 @@ class BioTCM::Databases::Cipher
     omim_ids.flatten.uniq.each do |_omim_id|
       # Check
       unless /(?<omim_id>\d+)/ =~ _omim_id.to_s && @disease[omim_id]
-        BioTCM.log.warn("Cipher") { "OMIM ID #{_omim_id.inspect} discarded, since it doesn't exist in the disease list of Cipher" }
+        BioTCM.logger.warn("Cipher") { "OMIM ID #{_omim_id.inspect} discarded, since it doesn't exist in the disease list of Cipher" }
         next
       end
 
@@ -95,7 +95,7 @@ class BioTCM::Databases::Cipher
       @table[omim_id] = tab
     end
     
-    BioTCM.log.debug("Cipher") { "New object " + self.inspect }
+    BioTCM.logger.debug("Cipher") { "New object " + self.inspect }
   end
   # Get contained omim ids
   # @return [Array]

@@ -122,7 +122,7 @@ class BioTCM::Databases::KEGG
 
     file_path = path_to("#{pathway_id}.xml")
     unless File.exist?(file_path)
-      BioTCM.log.info("KEGG") { "Downloading the KGML of pathway #{pathway_id.inspect} from KEGG" }
+      BioTCM.logger.info("KEGG") { "Downloading the KGML of pathway #{pathway_id.inspect} from KEGG" }
       content = BioTCM.get(URLS[:pathway_kgml].call(pathway_id))
       fout = File.open(file_path, 'w')
       fout.puts(content)
@@ -220,13 +220,13 @@ class BioTCM::Databases::KEGG
       pathway_ids = []
       (pathway_id.respond_to?(:each) ? pathway_id : [pathway_id]).each do |id|
         valid_id = self.class.validate_pathway_id(id, organism)
-        valid_id ? pathway_ids<<valid_id : BioTCM.log.warn("KEGG") { "Invalide pathway id #{id.inspect} discarded" }
+        valid_id ? pathway_ids<<valid_id : BioTCM.logger.warn("KEGG") { "Invalide pathway id #{id.inspect} discarded" }
       end
     else
       pathway_ids = self.class.get_pathway_list(organism)
     end
 
-    BioTCM.log.debug("KEGG") { "Start to load pathways: #{pathway_ids.inspect}" }
+    BioTCM.logger.debug("KEGG") { "Start to load pathways: #{pathway_ids.inspect}" }
     @pathways = {}
     pathway_ids.each { |id| @pathways[id] = self.class.get_pathway(id) }
   end
@@ -242,7 +242,7 @@ class BioTCM::Databases::KEGG
   # @return [Pathway]
   def merge
     merged = Pathway.new(:merged, [], [], [])
-    BioTCM.log.info("KEGG") { "Generating the merged network for #{self.inspect}" }
+    BioTCM.logger.info("KEGG") { "Generating the merged network for #{self.inspect}" }
     @pathways.each_value do |pathway|
       merged.genes |= pathway.genes
       merged.network |= pathway.network
