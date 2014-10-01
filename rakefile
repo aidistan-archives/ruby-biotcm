@@ -26,7 +26,7 @@ task :clean do
 end
 
 # clear
-desc "Clear log files and temporary files in BioTCM.wd [Dev]"
+desc "Clear log files and temporary files in BioTCM.wd"
 task :clear do
   ["log", "tmp"].each do |d|
     FileUtils.rm_r(BioTCM.path_to(d)) rescue nil
@@ -34,7 +34,7 @@ task :clear do
 end
 
 # clear all
-desc "Clear all files in BioTCM.wd [Dev]"
+desc "Clear all files in BioTCM.wd"
 task :clear_all => :clear do
   FileUtils.rm_r(BioTCM.path_to("data")) rescue nil
 end
