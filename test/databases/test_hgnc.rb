@@ -33,10 +33,10 @@ describe BioTCM::Databases::HGNC do
   end
 
   it "could formalize gene symbols" do
-    assert_equal('', @hgnc.formalize('Not a symbol'))
-    assert_equal('TP53', @hgnc.formalize('p-53'))
-    assert_equal(['TP53', 'TP53'], @hgnc.formalize(['p-53', 'p-53']))
-    assert_raises(RuntimeError) { @hgnc.formalize(53) }
+    assert_equal('', @hgnc.formalize_symbol('Not a symbol'))
+    assert_equal('TP53', @hgnc.formalize_symbol('p-53'))
+    assert_equal(['TP53', 'TP53'], @hgnc.formalize_symbol(['p-53', 'P-53']))
+    assert_raises(RuntimeError) { @hgnc.formalize_symbol(53) }
   end
 
   it "also would try to resuce unrecognized symbols" do
@@ -60,7 +60,7 @@ describe "With HGNC module" do
       assert_equal("", "".symbol2entrez)
     end
 
-    it "must convert identifiers" do
+    it "could convert identifiers" do
       assert_equal("41", "ASIC1".symbol2entrez)
       assert_equal("RGS5", "8490".entrez2symbol)
       assert_equal("9028", "NM_003961".refseq2entrez)
@@ -69,17 +69,25 @@ describe "With HGNC module" do
       assert_equal("", "".symbol2entrez)
     end
 
-    it "must resuce unrecognized symbols" do
+    it "could resuce unrecognized symbol" do
       assert_equal("41", "ASIC-1".symbol2entrez)
       assert_equal("41", "Asic1".symbol2entrez)
       assert_equal("41", "Asic-1".symbol2entrez)
     end
+
+    it "could formalize gene symbol" do
+      assert_equal('TP53', 'p-53'.formalize_symbol)
+    end
   end
 
   describe Array do
-    it "must convert identifiers" do
+    it "could convert identifiers" do
       assert_equal(["ASIC1", "RGS4"], ["41", "5999"].entrez2symbol)
       assert_equal(["ASIC1", "RGS4"], [41, 5999].entrez2symbol)
+    end
+
+    it "could formalize gene symbols" do
+      assert_equal(['TP53', 'TP53'], ['p-53', 'P-53'].formalize_symbol)
     end
   end
 end

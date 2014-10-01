@@ -238,15 +238,9 @@ class BioTCM::Databases::HGNC
   end
   # Formalize the gene symbol(s)
   # @return "" if fails to formalize
-  def formalize(obj)
-    case obj
-    when String
-      rescue_symbol(obj).symbol2hgncid.hgncid2symbol
-    when Array
-      obj.collect { |sym| rescue_symbol(sym).symbol2hgncid.hgncid2symbol }
-    else
-      raise "Unkwown object to formalize"
-    end
+  def formalize_symbol(obj)
+    raise "Unkwown object to formalize" unless obj.respond_to?(:formalize_symbol)
+    obj.formalize_symbol 
   end
   # Returns true if rescue symbol
   # @return [Boolean]
@@ -359,10 +353,14 @@ class BioTCM::Databases::HGNC
       auto_rescue = ""
       if @symbol2hgncid[symbol.upcase]
         auto_rescue = symbol.upcase
+      elsif @symbol2hgncid[symbol.downcase]
+        auto_rescue = symbol.downcase
       elsif @symbol2hgncid[symbol.gsub('-','')]
         auto_rescue = symbol.gsub('-','')
       elsif @symbol2hgncid[symbol.upcase.gsub('-','')]
         auto_rescue = symbol.upcase.gsub('-','')
+      elsif @symbol2hgncid[symbol.downcase.gsub('-','')]
+        auto_rescue = symbol.downcase.gsub('-','')
       # Add more rules here
       end
       # Record
@@ -399,6 +397,7 @@ class BioTCM::Databases::HGNC
   # Use class_eval to ensure not documented by YARD
   #
   class_eval do
+    # Rewrite the method to introduce in the rescue function
     def symbol2hgncid(symbol = nil)
       return @symbol2hgncid unless symbol
       begin
@@ -409,7 +408,7 @@ class BioTCM::Databases::HGNC
       end
     end
   end
-  # Use method way other than hash way to introduce rescue function
+  # Use method way other than hash way to introduce in the rescue function
   String.class_eval do
     def symbol2hgncid
       String.hgnc.symbol2hgncid(self) rescue raise "HGNC dictionary not given"
@@ -440,6 +439,19 @@ class String
       raise ArgumentError, "Not a HGNC object" unless obj.is_a?(BioTCM::Databases::HGNC)
       @hgnc = obj
     end
+  end
+  # Formalize the gene symbol
+  # @return "" if fails to formalize
+  def formalize_symbol
+    replace(self.symbol2hgncid.hgncid2symbol)
+  end
+end
+
+class Array
+  # Formalize gene symbols
+  # @return "" if fails to formalize
+  def formalize_symbol
+    self.collect { |sym| sym.symbol2hgncid.hgncid2symbol }
   end
 end
 
