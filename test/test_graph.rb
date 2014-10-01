@@ -1,7 +1,7 @@
 require_relative 'test_helper'
 require 'tempfile'
 
-describe BioTCM::Network do
+describe BioTCM::Graph do
 
   # Strict entry
 
@@ -11,7 +11,7 @@ describe BioTCM::Network do
       file.write "_source\t_interaction\t_target\tweight\n1\t->\t2\t1\n2\t-\t3\t2\n"
       file.flush
       assert_raises ArgumentError do
-        net = BioTCM::Network.new(file.path)
+        net = BioTCM::Graph.new(file.path)
       end
       file.close!
     end
@@ -24,7 +24,7 @@ describe BioTCM::Network do
       file = Tempfile.new('test')
       file.write "_source\t_interaction\t_target\n1\t--\t2\n2\t--\t3\n3\t--\t4\n4\t--\t1\n1\t--\t5\n5\t--\t3"
       file.flush
-      @net = BioTCM::Network.new(file.path)
+      @net = BioTCM::Graph.new(file.path)
       file.close!
     end
 
@@ -33,12 +33,12 @@ describe BioTCM::Network do
       assert_equal(%w{1--2 2--3 3--4 4--1 1--5 5--3}, @net.edge)
     end
 
-    it "must return sub-network given selected nodes" do
+    it "must return sub-graph given selected nodes" do
       assert_equal([], @net.select(["1", "3", "8"]).edge)
       assert_equal(["1--2", "2--3", "3--4", "4--1"], @net.select(["1", "2", "3", "4"]).edge)
     end
 
-    it "must expand the network given selected nodes" do
+    it "must expand the graph given selected nodes" do
       assert_equal(@net.edge, @net.select(["1", "3", "8"]).expand.edge)
     end
 

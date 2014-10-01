@@ -1,11 +1,11 @@
 require 'biotcm/table'
 
 module BioTCM
-  # One of the basic data models used in BioTCM to process network/graph
+  # One of the basic data models used in BioTCM to process graph/network
   # files, developed under <b>"strict entry and tolerant exit"</b> philosophy.
   #
   # Please refer to the test for details. 
-  class BioTCM::Network
+  class BioTCM::Graph
     # Valide interaction types
     INTERACTION_TYPES = ['--', '->']
     # List of nodes
@@ -18,7 +18,7 @@ module BioTCM
     attr_reader :node_table
     # Table of all edges
     attr_reader :edge_table
-    # Create a network from file(s)
+    # Create a graph from file(s)
     # @param edge_file [String] file path
     # @param node_file [String] file path
     def initialize(edge_file, node_file = nil,
@@ -69,16 +69,16 @@ module BioTCM
       @node = @node_table.instance_variable_get(:@row_keys).clone
       @edge = @edge_table.instance_variable_get(:@row_keys).clone
     end
-    # Clone the network but share the same background
-    # @return [Network]
+    # Clone the graph but share the same background
+    # @return [Graph]
     def clone
       net = super
       net.instance_variable_set(:@node, @node.clone)
       net.instance_variable_set(:@edge, @edge.clone)
       return net
     end
-    # Get a network with selected nodes and edges between them
-    # @return [Network]
+    # Get a graph with selected nodes and edges between them
+    # @return [Graph]
     def select(list)
       self.clone.select!(list)
     end
@@ -95,8 +95,8 @@ module BioTCM
       end
       return self
     end
-    # Get a expanded network
-    # @return [Network]
+    # Get a expanded graph
+    # @return [Graph]
     def expand(step=1)
       self.clone.expand!(step)
     end
@@ -120,8 +120,8 @@ module BioTCM
       end
       return self
     end
-    # Get a network without given nodes
-    # @return [Network]
+    # Get a graph without given nodes
+    # @return [Graph]
     def knock_down(list)
       self.clone.knock_down!(list)
     end
