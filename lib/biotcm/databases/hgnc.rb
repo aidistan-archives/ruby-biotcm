@@ -443,6 +443,11 @@ class String
   # Formalize the gene symbol
   # @return "" if fails to formalize
   def formalize_symbol
+    self.symbol2hgncid.hgncid2symbol
+  end
+  # Formalize the gene symbol
+  # @return "" if fails to formalize
+  def formalize_symbol!
     replace(self.symbol2hgncid.hgncid2symbol)
   end
 end
@@ -452,6 +457,9 @@ class Array
   # @return "" if fails to formalize
   def formalize_symbol
     self.collect { |sym| sym.symbol2hgncid.hgncid2symbol }
+  end
+  def formalize_symbol!
+    self.collect! { |sym| sym.symbol2hgncid.hgncid2symbol }
   end
 end
 
