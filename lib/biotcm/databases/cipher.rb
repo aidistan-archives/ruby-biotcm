@@ -22,8 +22,6 @@ require 'fileutils'
 # Network-based global inference of human disease genes. 
 # Molecular Systems Biology, 2008, 4:189.}
 #
-# @note TODO: Use BioTCM::Table here
-#
 class BioTCM::Databases::Cipher
   extend BioTCM::Modules::WorkingDir
 
@@ -105,7 +103,7 @@ class BioTCM::Databases::Cipher
     @table.keys
   end
   # Get the table of omim_id
-  # @return [BioTCM::Table] Gene symbol as the primary key
+  # @return [Table] Gene symbol as the primary key
   # @example
   #   cipher.table("137280").to_s
   #   # => 

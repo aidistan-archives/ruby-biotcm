@@ -10,6 +10,6 @@ describe BioTCM::Databases::Cipher do
   end
 
   it "must build gene tables" do
-    assert_instance_of(BioTCM::Table, @cipher.table('137280'))
+    assert_instance_of(Table, @cipher.table('137280'))
   end
 end

@@ -1,7 +1,7 @@
 require_relative 'test_helper'
 require 'tempfile'
 
-describe BioTCM::Table do
+describe Table do
 
   # Strict entry
 
@@ -11,21 +11,21 @@ describe BioTCM::Table do
       file = Tempfile.new('test')
       file.write "ID\tA\tA\n1\tC++\tgood\n2\tRuby\tbetter\n"
       file.flush
-      assert_raises(ArgumentError) { BioTCM::Table.new(file.path) }
+      assert_raises(ArgumentError) { Table.new(file.path) }
       file.close!
 
       # Duplicated primary keys
       file = Tempfile.new('test')
       file.write "ID\tA\tB\n1\tC++\tgood\n1\tRuby\tbetter\n"
       file.flush
-      assert_raises(ArgumentError) { BioTCM::Table.new(file.path) }
+      assert_raises(ArgumentError) { Table.new(file.path) }
       file.close!
 
       # Inconsistent-size row
       file = Tempfile.new('test')
       file.write "ID\tA\tA\n1\tC++\tgood\n2\tRuby\n"
       file.flush
-      assert_raises(ArgumentError) { BioTCM::Table.new(file.path) }
+      assert_raises(ArgumentError) { Table.new(file.path) }
       file.close!
     end
   end
@@ -163,7 +163,7 @@ describe BioTCM::Table do
 
       tab = @tab.merge("ID\tB\tD\n1\tab\t1\n4\tuc\t4".to_table)
       refute_same(@tab, tab)
-      assert_instance_of(BioTCM::Table, tab)
+      assert_instance_of(Table, tab)
       assert_equal('', tab.ele('4', 'A'))
       assert_equal('', tab.ele('2', 'D'))
       assert_equal('6', tab.ele('3', 'B'))

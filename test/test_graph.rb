@@ -1,7 +1,7 @@
 require_relative 'test_helper'
 require 'tempfile'
 
-describe BioTCM::Graph do
+describe Graph do
 
   # Strict entry
 
@@ -11,7 +11,7 @@ describe BioTCM::Graph do
       file.write "_source\t_interaction\t_target\tweight\n1\t->\t2\t1\n2\t-\t3\t2\n"
       file.flush
       assert_raises ArgumentError do
-        net = BioTCM::Graph.new(file.path)
+        net = Graph.new(file.path)
       end
       file.close!
     end
@@ -24,7 +24,7 @@ describe BioTCM::Graph do
       file = Tempfile.new('test')
       file.write "_source\t_interaction\t_target\n1\t--\t2\n2\t--\t3\n3\t--\t4\n4\t--\t1\n1\t--\t5\n5\t--\t3"
       file.flush
-      @net = BioTCM::Graph.new(file.path)
+      @net = Graph.new(file.path)
       file.close!
     end
 
