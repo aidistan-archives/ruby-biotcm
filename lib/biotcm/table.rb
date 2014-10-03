@@ -310,7 +310,13 @@ class Table
   # @private
   # For inspection
   def inspect
-    "#<Table col_keys.size=#{@col_keys.size} row_keys.size=#{@row_keys.size}>"
+    "#<Table col_keys=#{
+        @col_keys.keys.sort_by { |k| @col_keys[k] }.inspect
+      } row_keys=#{
+        @row_keys.keys.sort_by { |k| @row_keys[k] }.inspect
+      } content=#{
+        @content.inspect
+      }>"
   end
   # @private
   # Convert to {String}
