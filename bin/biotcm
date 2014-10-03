@@ -1,17 +1,28 @@
 #!/usr/bin/env ruby
-begin
-  require 'biotcm'
-  dev = ''
-rescue LoadError
-  $:.unshift(File.expand_path('../../lib', __FILE__))
-  require 'biotcm'
-  dev = ' [Dev]'
+$:.unshift(File.expand_path('../../lib', __FILE__))
+require 'biotcm'
+require 'json'
+
+# Get lists of apps
+app2const = JSON.parse(BioTCM.get(BioTCM::DEFAULT_APPS_FILE))
+app2const.delete('_filename')
+gem_apps = `gem list biotcm- --no-versions`.split("\n").collect { |a| a[7...a.size] } & app2const.keys
+built_in_apps = BioTCM::Apps::BUILT_IN
+
+if (cmd = ARGV.shift).nil? || cmd == '-h'
+  # Help message
+  puts <<-END_OF_DOC
+Usage: biotcm app [OPTIONS]
+
+Available apps:
+  END_OF_DOC
+  puts (built_in_apps + gem_apps).sort.collect { |a| '  ' + a }
+elsif built_in_apps.include?(cmd)
+  BioTCM::Apps.const_get(app2const[cmd]).new.run
+elsif gem_apps.include?(cmd)
+  require 'biotcm-' + cmd
+  BioTCM::Apps.const_get(app2const[cmd]).new.run
+else
+  # Error message
+  puts "Sorry. BioTCM can't find app \"#{cmd}\"."
 end
-
-# Show some info
-str = 'BioTCM Console v' + BioTCM::VERSION + dev
-l   = (str.size%2 == 0 ? 58 : 59)
-ll  = (l-str.size)/2
-puts ['-'*l, ' '*ll+str, '-'*l]
-
-BioTCM.console

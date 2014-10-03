@@ -48,7 +48,7 @@ end
 # install
 desc "Install the gem"
 task :install => :gem do
-  system("gem install biotcm-#{BioTCM::VERSION}.gem --no-rdoc --no-ri")
+  system("gem install biotcm-#{BioTCM::VERSION}.gem --local --no-document")
 end
 
 # uninstall

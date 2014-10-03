@@ -458,6 +458,8 @@ class Array
   def formalize_symbol
     self.collect { |sym| sym.symbol2hgncid.hgncid2symbol }
   end
+  # Formalize gene symbols
+  # @return "" if fails to formalize
   def formalize_symbol!
     self.collect! { |sym| sym.symbol2hgncid.hgncid2symbol }
   end

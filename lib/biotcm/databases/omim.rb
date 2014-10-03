@@ -58,7 +58,7 @@ class BioTCM::Databases::OMIM
     end
     @content = eval(File.open(file_path).read.gsub("\n", ''))['omim']['entryList'][0]['entry']
     # Find genes
-    @@gene_detector = BioTCM::Scripts::GeneDetector.new unless self.class.class_variable_defined?(:@@gene_detector)
+    @@gene_detector = BioTCM::Apps::GeneDetector.new unless self.class.class_variable_defined?(:@@gene_detector)
     @genes = []
     @genes |= @content['phenotypeMapList'].collect { |h| 
                 h['phenotypeMap']['geneSymbols'].split(", ") 

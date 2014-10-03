@@ -4,7 +4,7 @@ include BioTCM::Modules::Utility
 
 describe BioTCM::Modules::Utility do
   it "must get web pages" do
-    assert_match(/^<!doctype html>/i, get('http://biotcm.github.io/biotcm/'))
+    assert_match(/^<!doctype html>/i, get('http://biotcm.github.io'))
     assert_nil(get('unknown'))
   end
 

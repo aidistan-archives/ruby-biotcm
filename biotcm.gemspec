@@ -20,6 +20,8 @@ Gem::Specification.new do |s|
   s.test_files    = FileList['test/**/*'].to_a
   s.executables  << 'biotcm'
 
+  s.required_ruby_version = '>= 2.0.0'
+  
   s.add_development_dependency "yard", ">= 0.8.6"
   s.add_development_dependency "minitest", "~> 5.4.0" # for tests
 end

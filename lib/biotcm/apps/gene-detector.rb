@@ -1,5 +1,7 @@
-# For gene detection
-class BioTCM::Scripts::GeneDetector < BioTCM::Scripts::Script
+require 'optparse'
+
+# A built-in app for gene detection
+class BioTCM::Apps::GeneDetector < BioTCM::Apps::App
   # Version of GeneDetector
   VERSION = '0.1.0'
   # Default patterns of genes to exclude
@@ -13,20 +15,20 @@ class BioTCM::Scripts::GeneDetector < BioTCM::Scripts::Script
 
   # Initialize a gene detector
   def initialize(
-    gene_blacklist:DEFAULT_GENE_BLACKLIST, 
-    text_blacklist:DEFAULT_TEXT_BLACKLIST, 
-    if_regularize:true
+    gene_blacklist:DEFAULT_GENE_BLACKLIST,
+    text_blacklist:DEFAULT_TEXT_BLACKLIST,
+    if_formalize:true
   )
     @gene_regexp = gene_blacklist.empty? ? nil : Regexp.new('(' + gene_blacklist.join(')|(') + ')')
     @text_regexp = text_blacklist.empty? ? nil : Regexp.new('(' + text_blacklist.join(')|(') + ')')
-    @if_regularize = if_regularize
+    @if_formalize = if_formalize
   end
   # Detect genes appearing in text
   # @param text [String]
-  # @return [Array]
-  def run(text)
+  # @return [Array] list of symbols
+  def detect(text)
     # Check dependency
-    "".symbol2hgncid rescue BioTCM::Databases::HGNC.new.as_dictionary
+    BioTCM::Databases::HGNC.ensure
     # Prepare symbol list
     unless @symbols
       @symbols = String.hgnc.symbol2hgncid.keys
@@ -38,7 +40,27 @@ class BioTCM::Scripts::GeneDetector < BioTCM::Scripts::Script
     # Split sentences into words and eliminate redundancies
     rtn = text.split(/\.\s|\s?[,:!?#()\[\]{}]\s?|\s/).uniq & @symbols
     # Return approved symbols
-    return @if_regularize ? rtn.symbol2hgncid.hgncid2symbol.uniq : rtn
+    return @if_formalize ? rtn.formalize_symbol.uniq : rtn
   end
-  alias_method :detect, :run
+  # Run 
+  def run
+    # Get options
+    options = {
+      output:'gene-detector.out.txt'
+    }
+    optparser = OptionParser.new do |opts|
+      opts.banner = "Usage: biotcm gene-detector input_file [OPTIONS]"
+
+      opts.on("-o", "--output [FILE]", String, "Output to FILE") do |v|
+        options[:output] = v
+      end
+    end
+    optparser.parse!
+    # Run the app
+    unless ARGV[0]
+      puts optparser.to_s
+    else
+      File.open(options[:output], 'w').puts self.detect(File.open(ARGV.shift).read)
+    end
+  end
 end
