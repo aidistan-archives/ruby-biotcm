@@ -1,7 +1,7 @@
 History
 ===============
 
-### By now 2014-10-03
+### 0.1.0 2014-10-03
 * 3 major enhancements
 	* Introduced in App System instead of BioTCM::Scripts
 	* Renamed BioTCM::Network as BioTCM::Graph
