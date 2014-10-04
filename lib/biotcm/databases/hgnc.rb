@@ -204,7 +204,7 @@ class BioTCM::Databases::HGNC
 
   # Make sure methods in String are working
   def self.ensure
-    self.new.as_dictionary unless String.hgnc
+    String.hgnc or self.new.as_dictionary
   end
 
   # Create a new HGNC object based on the given flat file or a downloaded one
