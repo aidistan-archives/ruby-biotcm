@@ -3,7 +3,8 @@ require 'rexml/document'
 # KEGG class is designed to build ppi networks based on KEGG pathways.
 #
 # == Example Usage
-# To load single pathway, using class method is better than create an object.
+# To get only one pathway, using class method is better than creating 
+# a KEGG object.
 #   # bad
 #   BioTCM::Databases::KEGG.new("05010") # => KEGG object
 #   # good
@@ -25,16 +26,9 @@ require 'rexml/document'
 # experimental technologies.
 #
 # == Reference
-# {http://www.genome.jp/kegg/ KEGG website}
-#
-# {http://www.ncbi.nlm.nih.gov/pubmed/22080510 Kanehisa, M., Goto, S., 
-# Sato, Y., Furumichi, M., and Tanabe, M.; KEGG for integration and 
-# interpretation of large-scale molecular datasets. Nucleic Acids Res. 40, 
-# D109-D114 (2012).}
-#
-# {http://www.ncbi.nlm.nih.gov/pubmed/10592173 Kanehisa, M. and Goto, S.; 
-# KEGG: Kyoto Encyclopedia of Genes and Genomes. Nucleic Acids Res. 28, 
-# 27-30 (2000).}
+# 1. {http://www.genome.jp/kegg/ KEGG website}
+# 2. {http://www.ncbi.nlm.nih.gov/pubmed/22080510 Kanehisa, M., Goto, S., Sato, Y., Furumichi, M., and Tanabe, M.; KEGG for integration and interpretation of large-scale molecular datasets. Nucleic Acids Res. 40, D109-D114 (2012).}
+# 3. {http://www.ncbi.nlm.nih.gov/pubmed/10592173 Kanehisa, M. and Goto, S.; KEGG: Kyoto Encyclopedia of Genes and Genomes. Nucleic Acids Res. 28, 27-30 (2000).}
 class BioTCM::Databases::KEGG
   # Struct for storing pathway information
   # @attr id [String] KEGG pathway id
@@ -220,7 +214,11 @@ class BioTCM::Databases::KEGG
       pathway_ids = []
       (pathway_id.respond_to?(:each) ? pathway_id : [pathway_id]).each do |id|
         valid_id = self.class.validate_pathway_id(id, organism)
-        valid_id ? pathway_ids<<valid_id : BioTCM.logger.warn("KEGG") { "Invalide pathway id #{id.inspect} discarded" }
+        if valid_id
+          pathway_ids<<valid_id
+        else
+          BioTCM.logger.warn("KEGG") { "Discard invalid pathway id #{id.inspect}" }
+        end
       end
     else
       pathway_ids = self.class.get_pathway_list(organism)
