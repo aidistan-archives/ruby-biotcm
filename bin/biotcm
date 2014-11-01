@@ -4,7 +4,15 @@ require 'biotcm'
 require 'json'
 
 # Get lists of apps
-app2const = JSON.parse(BioTCM.get(BioTCM::DEFAULT_APPS_FILE))
+app2const = JSON.parse(
+  begin
+    # If online
+    BioTCM.get(BioTCM::DEFAULT_APPS_FILE)
+  rescue
+    # If offline
+    File.read(File.expand_path('../../lib/apps.json', __FILE__))
+  end
+)
 app2const.delete('_filename')
 gem_apps = `gem list biotcm- --no-versions`.split("\n").collect { |a| a[7...a.size] } & app2const.keys
 built_in_apps = BioTCM::Apps::BUILT_IN
