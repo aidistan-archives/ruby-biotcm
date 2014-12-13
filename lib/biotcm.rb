@@ -18,6 +18,7 @@ require 'json'
 #
 module BioTCM
   # autoloaders
+  autoload(:VERSION, 'biotcm/version')
   autoload(:Modules, 'biotcm/modules')
   autoload(:Databases, 'biotcm/databases')
   autoload(:Apps, 'biotcm/apps')
@@ -25,8 +26,6 @@ module BioTCM
   extend Modules::Utility
   extend Modules::WorkingDir
 
-  # Current version number
-  VERSION = '0.1.0'
   # Default working directory
   DEFAULT_WORKING_DIRECTORY = File.expand_path('~/.gem/biotcm')
   # Default url of the meta file

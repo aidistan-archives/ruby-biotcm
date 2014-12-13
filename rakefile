@@ -16,6 +16,9 @@ namespace :cop do
   task :default do
     system('bundle exec rubocop')
   end
+  task :simple do
+    system('bundle exec rubocop --format s')
+  end
   task :files do
     system('bundle exec rubocop --format files')
   end
@@ -25,13 +28,19 @@ namespace :cop do
   end
 end
 desc 'Run RuboCop to check styles'
-task :cop => ['cop:default']
+task :cop => 'cop:default'
 
 # doc
-desc "Open YARD doc server"
-task :doc do
-  system("bundle exec yard server -r")
+namespace :doc do
+  task :default do
+    system("bundle exec yard")
+  end
+  task :server do
+    system("bundle exec yard server -r")
+  end
 end
+desc "Open YARD doc server"
+task :doc => 'doc:server'
 
 # clean
 desc "Clean the directory"
@@ -53,6 +62,43 @@ end
 desc "Clear all files in BioTCM.wd"
 task :clear_all => :clear do
   FileUtils.rm_r(BioTCM.path_to("data")) rescue nil
+end
+
+# check
+desc "Check all things"
+task :check => [:test, 'cop:simple', 'doc:default']
+
+# bump
+namespace :bump do
+  desc "Bump major version code"
+  task :major do
+    bump_version :major
+  end
+  desc "Bump minor version code"
+  task :minor do
+    bump_version :minor
+  end
+  desc "Bump patch version code"
+  task :patch do
+    bump_version :patch
+  end
+end
+def bump_version(which)
+  lines = File.read('lib/biotcm/version.rb').split("\n")
+  lines.collect! do |l|
+    if /^\s+VERSION/ =~ l
+      /'(?<major>\d+)\.(?<minor>\d+).(?<patch>\d+)'/ =~ l
+      case which
+      when :major then major = major.to_i + 1
+      when :minor then minor = minor.to_i + 1
+      when :patch then patch = patch.to_i + 1
+      end
+      l.gsub(/'\d+\.\d+.\d+'/, "'#{major}.#{minor}.#{patch}'")
+    else
+      l
+    end
+  end
+  File.open('lib/biotcm/version.rb', 'w').puts lines
 end
 
 # gem
