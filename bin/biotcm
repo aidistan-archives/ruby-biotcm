@@ -3,19 +3,23 @@ $:.unshift(File.expand_path('../../lib', __FILE__))
 require 'biotcm'
 require 'json'
 
-# Get lists of apps
-app2const = JSON.parse(
+# Get the list of all apps
+app_list = JSON.parse(
   begin
-    # If online
-    BioTCM.get(BioTCM::DEFAULT_APPS_FILE)
+    json = BioTCM.get(BioTCM::DEFAULT_APPS_FILE)
+    File.open(BioTCM.path_to("data/apps.json"), 'w').write json
+    json
   rescue
-    # If offline
-    File.read(File.expand_path('../../lib/apps.json', __FILE__))
+    raise 'Please connect to Internet to get the latest list of apps' unless File.exists?(BioTCM.path_to("data/apps.json"))
+    File.read(BioTCM.path_to("data/apps.json"))
   end
 )
-app2const.delete('_filename')
-gem_apps = `gem list biotcm- --no-versions`.split("\n").collect { |a| a[7...a.size] } & app2const.keys
-built_in_apps = BioTCM::Apps::BUILT_IN
+app_list.reject! { |k,v| /^__/ =~ k }
+
+# Get lists of apps
+available_gems = `gem list biotcm- --no-versions`.split("\n")
+gem_apps = app_list.keys.select { |k| available_gems.include? app_list[k][0] }
+built_in_apps = app_list.keys.select { |k| app_list[k][0] == '(built-in)' }
 
 if (cmd = ARGV.shift).nil? || cmd == '-h'
   # Help message
@@ -26,10 +30,10 @@ Available apps:
   END_OF_DOC
   puts (built_in_apps + gem_apps).sort.collect { |a| '  ' + a }
 elsif built_in_apps.include?(cmd)
-  BioTCM::Apps.const_get(app2const[cmd]).new.run
+  BioTCM::Apps.const_get(app_list[cmd][1]).new.run
 elsif gem_apps.include?(cmd)
   require 'biotcm-' + cmd
-  BioTCM::Apps.const_get(app2const[cmd]).new.run
+  BioTCM::Apps.const_get(app_list[cmd][1]).new.run
 else
   # Error message
   puts "Sorry. BioTCM can't find app \"#{cmd}\"."
