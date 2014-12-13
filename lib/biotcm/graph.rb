@@ -3,16 +3,20 @@ require 'biotcm/table'
 # One of the basic data models used in BioTCM to process graph/network
 # files, developed under <b>"strict entry and tolerant exit"</b> philosophy.
 #
-# Please refer to the test for details. 
+# Please refer to the test for details.
 class Graph
   # Valide interaction types
   INTERACTION_TYPES = ['--', '->']
   # List of nodes
   attr_reader :node
-  def node; @node.keys; end
+  def node
+    @node.keys
+  end
   # List of edges
   attr_reader :edge
-  def edge; @edge.keys; end
+  def edge
+    @edge.keys
+  end
   # Table of all nodes
   attr_reader :node_table
   # Table of all edges
@@ -21,24 +25,31 @@ class Graph
   # @param edge_file [String] file path
   # @param node_file [String] file path
   def initialize(edge_file, node_file = nil,
-      column_source_node:"_source", 
-      column_interaction_type:"_interaction", 
-      column_target_node:"_target"
+      column_source_node:'_source',
+      column_interaction_type:'_interaction',
+      column_target_node:'_target'
   )
     fin = File.open(edge_file)
-    
+
     # Headline
     col = fin.gets.chomp.split("\t")
-    i_src = col.index(column_source_node) or raise ArgumentError, "Cannot find source node column: #{column_source_node}"
-    i_typ = col.index(column_interaction_type) or raise ArgumentError, "Cannot find interaction type column: #{column_interaction_type}"
-    i_tgt = col.index(column_target_node) or raise ArgumentError, "Cannot find target node column: #{column_target_node}"
-    col[i_src] = nil; col[i_typ] = nil; col[i_tgt] = nil; col.compact!
-    
+    unless (i_src = col.index(column_source_node))
+      fail ArgumentError, "Cannot find source node column: #{column_source_node}"
+    end
+    unless (i_typ = col.index(column_interaction_type))
+      fail ArgumentError, "Cannot find interaction type column: #{column_interaction_type}"
+    end
+    unless (i_tgt = col.index(column_target_node))
+      fail ArgumentError, "Cannot find target node column: #{column_target_node}"
+    end
+    col[i_src] = col[i_typ] = col[i_tgt] = nil
+    col.compact!
+
     # Initialize members
     @node_table = Table.new
-    @node_table.primary_key = "Node"
+    @node_table.primary_key = 'Node'
     @edge_table = Table.new
-    @edge_table.primary_key = "Edge"
+    @edge_table.primary_key = 'Edge'
     col.each { |c| @edge_table.col(c, {}) }
 
     # Load edge_file
@@ -46,15 +57,20 @@ class Graph
     col_size = @edge_table.col_keys.size
     fin.each_with_index do |line, line_no|
       col = line.chomp.split("\t")
-      raise ArgumentError, "Unrecognized interaction type: #{col[i_typ]}" unless INTERACTION_TYPES.include?(col[i_typ])
-      src = col[i_src]; typ = col[i_typ]; tgt = col[i_tgt];
+      unless INTERACTION_TYPES.include?(col[i_typ])
+        fail ArgumentError, "Unrecognized interaction type: #{col[i_typ]}"
+      end
+      src = col[i_src]
+      typ = col[i_typ]
+      tgt = col[i_tgt]
       # Insert nodes
       @node_table.row(src, []) unless node_in_table[src]
       @node_table.row(tgt, []) unless node_in_table[tgt]
       # Insert edge
-      col[i_src] = nil; col[i_typ] = nil; col[i_tgt] = nil; col.compact!
-      raise ArgumentError, "Row size inconsistent in line #{line_no+2}" unless col.size == col_size
-      @edge_table.row(src+typ+tgt, col)
+      col[i_src] = col[i_typ] = col[i_tgt] = nil
+      col.compact!
+      fail ArgumentError, "Row size inconsistent in line #{line_no + 2}" unless col.size == col_size
+      @edge_table.row(src + typ + tgt, col)
     end
 
     # Load node_file
@@ -74,12 +90,12 @@ class Graph
     net = super
     net.instance_variable_set(:@node, @node.clone)
     net.instance_variable_set(:@edge, @edge.clone)
-    return net
+    net
   end
   # Get a graph with selected nodes and edges between them
   # @return [Graph]
   def select(list)
-    self.clone.select!(list)
+    clone.select!(list)
   end
   # Leaving selected nodes and edges between them
   # @return [self]
@@ -87,27 +103,27 @@ class Graph
     # Node
     (@node.keys - list).each { |k| @node.delete(k) }
     # Edge
-    regexp = Regexp.new(INTERACTION_TYPES.join("|"))
+    regexp = Regexp.new(INTERACTION_TYPES.join('|'))
     @edge.select! do |edge|
       src, tgt = edge.split(regexp)
       @node[src] && @node[tgt] ? true : false
     end
-    return self
+    self
   end
   # Get a expanded graph
   # @return [Graph]
-  def expand(step=1)
-    self.clone.expand!(step)
+  def expand(step = 1)
+    clone.expand!(step)
   end
   # Expand self
   # @return [self]
-  def expand!(step=1)
-    step.times { self.expand } if step > 1
+  def expand!(step = 1)
+    step.times { expand } if step > 1
     all_node = @node_table.instance_variable_get(:@row_keys)
     old_node = @node
     @node = {}
     # Edge
-    regexp = Regexp.new(INTERACTION_TYPES.join("|"))
+    regexp = Regexp.new(INTERACTION_TYPES.join('|'))
     @edge_table.instance_variable_get(:@row_keys).each do |edge, edge_index|
       next if @edge[edge]
       src, tgt = edge.split(regexp)
@@ -117,16 +133,16 @@ class Graph
       @node[src] = all_node[src] unless @node[src]
       @node[tgt] = all_node[tgt] unless @node[tgt]
     end
-    return self
+    self
   end
   # Get a graph without given nodes
   # @return [Graph]
   def knock_down(list)
-    self.clone.knock_down!(list)
+    clone.knock_down!(list)
   end
   # Knock given nodes down
   # @return [self]
   def knock_down!(list)
-    self.select!(self.node - list)
+    self.select!(node - list)
   end
 end

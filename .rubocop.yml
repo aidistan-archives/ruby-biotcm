@@ -1,0 +1,36 @@
+Metrics/LineLength:
+  Enabled: false
+Metrics/BlockNesting:
+  Max: 5
+Metrics/AbcSize:
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
+Metrics/ClassLength:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
+Style/TrivialAccessors:
+  ExactNameMatch: true
+# We use 'or' in conditional branches
+Style/AndOr:
+  Enabled: false
+# We define modules/classes in a compact style. Nested definitions only used for
+# those class that could be loaded seperately from BioTCM
+Style/ClassAndModuleChildren:
+  Enabled: false
+# We handle documentation with YARD
+Style/Documentation:
+  Enabled: false
+# We may return nil in else
+Style/EmptyElse:
+  Enabled: false
+
+# We use eval for dynamic programming
+Lint/Eval:
+  Enabled: false

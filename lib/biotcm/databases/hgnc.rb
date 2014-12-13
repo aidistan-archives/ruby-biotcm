@@ -1,10 +1,10 @@
-# HGNC object loads in any given HGNC flat file and builds 
+# HGNC object loads in any given HGNC flat file and builds
 # hashes storing the conversion pairs, using HGNC ID as the primary key.
 #
 # == Example Usage
 #
 # === Instantiation
-# Create an HGNC using default downloaded table is the most common way. It 
+# Create an HGNC using default downloaded table is the most common way. It
 # may take minutes to download the table at the first time.
 #   hgnc = BioTCM::Databases::HGNC.new
 #
@@ -12,7 +12,7 @@
 #   hgnc = BioTCM::Databases::HGNC.new("path_to_your_table/hgnc_custom.txt")
 #
 # === Convert in hash way
-# Using HGNC object in hash way is the most effective way but without symbol 
+# Using HGNC object in hash way is the most effective way but without symbol
 # rescue. (Direct converters only)
 #   hgnc.entrez2hgncid["ASIC1"] # => "HGNC:100"
 #   some_function(hgnc.entrez2hgncid["ASIC1"], other_params) unless hgnc.entrez2hgncid["ASIC1"].nil?
@@ -24,8 +24,8 @@
 #   hgnc.symbol2hgncid["ada"] # => nil
 #
 # === Convert in method way
-# Using HGNC object to convert identifers in method way would rescue symbol 
-# while costs a little more. 
+# Using HGNC object to convert identifers in method way would rescue symbol
+# while costs a little more.
 #   hgnc.entrez2symbol("100") # => "ADA"
 #   some_function(hgnc.entrez2symbol("100"), other_params) unless hgnc.entrez2symbol("100") == ""
 #
@@ -36,7 +36,7 @@
 #   hgnc.symbol2entrez("ada") # => "100"
 #
 # === Convert String or Array
-# Using extended String or Array is a more "Ruby" way (as far as I think). 
+# Using extended String or Array is a more "Ruby" way (as far as I think).
 # Just claim an HGNC object as the dictionary at first.
 #   BioDB::HGNC.new.as_dictionary
 #
@@ -44,21 +44,21 @@
 #   "100".entrez2symbol # => "ADA"
 #   some_function("100".entrez2symbol, other_params) unless "100".entrez2symbol == ""
 #
-# Note that empty String "" (not nil) will be returned if fail to convert 
+# Note that empty String "" (not nil) will be returned if fail to convert
 #   "NOT_SYMBOL".symbol2entrez # => ""
 #   "NOT_SYMBOL".symbol2entrez.entrez2ensembl # => ""
 #
 # Have fun!
 #   "APC".symbol2entrez.entrez2ensembl # => "ENSG00000134982"
-#   ["APC", "IL1"].symbol2entrez # => ["324","3552"] 
+#   ["APC", "IL1"].symbol2entrez # => ["324","3552"]
 #   nil.entrez2ensembl # NoMethodError
 #
 # == About HGNC Database
-# The HUGO Gene Nomenclature Committee (HGNC) is the only worldwide authority 
-# that assigns standardised nomenclature to human genes. For each known human 
-# gene their approve a gene name and symbol (short-form abbreviation).  All 
-# approved symbols are stored in the HGNC database. Each symbol is unique and 
-# HGNC ensures that each gene is only given one approved gene symbol. 
+# The HUGO Gene Nomenclature Committee (HGNC) is the only worldwide authority
+# that assigns standardised nomenclature to human genes. For each known human
+# gene their approve a gene name and symbol (short-form abbreviation).  All
+# approved symbols are stored in the HGNC database. Each symbol is unique and
+# HGNC ensures that each gene is only given one approved gene symbol.
 #
 # == Reference
 # {http://www.genenames.org/ HUGO Gene Nomenclature Committee at the European Bioinformatics Institute}
@@ -70,26 +70,27 @@ class BioTCM::Databases::HGNC
   #
   class_eval do
     private
+
     # The trigger macro
     def self.create_converters
       # Define #converter_list
       def converter_list
-        { direct:@@direct_converters, indirect:@@indirect_converters }
+        { direct: @@direct_converters, indirect: @@indirect_converters }
       end
       # Define converters
       IDENTIFIERS.each_key do |src|
         IDENTIFIERS.each_key do |dst|
           next if src == dst
-          sym = (src.to_s + "2" + dst.to_s).to_sym
+          sym = (src.to_s + '2' + dst.to_s).to_sym
           [src, dst].include?(:hgncid) ? create_direct_converter(sym) : create_indirect_converter(sym)
         end
       end
-      return nil
+      nil
     end
     # Called by create_converters
     def self.create_direct_converter(*syms)
       syms.each do |sym|
-        class_variable_defined?(:@@direct_converters) ? @@direct_converters<<sym : @@direct_converters=[sym]
+        class_variable_defined?(:@@direct_converters) ? @@direct_converters << sym : @@direct_converters = [sym]
         class_eval %{
           def #{sym}(obj = nil)
             return @#{sym} unless obj
@@ -117,12 +118,12 @@ class BioTCM::Databases::HGNC
           end
         }
       end
-      return nil
+      nil
     end
     # Called by create_converters
     def self.create_indirect_converter(*syms)
       syms.each do |sym|
-        class_variable_defined?(:@@indirect_converters) ? @@indirect_converters<<sym : @@indirect_converters=[sym]
+        class_variable_defined?(:@@indirect_converters) ? @@indirect_converters << sym : @@indirect_converters = [sym]
         /^(?<src>[^2]+)2(?<dst>.+)$/ =~ sym.to_s
         class_eval %{
           def #{sym}(obj)
@@ -150,23 +151,23 @@ class BioTCM::Databases::HGNC
           end
         }
       end
-      return nil
+      nil
     end
   end
 
   # Current version of HGNC
-  VERSION = "0.2.1"
+  VERSION = '0.2.1'
   # Meta key for the download url of default HGNC table
-  META_KEY = "HGNC_DOWNLOAD_URL"
+  META_KEY = 'HGNC_DOWNLOAD_URL'
   # Identifers available in BioTCM::Databases::HGNC by now mapped to headline in HGNC table.
   # @note Single-item column comes first (at position 0) before multiple-item columns.
   IDENTIFIERS = {
-    hgncid:"HGNC ID",
-    symbol:["Approved Symbol", "Previous Symbols", "Synonyms"],
-    entrez:"Entrez Gene ID(supplied by NCBI)",
-    refseq:["RefSeq(supplied by NCBI)", "RefSeq IDs"],
-    uniprot:"UniProt ID(supplied by UniProt)",
-    ensembl:"Ensembl ID(supplied by Ensembl)",
+    hgncid: 'HGNC ID',
+    symbol: ['Approved Symbol', 'Previous Symbols', 'Synonyms'],
+    entrez: 'Entrez Gene ID(supplied by NCBI)',
+    refseq: ['RefSeq(supplied by NCBI)', 'RefSeq IDs'],
+    uniprot: 'UniProt ID(supplied by UniProt)',
+    ensembl: 'Ensembl ID(supplied by Ensembl)'
   }
 
   # @!group Conversion method family
@@ -204,7 +205,7 @@ class BioTCM::Databases::HGNC
 
   # Make sure methods in String are working
   def self.ensure
-    String.hgnc or self.new.as_dictionary
+    String.hgnc || new.as_dictionary
   end
 
   # Create a new HGNC object based on the given flat file or a downloaded one
@@ -214,22 +215,22 @@ class BioTCM::Databases::HGNC
     # Initialize instance variables
     self.rescue_symbol = true # Use setter to load @@rescue_history
     @rescue_method = :auto
-    @@direct_converters.each { |sym| instance_variable_set("@" + sym.to_s, {}) }
+    @@direct_converters.each { |sym| instance_variable_set('@' + sym.to_s, {}) }
 
     # Load HGNC table
     if file_path
-      raise ArgumentError, "#{file_path} not exists" unless File.exists?(file_path)
+      fail ArgumentError, "#{file_path} not exists" unless File.exist?(file_path)
     else
       # Load the default HGNC table (may download if in need)
-      file_path = self.class.path_to("hgnc_set.txt")
-      unless File.exists?(file_path)
-        BioTCM.logger.info("HGNC") { "Since default HGNC table not exists, trying to download one... (This may cost several minutes.)" }
+      file_path = self.class.path_to('hgnc_set.txt')
+      unless File.exist?(file_path)
+        BioTCM.logger.info('HGNC') { 'Since default HGNC table not exists, trying to download one... (This may cost several minutes.)' }
         File.open(file_path, 'w:UTF-8').puts BioTCM.get(BioTCM.get_meta(META_KEY))
       end
-    end    
+    end
     load_hgnc_table(File.open(file_path))
-    
-    BioTCM.logger.debug("HGNC") { "New object " + self.inspect }
+
+    BioTCM.logger.debug('HGNC') { 'New object ' + inspect }
   end
   # Use self as the dictionary for String & Array extention
   # @return [self]
@@ -239,8 +240,8 @@ class BioTCM::Databases::HGNC
   # Formalize the gene symbol(s)
   # @return "" if fails to formalize
   def formalize_symbol(obj)
-    raise "Unkwown object to formalize" unless obj.respond_to?(:formalize_symbol)
-    obj.formalize_symbol 
+    fail 'Unkwown object to formalize' unless obj.respond_to?(:formalize_symbol)
+    obj.formalize_symbol
   end
   # Returns true if rescue symbol
   # @return [Boolean]
@@ -249,13 +250,13 @@ class BioTCM::Databases::HGNC
   end
   # When set to true, try to rescue unrecognized symbol (default is true)
   # @param boolean [Boolean]
-  def rescue_symbol= (boolean)
+  def rescue_symbol=(boolean)
     @rescue_symbol = (boolean ? true : false)
 
     # Load in rescue history if exists
     if @rescue_symbol && !self.class.class_variable_defined?(:@@rescue_history)
       @@rescue_history = {}
-      @@rescue_history_filename = self.class.path_to("rescue_history.txt")
+      @@rescue_history_filename = self.class.path_to('rescue_history.txt')
       if FileTest.exists?(@@rescue_history_filename)
         File.open(@@rescue_history_filename).each do |line|
           column = line.chomp.split("\t")
@@ -263,17 +264,15 @@ class BioTCM::Databases::HGNC
         end
       end
     end
-    return @rescue_symbol
+    @rescue_symbol
   end
   # Return current rescue method
   # @return [Symbol] :manual or :auto
-  def rescue_method
-    @rescue_method
-  end
-  # When set to :manual, user has to explain every new unrecognized symbol; 
+  attr_reader :rescue_method
+  # When set to :manual, user has to explain every new unrecognized symbol;
   # otherwise, HGNC will try to do this by itself.
   # @param symbol [Symbol] :manual or :auto
-  def rescue_method= (symbol)
+  def rescue_method=(symbol)
     @rescue_method = (symbol == :manual ? :manual : :auto)
   end
   # Return the statistics hash
@@ -285,7 +284,7 @@ class BioTCM::Databases::HGNC
     unless @stat
       @stat = {}
       IDENTIFIERS.each_key do |id|
-        id == :hgncid ? @stat[id] = @hgncid2symbol.size : @stat[id] = instance_variable_get("@" + id.to_s + "2hgncid").size
+        id == :hgncid ? @stat[id] = @hgncid2symbol.size : @stat[id] = instance_variable_get('@' + id.to_s + '2hgncid').size
       end
     end
     @stat
@@ -320,26 +319,26 @@ class BioTCM::Databases::HGNC
         name.each_with_index { |n, i| index2identifier[names.index(n)] =  (i == 0 ? identifer : identifer.to_s) if names.index(n) }
       end
     end
-    
+
     # Dynamically bulid a line processor
-    process_one_line = index2identifier.collect { |index, identifer|
+    process_one_line = index2identifier.collect do |index, identifer|
       if identifer.is_a?(Symbol) # Single
-      %{
-        unless column[#{index}] == nil || column[#{index}] == "" || column[#{index}] == "-"
-          @#{identifer}2hgncid[column[#{index}]] = column[#{index_hgncid}]
-          @hgncid2#{identifer}[column[#{index_hgncid}]] = column[#{index}]
-        end }
+        %(
+          unless column[#{index}] == nil || column[#{index}] == "" || column[#{index}] == "-"
+            @#{identifer}2hgncid[column[#{index}]] = column[#{index_hgncid}]
+            @hgncid2#{identifer}[column[#{index_hgncid}]] = column[#{index}]
+          end )
       else # Array
-      %{
-        unless column[#{index}] == nil
-          column[#{index}].split(", ").each { |id| @#{identifer}2hgncid[id] = column[#{index_hgncid}] if @#{identifer}2hgncid[id].nil? }
-        end }
+        %{
+          unless column[#{index}] == nil
+            column[#{index}].split(", ").each { |id| @#{identifer}2hgncid[id] = column[#{index_hgncid}] if @#{identifer}2hgncid[id].nil? }
+          end }
       end
-    }.join
+    end.join
 
     # Content
-    eval %{fin.each do |line|\n column = line.chomp.split("\\t")} + process_one_line + "end"
-    return nil
+    eval %{fin.each do |line|\n column = line.chomp.split("\\t")} + process_one_line + 'end'
+    nil
   end
   # Try to rescue a gene symbol
   # @param symbol [String] Gene symbol
@@ -350,28 +349,28 @@ class BioTCM::Databases::HGNC
     return @@rescue_history[symbol] if @@rescue_history[symbol]
     case method
     when :auto
-      auto_rescue = ""
+      auto_rescue = ''
       if @symbol2hgncid[symbol.upcase]
         auto_rescue = symbol.upcase
       elsif @symbol2hgncid[symbol.downcase]
         auto_rescue = symbol.downcase
-      elsif @symbol2hgncid[symbol.gsub('-','')]
-        auto_rescue = symbol.gsub('-','')
-      elsif @symbol2hgncid[symbol.upcase.gsub('-','')]
-        auto_rescue = symbol.upcase.gsub('-','')
-      elsif @symbol2hgncid[symbol.downcase.gsub('-','')]
-        auto_rescue = symbol.downcase.gsub('-','')
-      # Add more rules here
+      elsif @symbol2hgncid[symbol.gsub('-', '')]
+        auto_rescue = symbol.gsub('-', '')
+      elsif @symbol2hgncid[symbol.upcase.gsub('-', '')]
+        auto_rescue = symbol.upcase.gsub('-', '')
+      elsif @symbol2hgncid[symbol.downcase.gsub('-', '')]
+        auto_rescue = symbol.downcase.gsub('-', '')
+        # Add more rules here
       end
       # Record
       unless rehearsal
-        BioTCM.logger.warn("HGNC") { "Unrecognized symbol \"#{symbol}\", \"#{auto_rescue}\" used instead" }
+        BioTCM.logger.warn('HGNC') { "Unrecognized symbol \"#{symbol}\", \"#{auto_rescue}\" used instead" }
         @@rescue_history[symbol] = auto_rescue
       end
       return auto_rescue
     when :manual
       # Try automatic rescue first
-      if (auto_rescue = rescue_symbol(symbol, :auto, true)) != ""
+      if (auto_rescue = rescue_symbol(symbol, :auto, true)) != ''
         print "\"#{symbol}\" unrecognized. Use \"#{auto_rescue}\" instead? [Yn] "
         unless gets.chomp == 'n'
           @@rescue_history[symbol] = auto_rescue unless rehearsal
@@ -381,12 +380,12 @@ class BioTCM::Databases::HGNC
       # Manually rescue
       loop do
         print "Please correct \"#{symbol}\" or press enter directly to return empty String instead:\n"
-        unless (manual_rescue = gets.chomp) == "" || @symbol2hgncid[manual_rescue]
+        unless (manual_rescue = gets.chomp) == '' || @symbol2hgncid[manual_rescue]
           puts "Failed to recognize \"#{manual_rescue}\""
           next
         end
         @@rescue_history[symbol] = manual_rescue unless rehearsal
-        File.open(@@rescue_history_filename, "a").print(symbol, "\t", manual_rescue, "\n") unless rehearsal
+        File.open(@@rescue_history_filename, 'a').print(symbol, "\t", manual_rescue, "\n") unless rehearsal
         return manual_rescue
       end
     end
@@ -403,7 +402,7 @@ class BioTCM::Databases::HGNC
       begin
         @symbol2hgncid.fetch(symbol)
       rescue KeyError
-        return "" if symbol == "" || !@rescue_symbol
+        return '' if symbol == '' || !@rescue_symbol
         @symbol2hgncid[rescue_symbol(symbol)].to_s
       end
     end
@@ -411,10 +410,11 @@ class BioTCM::Databases::HGNC
   # Use method way other than hash way to introduce in the rescue function
   String.class_eval do
     def symbol2hgncid
-      String.hgnc.symbol2hgncid(self) rescue raise "HGNC dictionary not given"
+      String.hgnc.symbol2hgncid(self) rescue raise 'HGNC dictionary not given'
     end
+
     def symbol2hgncid!
-      replace(String.hgnc.symbol2hgncid(self)) rescue raise "HGNC dictionary not given"
+      replace(String.hgnc.symbol2hgncid(self)) rescue raise 'HGNC dictionary not given'
     end
   end
 end
@@ -422,8 +422,8 @@ end
 class String
   # Get the HGNC dictionary for conversion
   # @return [BioTCM::Databases::HGNC]
-  def self.hgnc
-    @hgnc
+  class << self
+    attr_reader :hgnc
   end
   # @overload hgnc=(obj)
   #   Set the HGNC dictionary for conversion
@@ -433,22 +433,22 @@ class String
   #   @param [nil]
   # @raise ArgumentError Raised if neither HGNC object nor nil given
   def self.hgnc=(obj)
-    if obj == nil
+    if obj.nil?
       @hgnc = nil
     else
-      raise ArgumentError, "Not a HGNC object" unless obj.is_a?(BioTCM::Databases::HGNC)
+      fail ArgumentError, 'Not a HGNC object' unless obj.is_a?(BioTCM::Databases::HGNC)
       @hgnc = obj
     end
   end
   # Formalize the gene symbol
   # @return "" if fails to formalize
   def formalize_symbol
-    self.symbol2hgncid.hgncid2symbol
+    symbol2hgncid.hgncid2symbol
   end
   # Formalize the gene symbol
   # @return "" if fails to formalize
   def formalize_symbol!
-    replace(self.symbol2hgncid.hgncid2symbol)
+    replace(symbol2hgncid.hgncid2symbol)
   end
 end
 
@@ -456,7 +456,7 @@ class Array
   # Formalize gene symbols
   # @return "" if fails to formalize
   def formalize_symbol
-    self.collect { |sym| sym.symbol2hgncid.hgncid2symbol }
+    collect { |sym| sym.symbol2hgncid.hgncid2symbol }
   end
   # Formalize gene symbols
   # @return "" if fails to formalize
@@ -465,4 +465,4 @@ class Array
   end
 end
 
-BioTCM::Databases::HGNC.wd = BioTCM.path_to("data/hgnc")
+BioTCM::Databases::HGNC.wd = BioTCM.path_to('data/hgnc')

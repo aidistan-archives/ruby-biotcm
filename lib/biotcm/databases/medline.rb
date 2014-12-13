@@ -6,22 +6,23 @@ class BioTCM::Databases::Medline
   #
   # = About E-utilities
   # {http://www.ncbi.nlm.nih.gov/books/NBK25500/ The Entrez Programming Utilities (E-utilities)}
-  # are a set of nine server-side programs that provide a stable interface 
-  # into the Entrez query and database system at the National Center for 
-  # Biotechnology Information (NCBI). The E-utilities use a fixed URL 
-  # syntax that translates a standard set of input parameters into the 
-  # values necessary for various NCBI software components to search for 
-  # and retrieve the requested data. The E-utilities are therefore the 
-  # structured interface to the Entrez system, which currently includes 
-  # 38 databases covering a variety of biomedical data, including nucleotide 
-  # and protein sequences, gene records, three-dimensional molecular 
-  # structures, and the biomedical literature. 
+  # are a set of nine server-side programs that provide a stable interface
+  # into the Entrez query and database system at the National Center for
+  # Biotechnology Information (NCBI). The E-utilities use a fixed URL
+  # syntax that translates a standard set of input parameters into the
+  # values necessary for various NCBI software components to search for
+  # and retrieve the requested data. The E-utilities are therefore the
+  # structured interface to the Entrez system, which currently includes
+  # 38 databases covering a variety of biomedical data, including nucleotide
+  # and protein sequences, gene records, three-dimensional molecular
+  # structures, and the biomedical literature.
   #
   # = Copyright & Disclaimer
   # {http://www.ncbi.nlm.nih.gov/About/disclaimer.html}
   #
   module EUtilities
     module_function
+
     # ESearch (text searches)
     #
     # Responds to a text query with the list of matching UIDs in a given database (for later use in ESummary, EFetch or ELink), along with the term translations of the query.
@@ -36,14 +37,14 @@ class BioTCM::Databases::Medline
       BioTCM.get(
         [
           "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=#{params[:db]}",
-          params[:term] ? "term=#{params[:term]}" : "",
-          params[:webenv] ? "WebEnv=#{params[:webenv]}" : "",
-          params[:usehistory]=="n" ? "" : "usehistory=y",
+          params[:term] ? "term=#{params[:term]}" : '',
+          params[:webenv] ? "WebEnv=#{params[:webenv]}" : '',
+          params[:usehistory] == 'n' ? '' : 'usehistory=y',
 
-          params[:retstart] ? "retstart=#{params[:retstart]}" : "",
-          params[:retmax] ? "retmax=#{params[:retmax]}" : "",
-          params[:query_key] ? "query_key=#{params[:query_key]}" : "",
-        ].join("&").gsub(/&+/,"&")
+          params[:retstart] ? "retstart=#{params[:retstart]}" : '',
+          params[:retmax] ? "retmax=#{params[:retmax]}" : '',
+          params[:query_key] ? "query_key=#{params[:query_key]}" : ''
+        ].join('&').gsub(/&+/, '&')
       )
     end
     # EFetch (data record downloads)
@@ -63,13 +64,13 @@ class BioTCM::Databases::Medline
       BioTCM.get(
         [
           "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=#{params[:db]}",
-          params[:rettype] ? "rettype=#{params[:rettype]}" : "",
-          params[:retmode] ? "retmode=#{params[:retmode]}" : "",
-          params[:retstart] ? "retstart=#{params[:retstart]}" : "",
-          params[:retmax] ? "retmax=#{params[:retmax]}" : "",
+          params[:rettype] ? "rettype=#{params[:rettype]}" : '',
+          params[:retmode] ? "retmode=#{params[:retmode]}" : '',
+          params[:retstart] ? "retstart=#{params[:retstart]}" : '',
+          params[:retmax] ? "retmax=#{params[:retmax]}" : '',
           "query_key=#{params[:query_key]}",
-          "WebEnv=#{params[:webenv]}",
-        ].join("&").gsub(/&+/,"&")
+          "WebEnv=#{params[:webenv]}"
+        ].join('&').gsub(/&+/, '&')
       )
     end
     # # EInfo (database statistics)
@@ -112,7 +113,7 @@ class BioTCM::Databases::Medline
   attr_reader :term, :count
 
   # Current version of Medline
-  VERSION = "0.2.0"
+  VERSION = '0.2.0'
   # @private
   # WebEnv used last time
   @@last_webenv = nil
@@ -128,34 +129,34 @@ class BioTCM::Databases::Medline
 
   # OR operation search
   # @return [self]
-  def | (query)
-    search("%23#{@query_key}+OR+" + 
-      case query
+  def |(other)
+    search("%23#{@query_key}+OR+" +
+      case other
       when String
-        query
+        other
       when self.class
-        '%23'+query.query_key
+        '%23' + other.query_key
       else
-        raise ArgumentError, "illegal query"
+        fail ArgumentError, 'illegal query'
       end
     )
-    return self
+    self
   end
 
   # AND operation search
   # @return [self]
-  def & (query)
-    search("%23#{@query_key}+AND+" + 
-      case query
+  def &(other)
+    search("%23#{@query_key}+AND+" +
+      case other
       when String
-        query
+        other
       when self.class
-        "%23"+query.query_key
+        '%23' + other.query_key
       else
-        raise ArgumentError, "illegal query"
+        fail ArgumentError, 'illegal query'
       end
     )
-    return self
+    self
   end
 
   # Fetch all pubmed ids
@@ -166,19 +167,19 @@ class BioTCM::Databases::Medline
     retmax = 500
     total_count = @count
 
-    while retstart<total_count
-      rtn += EUtilities.esearch({
-        db:"pubmed",
-        retstart:retstart,
-        retmax:retmax,
-        query_key:@query_key,
-        webenv:@webenv,
-      }).scan(/<Id>(\d+)<\/Id>/).flatten
+    while retstart < total_count
+      rtn += EUtilities.esearch(
+        db: 'pubmed',
+        retstart: retstart,
+        retmax: retmax,
+        query_key: @query_key,
+        webenv: @webenv
+      ).scan(/<Id>(\d+)<\/Id>/).flatten
 
       retstart += retmax
       retstart = total_count unless retstart < total_count
     end
-    return rtn
+    rtn
   end
 
   # Download all abstracts
@@ -189,26 +190,26 @@ class BioTCM::Databases::Medline
     retmax = 500
     total_count = @count
 
-    BioTCM.logger.info("Medline") { "Downloading #{total_count} medlines ..." }
-    File.open(filename, "w") do |fout|
-      while retstart<total_count
-        fout.puts EUtilities.efetch({
-          db:"pubmed",
-          rettype:"medline",
-          retmode:"text",
-          retstart:retstart,
-          retmax:retmax,
-          query_key:@query_key,
-          webenv:@webenv,
-        })
+    BioTCM.logger.info('Medline') { "Downloading #{total_count} medlines ..." }
+    File.open(filename, 'w') do |fout|
+      while retstart < total_count
+        fout.puts EUtilities.efetch(
+          db: 'pubmed',
+          rettype: 'medline',
+          retmode: 'text',
+          retstart: retstart,
+          retmax: retmax,
+          query_key: @query_key,
+          webenv: @webenv
+        )
 
         retstart += retmax
         retstart = total_count unless retstart < total_count
 
-        BioTCM.logger.info("Medline") { "#{retstart}/#{total_count}" }
+        BioTCM.logger.info('Medline') { "#{retstart}/#{total_count}" }
       end
     end
-    return self
+    self
   end
 
   # @private
@@ -226,20 +227,20 @@ class BioTCM::Databases::Medline
   # Append an esearch
   def search(term)
     # Make sure term is valid
-    @term = term.chomp.gsub(/\s+/, "+")
+    @term = term.chomp.gsub(/\s+/, '+')
 
-    @xml = EUtilities.esearch({
-      db:"pubmed",
-      term:@term,
-      webenv:@webenv,
-      usehistory:"y",
-    })
-    @xml =~ /<Count>(\d+)<\/Count>.*<QueryKey>(\d+)<\/QueryKey>.*<WebEnv>(\S+)<\/WebEnv>/
-    @count = $1.to_i
-    @query_key = $2
-    @webenv = $3
+    @xml = EUtilities.esearch(
+      db: 'pubmed',
+      term: @term,
+      webenv: @webenv,
+      usehistory: 'y'
+    )
+    @xml =~ %r{<Count>(\d+)</Count>.*<QueryKey>(\d+)</QueryKey>.*<WebEnv>(\S+)</WebEnv>}
+    @count = Regexp.last_match[1].to_i
+    @query_key = Regexp.last_match[2]
+    @webenv = Regexp.last_match[3]
 
-    File.open(BioTCM.path_to("tmp/MineLiteratureInPubMed #{@webenv} ##{@query_key}.txt", secure:true), 'w').puts @xml
-    BioTCM.logger.debug("Medline") { "Object updated by searching => #{self}" }
+    File.open(BioTCM.path_to("tmp/MineLiteratureInPubMed #{@webenv} ##{@query_key}.txt", secure: true), 'w').puts @xml
+    BioTCM.logger.debug('Medline') { "Object updated by searching => #{self}" }
   end
 end

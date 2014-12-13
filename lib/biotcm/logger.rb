@@ -2,7 +2,7 @@ require 'logger'
 
 module BioTCM
   # A double-output featured logger.
-  # Call {instance} to return the singleton instance and use it 
+  # Call {instance} to return the singleton instance and use it
   # as if it's a {http://rubydoc.info/stdlib/logger/Logger stdlib Logger}.
   class Logger
     # Instance methods not in this list will be undefined at the beginning of
@@ -23,12 +23,12 @@ module BioTCM
     # Get the instance of {Logger}
     # @param log_file_path [String] path to your log file
     def self.instance(log_file_path)
-      @instance or @instance = new(log_file_path)
+      @instance || @instance = new(log_file_path)
     end
 
     # @private
     def inspect
-      "#<Bioinfo::Logger.instance>"
+      '#<Bioinfo::Logger.instance>'
     end
     # @private
     def to_s
@@ -36,7 +36,7 @@ module BioTCM
     end
     #
     def respond_to?(sym)
-      return super(sym) ? true : @screen_logger.respond_to?(sym)
+      super(sym) ? true : @screen_logger.respond_to?(sym)
     end
 
     private
@@ -46,7 +46,7 @@ module BioTCM
       @screen_logger = ::Logger.new(STDOUT)
       @screen_logger.level = ::Logger::INFO
       @screen_logger.formatter = proc { |severity, datetime, progname, msg|
-        ['%7s' % "[#{severity}]", datetime.strftime('%H:%M:%S'), progname.to_s+':', msg].join(' ') + "\n"
+        [format('%7s', "[#{severity}]"), datetime.strftime('%H:%M:%S'), progname.to_s + ':', msg].join(' ') + "\n"
       }
       # File
       @file_logger = ::Logger.new(log_file_path)

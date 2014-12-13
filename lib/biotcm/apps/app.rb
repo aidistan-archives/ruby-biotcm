@@ -4,6 +4,6 @@ class BioTCM::Apps::App
   # Run the app from a command prompt with arguments set in ARGV.
   # @abstract
   def run
-    raise NotImplementedError, "Please overload"
+    fail NotImplementedError, 'Please overload'
   end
 end

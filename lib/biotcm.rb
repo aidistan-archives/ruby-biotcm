@@ -18,9 +18,9 @@ require 'json'
 #
 module BioTCM
   # autoloaders
-  autoload(:Modules, "biotcm/modules")
-  autoload(:Databases, "biotcm/databases")
-  autoload(:Apps, "biotcm/apps")
+  autoload(:Modules, 'biotcm/modules')
+  autoload(:Databases, 'biotcm/databases')
+  autoload(:Apps, 'biotcm/apps')
 
   extend Modules::Utility
   extend Modules::WorkingDir
@@ -28,7 +28,7 @@ module BioTCM
   # Current version number
   VERSION = '0.1.0'
   # Default working directory
-  DEFAULT_WORKING_DIRECTORY = File.expand_path("~/.gem/biotcm")
+  DEFAULT_WORKING_DIRECTORY = File.expand_path('~/.gem/biotcm')
   # Default url of the meta file
   DEFAULT_META_FILE = 'http://biotcm.github.io/biotcm/meta/meta.json'
   # Default url of the apps file
@@ -47,12 +47,12 @@ module BioTCM
     require 'biotcm/table'
     require 'biotcm/graph'
     BioTCM.wd = BioTCM::DEFAULT_WORKING_DIRECTORY
-    return nil
+    nil
   end
   # Get the instance of Logger
   # @return [Logger]
   def logger
-    Logger.instance(path_to("log/#{get(:stamp)}.log", secure:true))
+    Logger.instance(path_to("log/#{get(:stamp)}.log", secure: true))
   end
   # Get meta value
   def get_meta(key)

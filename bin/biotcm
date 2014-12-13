@@ -1,25 +1,28 @@
 #!/usr/bin/env ruby
-$:.unshift(File.expand_path('../../lib', __FILE__))
+$LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 require 'biotcm'
 require 'json'
 
 # Get the list of all apps
-app_list = JSON.parse(
+apps_file = BioTCM.path_to('data/apps.json')
+apps = JSON.parse(
   begin
+    # Try to use the latest
     json = BioTCM.get(BioTCM::DEFAULT_APPS_FILE)
-    File.open(BioTCM.path_to("data/apps.json"), 'w').write json
+    File.open(apps_file, 'w').write json
     json
   rescue
-    raise 'Please connect to Internet to get the latest list of apps' unless File.exists?(BioTCM.path_to("data/apps.json"))
-    File.read(BioTCM.path_to("data/apps.json"))
+    # Or use the one downloaded previously
+    raise 'Please connect to Internet to get the latest list of apps' unless File.exist?(apps_file)
+    File.read(apps_file)
   end
 )
-app_list.reject! { |k,v| /^__/ =~ k }
+apps.reject! { |k, _| /^__/ =~ k }
 
 # Get lists of apps
 available_gems = `gem list biotcm- --no-versions`.split("\n")
-gem_apps = app_list.keys.select { |k| available_gems.include? app_list[k][0] }
-built_in_apps = app_list.keys.select { |k| app_list[k][0] == '(built-in)' }
+gem_apps = apps.keys.select { |k| available_gems.include? apps[k][0] }
+built_in_apps = apps.keys.select { |k| apps[k][0] == '(built-in)' }
 
 if (cmd = ARGV.shift).nil? || cmd == '-h'
   # Help message
@@ -28,12 +31,12 @@ Usage: biotcm app [OPTIONS]
 
 Available apps:
   END_OF_DOC
-  puts (built_in_apps + gem_apps).sort.collect { |a| '  ' + a }
+  (built_in_apps + gem_apps).sort.each { |app| puts '  ' + app }
 elsif built_in_apps.include?(cmd)
-  BioTCM::Apps.const_get(app_list[cmd][1]).new.run
+  BioTCM::Apps.const_get(apps[cmd][1]).new.run
 elsif gem_apps.include?(cmd)
   require 'biotcm-' + cmd
-  BioTCM::Apps.const_get(app_list[cmd][1]).new.run
+  BioTCM::Apps.const_get(apps[cmd][1]).new.run
 else
   # Error message
   puts "Sorry. BioTCM can't find app \"#{cmd}\"."

@@ -23,16 +23,15 @@ module BioTCM
           case uri.scheme
           when 'http'
             res = Net::HTTP.get_response(uri)
-            raise "HTTP status #{res.code} returned when #{uri} sent" unless res.is_a?(Net::HTTPOK)
-            res.body
-          else
-            nil
+            fail "HTTP status #{res.code} returned when #{uri} sent" unless res.is_a?(Net::HTTPOK)
+            return res.body
           end
         when :stamp
-          Time.now.to_s.split(" ")[0..1]
-              .push((Thread.current.object_id<<1).to_s(16))
-              .join("_").gsub(/-|:/,"")
+          return Time.now.to_s.split(' ')[0..1]
+            .push((Thread.current.object_id << 1).to_s(16))
+            .join('_').gsub(/-|:/, '')
         end
+        nil
       end
     end
   end

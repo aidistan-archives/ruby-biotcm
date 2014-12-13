@@ -2,15 +2,15 @@ require 'fileutils'
 
 module BioTCM
   module Modules
-    # Designed for handling with working directory, {WorkingDir} is included 
-    # in almost all classes and modules in BioTCM. It provides 
-    # {WorkingDir#wd= setter} and {WorkingDir#wd getter} for working directory 
+    # Designed for handling with working directory, {WorkingDir} is included
+    # in almost all classes and modules in BioTCM. It provides
+    # {WorkingDir#wd= setter} and {WorkingDir#wd getter} for working directory
     # variable @wd and a useful method {WorkingDir#path_to} to reference files.
     # Note that WorkingDir doesn't initialize @wd itself.
     #   class BioWhat
     #     include BioTCM::Modules::WorkingDir
     #   end
-    #   
+    #
     #   BioWhat.new.wd # raise RuntimeError
     #
     module WorkingDir
@@ -18,7 +18,7 @@ module BioTCM
       # @return [String]
       # @raise RuntimeError Raised if @wd undefined
       def wd
-        @wd or raise "The working directory of #{self} is undefined."
+        @wd || fail("The working directory of #{self} is undefined.")
       end
       # Set current working directory
       #

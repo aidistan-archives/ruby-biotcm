@@ -7,7 +7,7 @@ class BioTCM::Apps::GeneDetector < BioTCM::Apps::App
   # Default patterns of genes to exclude
   DEFAULT_GENE_BLACKLIST = [
     '^\w$',
-    '^\d',
+    '^\d'
   ]
   # Default patterns of text to exclude
   DEFAULT_TEXT_BLACKLIST = [
@@ -36,31 +36,31 @@ class BioTCM::Apps::GeneDetector < BioTCM::Apps::App
       @symbols.reject! { |sym| sym =~ @gene_regexp } if @gene_regexp
     end
     # Exclude text patterns
-    text.gsub!(@text_regexp, " ") if @text_regexp
+    text.gsub!(@text_regexp, ' ') if @text_regexp
     # Split sentences into words and eliminate redundancies
     rtn = text.split(/\.\s|\s?[,:!?#()\[\]{}]\s?|\s/).uniq & @symbols
     # Return approved symbols
-    return @if_formalize ? rtn.formalize_symbol.uniq : rtn
+    @if_formalize ? rtn.formalize_symbol.uniq : rtn
   end
-  # Run 
+  # Run
   def run
     # Get options
     options = {
-      output:'gene-detector.out.txt'
+      output: 'gene-detector.out.txt'
     }
     optparser = OptionParser.new do |opts|
-      opts.banner = "Usage: biotcm gene-detector input_file [OPTIONS]"
+      opts.banner = 'Usage: biotcm gene-detector input_file [OPTIONS]'
 
-      opts.on("-o", "--output [FILE]", String, "Output to FILE") do |v|
+      opts.on('-o', '--output [FILE]', String, 'Output to FILE') do |v|
         options[:output] = v
       end
     end
     optparser.parse!
     # Run the app
-    unless ARGV[0]
-      puts optparser.to_s
+    if ARGV[0]
+      File.open(options[:output], 'w').puts detect(File.open(ARGV.shift).read)
     else
-      File.open(options[:output], 'w').puts self.detect(File.open(ARGV.shift).read)
+      puts optparser.to_s
     end
   end
 end

@@ -25,7 +25,7 @@ namespace :cop do
   end
 end
 desc 'Run RuboCop to check styles'
-task :cop => ['cop:html', 'cop:files']
+task :cop => ['cop:default']
 
 # doc
 desc "Open YARD doc server"

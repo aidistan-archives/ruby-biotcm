@@ -1,9 +1,9 @@
 require 'minitest/autorun'
-require "minitest/reporters"
+require 'minitest/reporters'
 Minitest::Reporters.use!
 
-unless $:.include?(File.expand_path('../../lib', __FILE__))
-  $:.unshift(File.expand_path('../../lib', __FILE__))
+unless $LOAD_PATH.include?(File.expand_path('../../lib', __FILE__))
+  $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 end
 require 'biotcm'
 
