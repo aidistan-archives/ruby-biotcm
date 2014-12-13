@@ -1,4 +1,4 @@
-require_relative '../test_helper'
+require_relative '../test-helper'
 
 describe BioTCM::Apps::GeneDetector do
   it "must detect genes" do

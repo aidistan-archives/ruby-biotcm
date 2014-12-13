@@ -33,7 +33,7 @@ class BioTCM::Databases::OMIM
     end
     return rtn
   end
-  
+
   # Retrieve one OMIM entry
   # @raise ArgumentError if omim_id not exists
   def initialize(omim_id)
@@ -46,7 +46,7 @@ class BioTCM::Databases::OMIM
       fout.puts BioTCM.get(MIM2GENE_URL)
       fout.close
     end
-    @@entry_tab = Table.new(file_path) unless self.class.class_variable_defined?(:@@entry_tab)
+    @@entry_tab = Table.load(file_path) unless self.class.class_variable_defined?(:@@entry_tab)
     # Check
     raise ArgumentError, "OMIM number not exists" unless @id = @@entry_tab.row(omim_id.to_s)
     # Get the hash
@@ -60,10 +60,10 @@ class BioTCM::Databases::OMIM
     # Find genes
     @@gene_detector = BioTCM::Apps::GeneDetector.new unless self.class.class_variable_defined?(:@@gene_detector)
     @genes = []
-    @genes |= @content['phenotypeMapList'].collect { |h| 
-                h['phenotypeMap']['geneSymbols'].split(", ") 
-              }.flatten.symbol2hgncid.hgncid2symbol.uniq.reject { 
-                |sym| sym == "" 
+    @genes |= @content['phenotypeMapList'].collect { |h|
+                h['phenotypeMap']['geneSymbols'].split(", ")
+              }.flatten.symbol2hgncid.hgncid2symbol.uniq.reject {
+                |sym| sym == ""
               } if @content['phenotypeMapExists']
     @genes |= @@gene_detector.detect(@content['textSectionList'].collect { |h| h['textSection']['textSectionContent'] }.join(" "))
   end

@@ -6,6 +6,8 @@ group :development do
   gem 'yard'
   # Use minitest for tests
   gem 'minitest'
+  # Use minitest-reporters to highlight test results
+  gem 'minitest-reporters'
   # Use Rubocop to analyze codes
   gem 'rubocop', require: false
 end

@@ -1,4 +1,4 @@
-require_relative '../test_helper'
+require_relative '../test-helper'
 
 describe BioTCM::Databases::KEGG do
   it "must raise error if given pathway not exists" do
@@ -15,7 +15,7 @@ describe BioTCM::Databases::KEGG do
   it "must load KGMLs and create Pathway objects" do
     kegg = BioTCM::Databases::KEGG.new("05010")
     assert(kegg.pathways["hsa05010"])
-  end 
+  end
 
   it "have more pathways if extended (in most cases)" do
     kegg = BioTCM::Databases::KEGG.new("05010")

@@ -1,11 +1,11 @@
-require_relative 'test_helper'
+require_relative 'test-helper'
 
 describe BioTCM do
   it "must be able to get meta data" do
-    assert_equal('meta.json', BioTCM.get_meta('_filename'))
+    assert_equal('meta.json', BioTCM.get_meta('__filename'))
   end
 
   it "must be able to get apps data" do
-    assert_equal('apps.json', JSON.parse(BioTCM.get(BioTCM::DEFAULT_APPS_FILE)).fetch('_filename'))
+    assert_equal('apps.json', JSON.parse(BioTCM.get(BioTCM::DEFAULT_APPS_FILE)).fetch('__filename'))
   end
 end

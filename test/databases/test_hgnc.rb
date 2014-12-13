@@ -1,4 +1,4 @@
-require_relative '../test_helper'
+require_relative '../test-helper'
 
 describe BioTCM::Databases::HGNC do
   before do

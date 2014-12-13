@@ -1,4 +1,4 @@
-require_relative '../test_helper'
+require_relative '../test-helper'
 
 describe BioTCM::Databases::OMIM do
   it "must return an hash storing OMIM objects if batch method called" do

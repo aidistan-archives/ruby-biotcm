@@ -1,4 +1,6 @@
 require 'minitest/autorun'
+require "minitest/reporters"
+Minitest::Reporters.use!
 
 unless $:.include?(File.expand_path('../../lib', __FILE__))
   $:.unshift(File.expand_path('../../lib', __FILE__))

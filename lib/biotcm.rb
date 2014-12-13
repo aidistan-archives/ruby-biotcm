@@ -10,8 +10,8 @@ require 'json'
 #   end
 #   BioTCM.init
 #
-# Sometimes custom initialization fits your need better. Override configs 
-# according to {BioTCM.init}, right immediately after you require {BioTCM}, 
+# Sometimes custom initialization fits your need better. Override configs
+# according to {BioTCM.init}, right immediately after you require {BioTCM},
 # to make sure that nothing will not affect your final result.
 #   require 'biotcm'
 #   BioTCM.wd = "/home/aidistan/.biotcm"
@@ -24,15 +24,15 @@ module BioTCM
 
   extend Modules::Utility
   extend Modules::WorkingDir
-  
+
   # Current version number
   VERSION = '0.1.0'
   # Default working directory
   DEFAULT_WORKING_DIRECTORY = File.expand_path("~/.gem/biotcm")
   # Default url of the meta file
-  DEFAULT_META_FILE = 'http://biotcm.github.io/meta.json'
+  DEFAULT_META_FILE = 'http://biotcm.github.io/biotcm/meta/meta.json'
   # Default url of the apps file
-  DEFAULT_APPS_FILE = 'http://biotcm.github.io/apps.json'
+  DEFAULT_APPS_FILE = 'http://biotcm.github.io/biotcm/meta/apps.json'
 
   module_function
 

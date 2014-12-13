@@ -1,7 +1,7 @@
-require_relative '../test_helper'
+require_relative '../test-helper'
 
 describe BioTCM::Databases::Medline do
-  it "could search PubMed with specific terms" do 
+  it "could search PubMed with specific terms" do
     assert(BioTCM::Databases::Medline.new("IL-2 IBD").count > 0)
   end
 

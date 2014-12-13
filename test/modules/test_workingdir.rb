@@ -1,4 +1,4 @@
-require_relative '../test_helper'
+require_relative '../test-helper'
 
 include BioTCM::Modules::WorkingDir
 
@@ -8,7 +8,7 @@ describe BioTCM::Modules::WorkingDir do
     self.wd = File.dirname(__FILE__)
     assert_equal(File.dirname(__FILE__), self.wd, "@wd not changed.")
   end
-  
+
   it "must create working directory if @wd not exist" do
     test_path = File.expand_path("../_test" ,__FILE__)
     Dir.delete(test_path) if Dir.exists?(test_path)
