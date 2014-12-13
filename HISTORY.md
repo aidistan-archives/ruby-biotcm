@@ -1,6 +1,12 @@
 History
 ===============
 
+### 0.2.0.pre 2014-12-13
+* 3 major enhancement
+	* Introduced in Rubocop for style guiding
+	* Improved Table
+	* Improved the app system
+
 ### 0.1.0 2014-10-03
 * 3 major enhancements
 	* Introduced in App System instead of BioTCM::Scripts
