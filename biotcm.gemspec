@@ -21,7 +21,4 @@ Gem::Specification.new do |s|
   s.executables  << 'biotcm'
 
   s.required_ruby_version = '>= 2.0.0'
-
-  s.add_development_dependency 'yard'
-  s.add_development_dependency 'minitest'
 end
