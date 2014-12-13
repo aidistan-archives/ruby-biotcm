@@ -3,6 +3,22 @@ require 'tempfile'
 
 describe Table do
 
+  it "has three ways to get instances" do
+    # Table.build (used internally)
+    assert_instance_of(Table, Table.build)
+
+    # Table.load
+    file = Tempfile.new('test')
+    file.write "ID\tA\tB\n1\tC++\tgood\n2\tRuby\tbetter\n"
+    file.flush
+    assert_instance_of(Table, Table.load(file.path))
+    file.close!
+
+    # Table#new
+    @tab = Table.new(primary_key:'id', row_keys:['1', '2'], col_keys:['A', 'B'])
+    assert_equal('id', @tab.primary_key)
+  end
+
   # Strict entry
 
   describe "when initialized improperly" do
@@ -11,21 +27,21 @@ describe Table do
       file = Tempfile.new('test')
       file.write "ID\tA\tA\n1\tC++\tgood\n2\tRuby\tbetter\n"
       file.flush
-      assert_raises(ArgumentError) { Table.new(file.path) }
+      assert_raises(ArgumentError) { Table.load(file.path) }
       file.close!
 
       # Duplicated primary keys
       file = Tempfile.new('test')
       file.write "ID\tA\tB\n1\tC++\tgood\n1\tRuby\tbetter\n"
       file.flush
-      assert_raises(ArgumentError) { Table.new(file.path) }
+      assert_raises(ArgumentError) { Table.load(file.path) }
       file.close!
 
       # Inconsistent-size row
       file = Tempfile.new('test')
       file.write "ID\tA\tA\n1\tC++\tgood\n2\tRuby\n"
       file.flush
-      assert_raises(ArgumentError) { Table.new(file.path) }
+      assert_raises(ArgumentError) { Table.load(file.path) }
       file.close!
     end
   end
@@ -153,7 +169,7 @@ describe Table do
       assert_equal('6', tab.ele('3', 'B'))
       assert_equal('1.9', tab.ele('3', 'C'))
     end
-    
+
     it "must be merged with another table" do
       assert_equal(nil, @tab.ele('4', 'A'))
       assert_equal(nil, @tab.ele('2', 'D'))

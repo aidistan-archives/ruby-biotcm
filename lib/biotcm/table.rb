@@ -1,8 +1,16 @@
-# One of the basic data models used in BioTCM to process flat files, 
+# One of the basic data models used in BioTCM to process
+# {https://github.com/biotcm/biotcm/wiki/Formats#tab .tab files},
 # developed under <b>"strict entry and tolerant exit"</b> philosophy.
 #
-# Please refer to the test for details. 
+# For more details, please refer to the test.
 class Table
+  # Primary key used in this table
+  attr_accessor :primary_key
+  def primary_key; @primary_key; end
+  def primary_key=(val)
+    raise ArgumentError, "Not a String" unless val.is_a?(String)
+    @primary_key = val
+  end
   # Keys of rows
   attr_accessor :row_keys
   def row_keys
@@ -31,13 +39,6 @@ class Table
     @col_keys = {}
     val.each_with_index { |key, index| key ? @col_keys[key] = index : @col_keys["column_#{index+1}"] = index}
   end
-  # Primary key used in this table
-  attr_accessor :primary_key
-  def primary_key; @primary_key; end
-  def primary_key=(val)
-    raise ArgumentError, "Not a String" unless val.is_a?(String)
-    @primary_key = val
-  end
 
   # @private
   # Factory method
@@ -50,31 +51,34 @@ class Table
     @tab.instance_variable_set(:@content, content)
     return @tab
   end
-
-  # Create a table from a file
-  # @param filepath [String, nil] create an empty {Table} if nil
+  # Load a table from a file
+  # @param filepath [String]
   # @param encoding [String]
   # @param seperator [String]
-  def initialize(filepath = nil, encoding:Encoding.default_external, seperator:"\t")
-    case filepath
-    when nil # Empty table
-      @primary_key = "_id"
-      @row_keys = {}
-      @col_keys = {}
-      @content = []
-    when String
-        File.open(filepath, "r:#{encoding}").read.to_table(self, seperator:seperator)
-    else
-      raise ArgumentError, 'Illegal argument type for Table#new'
-    end
+  def self.load(filepath, encoding:Encoding.default_external, seperator:"\t")
+    raise ArgumentError, 'Illegal argument type for Table.load' unless filepath.is_a?(String)
+    File.open(filepath, "r:#{encoding}").read.to_table(seperator:seperator)
+  end
+
+  # Create an empty table with keys
+  # @param primary_key [String]
+  # @param row_keys [Array]
+  # @param col_keys [Array]
+  def initialize(primary_key:"_id", row_keys:[], col_keys:[])
+    @primary_key = primary_key
+    @row_keys = {}
+    @col_keys = {}
+    @content = []
+    row_keys.each_with_index { |k,i| @row_keys[k] = i }
+    col_keys.each_with_index { |k,i| @col_keys[k] = i }
   end
   # Clone this table
   # @return [Table]
   def clone
     self.class.build(
-        primary_key:@primary_key, 
-        row_keys:@row_keys.clone, 
-        col_keys:@col_keys.clone, 
+        primary_key:@primary_key,
+        row_keys:@row_keys.clone,
+        col_keys:@col_keys.clone,
         content:@content.collect { |arr| arr.clone }
     )
   end
@@ -134,9 +138,9 @@ class Table
 
     # Setter
     if !row.is_a?(String) || (!val.is_a?(Hash) && !val.is_a?(Array))
-      raise ArgumentError, 'Illegal argument type' 
+      raise ArgumentError, 'Illegal argument type'
     elsif val.is_a?(Array) && val.size != col_keys.size
-      raise ArgumentError, 'Column size not match' 
+      raise ArgumentError, 'Column size not match'
     end
 
     case val
@@ -182,9 +186,9 @@ class Table
 
     # Setter
     if !col.is_a?(String) || (!val.is_a?(Hash) && !val.is_a?(Array))
-      raise ArgumentError, 'Illegal argument type' 
+      raise ArgumentError, 'Illegal argument type'
     elsif val.is_a?(Array) && val.size != row_keys.size
-      raise ArgumentError, 'Row size not match' 
+      raise ArgumentError, 'Row size not match'
     end
 
     case val
@@ -248,9 +252,9 @@ class Table
 
     # Create a new table
     self.class.build(
-        primary_key:primary_key, 
-        row_keys:row_keys, 
-        col_keys:col_keys, 
+        primary_key:primary_key,
+        row_keys:row_keys,
+        col_keys:col_keys,
         content:content
     )
   end
@@ -301,9 +305,9 @@ class Table
 
     # Create a new table
     self.class.build(
-        primary_key:primary_key, 
-        row_keys:row_keys, 
-        col_keys:col_keys, 
+        primary_key:primary_key,
+        row_keys:row_keys,
+        col_keys:col_keys,
         content:content
     )
   end
@@ -326,7 +330,7 @@ class Table
   # Print in a file
   # @param filepath [String]
   # @return [self]
-  def export(filepath)
+  def save(filepath)
     File.open(filepath, 'w').puts self
     return self
   end
@@ -334,11 +338,10 @@ end
 
 class String
   # Create a {Table} based on a String or fill the given table
-  # @param tab [nil, Table] a table to fill
   # @param seperator [String]
-  def to_table(tab=nil, seperator:"\t")
+  def to_table(seperator:"\t")
     stuff = self.split(/\r\n|\n/)
-    
+
     # Headline
     col_keys = stuff.shift.split(seperator)
     raise ArgumentError, "Duplicated column names" unless col_keys.uniq!.nil?
@@ -346,7 +349,7 @@ class String
     col_keys_hash = {}
     col_keys.each_with_index { |n, i| col_keys_hash[n]=i }
     col_keys = col_keys_hash
-    
+
     # Table content
     row_keys = {}
     content = []
@@ -358,19 +361,12 @@ class String
       content<<col
     end
 
-    if tab
-      tab.instance_variable_set(:@primary_key, primary_key)
-      tab.instance_variable_set(:@row_keys, row_keys)
-      tab.instance_variable_set(:@col_keys, col_keys)
-      tab.instance_variable_set(:@content, content)
-      tab
-    else
-      Table.build(
-          primary_key:primary_key, 
-          row_keys:row_keys, 
-          col_keys:col_keys, 
-          content:content
-      )
-    end
+    # Build a table to return
+    Table.build(
+        primary_key:primary_key,
+        row_keys:row_keys,
+        col_keys:col_keys,
+        content:content
+    )
   end
 end

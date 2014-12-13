@@ -1,7 +1,7 @@
 require_relative 'bm-helper'
 
 MyBenchmark.group "Table initialization" do |b|
-  
+
   # Current method used by Table#new
   b.report("String#to_table") do
     tab = File.open("bm_table/table_1.txt").read.to_table
@@ -37,8 +37,8 @@ MyBenchmark.group "Table initialization" do |b|
   end
 end
 
-@tab1 = Table.new("bm_table/table_1.txt")
-@tab2 = Table.new("bm_table/table_2.txt")
+@tab1 = Table.load("bm_table/table_1.txt")
+@tab2 = Table.load("bm_table/table_2.txt")
 
 MyBenchmark.group "Table operation" do |b|
   b.report("merge") do
