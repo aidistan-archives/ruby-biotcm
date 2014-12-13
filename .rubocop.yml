@@ -17,6 +17,8 @@ Style/ClassVars:
   Enabled: false
 Style/TrivialAccessors:
   ExactNameMatch: true
+Style/SpaceAfterSemicolon:
+  Enabled: false
 # We use 'or' in conditional branches
 Style/AndOr:
   Enabled: false

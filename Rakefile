@@ -1,4 +1,4 @@
-$:.push File.expand_path("../lib", __FILE__)
+$LOAD_PATH.push File.expand_path('../lib', __FILE__)
 require 'biotcm'
 require 'bundler/setup'
 
@@ -6,10 +6,10 @@ require 'bundler/setup'
 require 'rake/testtask'
 Rake::TestTask.new do |t|
   t.libs << 'test'
-  t.test_files = FileList["test/**/test_*.rb"]
+  t.test_files = FileList['test/**/test_*.rb']
   # t.verbose = true
 end
-task :default => :test
+task default: :test
 
 # cop
 namespace :cop do
@@ -28,57 +28,61 @@ namespace :cop do
   end
 end
 desc 'Run RuboCop to check styles'
-task :cop => 'cop:default'
+task cop: 'cop:default'
 
 # doc
 namespace :doc do
   task :default do
-    system("bundle exec yard")
+    system('bundle exec yard')
   end
   task :server do
-    system("bundle exec yard server -r")
+    system('bundle exec yard server -r')
   end
 end
-desc "Open YARD doc server"
-task :doc => 'doc:server'
+desc 'Open YARD doc server'
+task doc: 'doc:server'
+
+# rubocop:disable Style/RescueModifier
 
 # clean
-desc "Clean the directory"
+desc 'Clean the directory'
 task :clean do
-  FileList[".yardoc", "doc", "*.gem"].each do |d|
+  FileList['.yardoc', 'doc', '*.gem'].each do |d|
     FileUtils.rm_r(d) rescue nil
   end
 end
 
 # clear
-desc "Clear log files and temporary files in BioTCM.wd"
+desc 'Clear log files and temporary files in BioTCM.wd'
 task :clear do
-  ["log", "tmp"].each do |d|
+  %w(log tmp).each do |d|
     FileUtils.rm_r(BioTCM.path_to(d)) rescue nil
   end
 end
 
 # clear all
-desc "Clear all files in BioTCM.wd"
-task :clear_all => :clear do
-  FileUtils.rm_r(BioTCM.path_to("data")) rescue nil
+desc 'Clear all files in BioTCM.wd'
+task clear_all: :clear do
+  FileUtils.rm_r(BioTCM.path_to('data')) rescue nil
 end
 
+# rubocop:enable Style/RescueModifier
+
 # check
-desc "Check all things"
-task :check => [:test, 'cop:simple', 'doc:default']
+desc 'Check all things'
+task check: [:test, 'cop:simple', 'doc:default']
 
 # bump
 namespace :bump do
-  desc "Bump major version code"
+  desc 'Bump major version code'
   task :major do
     bump_version :major
   end
-  desc "Bump minor version code"
+  desc 'Bump minor version code'
   task :minor do
     bump_version :minor
   end
-  desc "Bump patch version code"
+  desc 'Bump patch version code'
   task :patch do
     bump_version :patch
   end
@@ -102,19 +106,19 @@ def bump_version(which)
 end
 
 # gem
-desc "Build the gem"
+desc 'Build the gem'
 task :gem do
-  system("gem build #{File.dirname(__FILE__)}" + "/biotcm.gemspec")
+  system("gem build #{File.dirname(__FILE__)}" + '/biotcm.gemspec')
 end
 
 # install
-desc "Install the gem"
-task :install => :gem do
+desc 'Install the gem'
+task install: :gem do
   system("gem install biotcm-#{BioTCM::VERSION}.gem --local --no-document")
 end
 
 # uninstall
-desc "Uninstall the gem"
+desc 'Uninstall the gem'
 task :uninstall do
-  system("gem uninstall biotcm")
+  system('gem uninstall biotcm')
 end
