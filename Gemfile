@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 
 group :development do
+  # Use Rake to manage tasks
+  gem 'rake'
   # Use YARD to document
   gem 'yard'
   # Use minitest for tests
