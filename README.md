@@ -26,19 +26,31 @@ We believe in self-documentation coding, so you could find all APIs, examples an
 
 ## Getting Involved
 
-We develop this gem under some philosophies and some styles. Please follow the style and feel free to send pull requests.
+### What can I do?
 
-### Design Philosophies
+Feel free to send pull requests. You could help us
+
+- integrate your awesome application into BioTCM framework
+- implement new features to get through [our roadmap](http://libreboard.com/boards/k7ojKM7FNXM9MBk3M/biotcm-roadmap)
+- refactor codes to improve [the code climate](https://codeclimate.com/github/biotcm/biotcm)
+- write more tests to increase [the test coverage](https://codeclimate.com/github/biotcm/biotcm)
+- refine [docs](http://inch-ci.org/github/biotcm/biotcm) to help more users
+
+### How should I do?
+
+We develop this gem under some philosophies and some styles. Please follow the style while you are making amazing things.
+
+#### Design Philosophies
 
 * self-explanatory coding
 * Do not Repeat Yourself (DRY)
 * Convention over Configuration (CoC)
 
-### Coding Style
+#### Coding Style
 
 Practically we follow [ruby-style-guide](https://github.com/bbatsov/ruby-style-guide), a community-driven ruby coding style guide, and use [**Rubocop**](https://github.com/bbatsov/rubocop) to check it.
 
-#### Documentation
+##### Documentation
 
 We write YARD document within codes to generate API docs and example usages for users and use (part of) these sections to describe a class or module.
 
@@ -49,7 +61,7 @@ We write YARD document within codes to generate API docs and example usages for 
   database (this subtitle could be changed)
 * Reference
 
-#### Class/Module Structure
+##### Class/Module Structure
 
 For classes & modules, we
 
@@ -65,7 +77,7 @@ For classes & modules, we
 	* Protected and private methods
 	* Special handling, such as overwriting (to escape YARD documenting)
 
-### Test Style
+#### Test Style
 
 Having no explicit map of our gem, we add new Class or Module when we need it, which make the popular test suite _RSepc_ doesn't suit our need quite well. In such case, we choose to write our tests with __minitest__ gem.
 
