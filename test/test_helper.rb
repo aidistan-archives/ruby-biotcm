@@ -3,6 +3,8 @@ require 'minitest/reporters'
 Minitest::Reporters.use!
 require 'coveralls'
 Coveralls.wear!
+require 'codeclimate-test-reporter'
+CodeClimate::TestReporter.start
 
 unless $LOAD_PATH.include?(File.expand_path('../../lib', __FILE__))
   $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
