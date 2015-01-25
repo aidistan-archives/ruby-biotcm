@@ -420,26 +420,27 @@ class BioTCM::Databases::HGNC
 end
 
 class String
-  # Get the HGNC dictionary for conversion
-  # @return [BioTCM::Databases::HGNC]
   class << self
+    # HGNC dictionary for conversion
+    # @return [BioTCM::Databases::HGNC]
     attr_reader :hgnc
-  end
-  # @overload hgnc=(obj)
-  #   Set the HGNC dictionary for conversion
-  #   @param [BioTCM::Databases::HGNC] obj
-  # @overload hgnc=(nil)
-  #   Deregister the HGNC dictionary
-  #   @param [nil]
-  # @raise ArgumentError Raised if neither HGNC object nor nil given
-  def self.hgnc=(obj)
-    if obj.nil?
-      @hgnc = nil
-    else
-      fail ArgumentError, 'Not a HGNC object' unless obj.is_a?(BioTCM::Databases::HGNC)
-      @hgnc = obj
+    # @overload hgnc=(obj)
+    #   Set the HGNC dictionary for conversion
+    #   @param [BioTCM::Databases::HGNC] obj
+    # @overload hgnc=(nil)
+    #   Deregister the HGNC dictionary
+    #   @param [nil]
+    # @raise ArgumentError Raised if neither HGNC object nor nil given
+    def hgnc=(obj)
+      if obj.nil?
+        @hgnc = nil
+      else
+        fail ArgumentError, 'Not a HGNC object' unless obj.is_a?(BioTCM::Databases::HGNC)
+        @hgnc = obj
+      end
     end
   end
+
   # Formalize the gene symbol
   # @return "" if fails to formalize
   def formalize_symbol

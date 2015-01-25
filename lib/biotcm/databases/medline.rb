@@ -91,7 +91,12 @@ class BioTCM::Databases::Medline
     # end
   end
 
-  attr_reader :term, :count
+  # Query term
+  # @return [String]
+  attr_reader :term
+  # Number of entries for current query
+  # @return [Fixnum]
+  attr_reader :count
 
   # Current version of Medline
   VERSION = '0.2.0'

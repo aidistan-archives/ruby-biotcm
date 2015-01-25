@@ -12,7 +12,11 @@ class BioTCM::Databases::OMIM
   # Url of the mim2gene.txt
   MIM2GENE_URL = 'http://biotcm.github.io/biotcm/meta/OMIM/mim2gene.txt'
 
-  attr_reader :id, :genes
+  # OMIM ID
+  attr_reader :id
+  # Genes related
+  # @return [Array]
+  attr_reader :genes
 
   # Get the URL for retrieving given entry
   def self.url(omim_id, api_key:API_KEY)
