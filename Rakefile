@@ -45,23 +45,25 @@ task doc: 'doc:server'
 # clean
 desc 'Clean the directory'
 task :clean do
-  FileList['.yardoc', 'doc', '*.gem'].each do |d|
-    FileUtils.rm_r(d) rescue nil
+  FileList['.yardoc', 'doc', '*.gem'].each do |f|
+    FileUtils.rm_r(f) if File.exist?(f) || Dir.exist?(f)
   end
 end
 
 # clear
 desc 'Clear log files and temporary files in BioTCM.wd'
 task :clear do
-  %w(log tmp).each do |d|
-    FileUtils.rm_r(BioTCM.path_to(d)) rescue nil
+  %w(log tmp).map { |d| BioTCM.path_to(d) }.each do |d|
+    FileUtils.rm_r(d) if Dir.exist?(d)
   end
 end
 
 # clear all
 desc 'Clear all files in BioTCM.wd'
 task clear_all: :clear do
-  FileUtils.rm_r(BioTCM.path_to('data')) rescue nil
+  %w(data).map { |d| BioTCM.path_to(d) }.each do |d|
+    FileUtils.rm_r(d) if Dir.exist?(d)
+  end
 end
 
 # rubocop:enable Style/RescueModifier
