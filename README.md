@@ -65,4 +65,4 @@ design purpose more easily.
 
 ## License
 
-Copyright 2014 BioTCM group under the MIT license.
+Copyright (c) 2014-2015 BioTCM group under [the MIT license](https://github.com/biotcm/biotcm/blob/master/LICENSE).
