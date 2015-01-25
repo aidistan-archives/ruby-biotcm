@@ -42,8 +42,6 @@ end
 desc 'Open YARD doc server'
 task doc: 'doc:server'
 
-# rubocop:disable Style/RescueModifier
-
 # clean
 desc 'Clean the directory'
 task :clean do
