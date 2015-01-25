@@ -66,12 +66,6 @@ task clear_all: :clear do
   end
 end
 
-# rubocop:enable Style/RescueModifier
-
-# check
-desc 'Check all things'
-task check: [:test, 'cop:simple', 'doc:default']
-
 # bump
 namespace :bump do
   desc 'Bump major version code'

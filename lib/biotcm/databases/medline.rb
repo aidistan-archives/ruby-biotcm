@@ -34,8 +34,7 @@ class BioTCM::Databases::Medline
     # @option params :webenv [String]  web environment used
     # @option params :usehistory ["y" or "n"] ('y') whether to use history server
     def esearch(params)
-      BioTCM.get('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?' +
-        params.select { |k,v| v }.map { |k,v| k.to_s + "=" + v.to_s }.join("&"))
+      BioTCM.get('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?' + parameterize(params))
     end
     # EFetch (data record downloads)
     #
@@ -51,8 +50,7 @@ class BioTCM::Databases::Medline
     # @option params :query_key [String] query key used
     # @option params :webenv [String] web environment used
     def efetch(params)
-      BioTCM.get('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?' +
-        params.select { |k,v| v }.map { |k,v| k.to_s + "=" + v.to_s }.join("&"))
+      BioTCM.get('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?' + parameterize(params))
     end
     # # EInfo (database statistics)
     # # Provides the number of records indexed in each field of a given database, the date of the last update of the database, and the available links from the database to other Entrez databases.
@@ -89,6 +87,11 @@ class BioTCM::Databases::Medline
     # def espell
     #    # http://eutils.ncbi.nlm.nih.gov/entrez/eutils/espell.fcgi
     # end
+
+    # Convert param hash into param string
+    def parameterize(params)
+      params.select { |_k, v| v }.map { |k, v| k.to_s + '=' + v.to_s }.join('&')
+    end
   end
 
   # Query term
