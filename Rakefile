@@ -45,7 +45,7 @@ task doc: 'doc:server'
 # clean
 desc 'Clean the directory'
 task :clean do
-  FileList['.yardoc', 'doc', '*.gem'].each do |f|
+  FileList['.yardoc', 'doc', 'coverage', '*.gem'].each do |f|
     FileUtils.rm_r(f) if File.exist?(f) || Dir.exist?(f)
   end
 end

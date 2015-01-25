@@ -1,6 +1,7 @@
 # Ruby
 .bundle
 *.gem
+coverage
 
 # YARD artifacts
 .yardoc

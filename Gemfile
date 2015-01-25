@@ -11,9 +11,6 @@ group :development do
   gem 'minitest-reporters'
   # Use Rubocop to analyze codes
   gem 'rubocop', require: false
-end
-
-group :remote do
   # Wear Coveralls to analyze coverage
   gem 'coveralls', require: false
 end
