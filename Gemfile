@@ -12,3 +12,8 @@ group :development do
   # Use Rubocop to analyze codes
   gem 'rubocop', require: false
 end
+
+group :remote do
+  # Wear Coveralls to analyze coverage
+  gem 'coveralls', require: false
+end

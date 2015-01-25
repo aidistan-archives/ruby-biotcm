@@ -1,6 +1,7 @@
-### Ruby
+# Ruby
+.bundle
 *.gem
 
-### YARD artifacts
+# YARD artifacts
 .yardoc
 doc/
