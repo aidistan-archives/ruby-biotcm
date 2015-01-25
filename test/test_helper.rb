@@ -1,8 +1,6 @@
 require 'minitest/autorun'
 require 'minitest/reporters'
 Minitest::Reporters.use!
-require 'coveralls'
-Coveralls.wear!
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
 

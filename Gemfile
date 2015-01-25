@@ -11,8 +11,6 @@ group :development do
   gem 'minitest-reporters'
   # Use Rubocop to analyze codes
   gem 'rubocop', require: false
-  # Wear Coveralls to analyze coverage
-  gem 'coveralls', require: false
   # Measure test coverage with Code Climate
   gem 'codeclimate-test-reporter', require: false
 end
