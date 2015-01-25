@@ -1,8 +1,11 @@
 # BioTCM
 
 [![Gem Version](https://badge.fury.io/rb/biotcm.svg)](http://badge.fury.io/rb/biotcm)
+[![Roadmap](https://img.shields.io/badge/roadmap-0.2.0-blue.svg?style=flat)](http://libreboard.com/boards/k7ojKM7FNXM9MBk3M/biotcm-roadmap)
 [![Build Status](https://travis-ci.org/biotcm/biotcm.svg?branch=master)](https://travis-ci.org/biotcm/biotcm)
-[![Roadmap](https://img.shields.io/badge/libreboard-roadmap-blue.svg?style=flat)](http://libreboard.com/boards/k7ojKM7FNXM9MBk3M/biotcm-roadmap)
+[![Code Climate](https://codeclimate.com/github/biotcm/biotcm/badges/gpa.svg)](https://codeclimate.com/github/biotcm/biotcm)
+[![Coverage Status](https://coveralls.io/repos/biotcm/biotcm/badge.svg?branch=master)](https://coveralls.io/r/biotcm/biotcm?branch=master)
+[![Docs Status](http://inch-ci.org/github/biotcm/biotcm.svg?branch=master)](http://inch-ci.org/github/biotcm/biotcm)
 
 BioTCM is designed as a base gem to build advanced applications on Bioinformatics.
 
