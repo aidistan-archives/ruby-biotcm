@@ -34,18 +34,8 @@ class BioTCM::Databases::Medline
     # @option params :webenv [String]  web environment used
     # @option params :usehistory ["y" or "n"] ('y') whether to use history server
     def esearch(params)
-      BioTCM.get(
-        [
-          "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=#{params[:db]}",
-          params[:term] ? "term=#{params[:term]}" : '',
-          params[:webenv] ? "WebEnv=#{params[:webenv]}" : '',
-          params[:usehistory] == 'n' ? '' : 'usehistory=y',
-
-          params[:retstart] ? "retstart=#{params[:retstart]}" : '',
-          params[:retmax] ? "retmax=#{params[:retmax]}" : '',
-          params[:query_key] ? "query_key=#{params[:query_key]}" : ''
-        ].join('&').gsub(/&+/, '&')
-      )
+      BioTCM.get('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?' +
+        params.select { |k,v| v }.map { |k,v| k.to_s + "=" + v.to_s }.join("&"))
     end
     # EFetch (data record downloads)
     #
@@ -61,17 +51,8 @@ class BioTCM::Databases::Medline
     # @option params :query_key [String] query key used
     # @option params :webenv [String] web environment used
     def efetch(params)
-      BioTCM.get(
-        [
-          "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=#{params[:db]}",
-          params[:rettype] ? "rettype=#{params[:rettype]}" : '',
-          params[:retmode] ? "retmode=#{params[:retmode]}" : '',
-          params[:retstart] ? "retstart=#{params[:retstart]}" : '',
-          params[:retmax] ? "retmax=#{params[:retmax]}" : '',
-          "query_key=#{params[:query_key]}",
-          "WebEnv=#{params[:webenv]}"
-        ].join('&').gsub(/&+/, '&')
-      )
+      BioTCM.get('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?' +
+        params.select { |k,v| v }.map { |k,v| k.to_s + "=" + v.to_s }.join("&"))
     end
     # # EInfo (database statistics)
     # # Provides the number of records indexed in each field of a given database, the date of the last update of the database, and the available links from the database to other Entrez databases.
