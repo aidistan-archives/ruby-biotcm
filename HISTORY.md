@@ -1,8 +1,13 @@
 History
 ===============
 
+### 0.2.0 2015-01-25
+* 2 major enhancements
+	* Started to use Travis CI
+	* Started to use Code Climate
+
 ### 0.2.0.pre 2014-12-13
-* 3 major enhancement
+* 3 major enhancements
 	* Introduced in Rubocop for style guiding
 	* Improved Table
 	* Improved the app system
