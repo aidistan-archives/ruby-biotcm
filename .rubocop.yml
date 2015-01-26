@@ -19,7 +19,10 @@ Style/TrivialAccessors:
   ExactNameMatch: true
 Style/SpaceAfterSemicolon:
   Enabled: false
-# We use 'or' in conditional branches
+# It's OK to use 'and' and 'or'.
+#
+# Example:
+#   value = hash[key] or return false
 Style/AndOr:
   Enabled: false
 # We define modules/classes in a compact style. Nested definitions only used for
