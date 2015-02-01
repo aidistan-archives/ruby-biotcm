@@ -6,7 +6,6 @@
 class Table
   # Primary key used in this table
   attr_accessor :primary_key
-  attr_reader :primary_key
 
   def primary_key=(val)
     fail ArgumentError, 'Not a String' unless val.is_a?(String)
@@ -103,9 +102,9 @@ class Table
   #   @param val [String]
   def ele(row, col, val = nil)
     if val.nil?
-      row = @row_keys[row] or return nil
-      col = @col_keys[col] or return nil
-      return @content[row][col]
+      row = @row_keys[row]
+      col = @col_keys[col]
+      return row && col ? @content[row][col] : nil
     else
       unless row.is_a?(String) && col.is_a?(String) && val.is_a?(String)
         fail ArgumentError, 'Illegal argument type'

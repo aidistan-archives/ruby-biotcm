@@ -1,4 +1,4 @@
-require_relative '../test_helper'
+require_relative 'test_helper'
 
 describe BioTCM do
   it 'must be able to get meta data' do

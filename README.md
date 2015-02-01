@@ -50,6 +50,8 @@ We develop this gem under some philosophies and some styles. Please follow the s
 
 Practically we follow [ruby-style-guide](https://github.com/bbatsov/ruby-style-guide), a community-driven ruby coding style guide, and use [**Rubocop**](https://github.com/bbatsov/rubocop) to check it.
 
+For Atom users, we strongly recommend to use [linter-rubocop](https://atom.io/packages/linter-rubocop) package to lint Ruby code on the fly.
+
 ##### Documentation
 
 We write YARD document within codes to generate API docs and example usages for users and use (part of) these sections to describe a class or module.
