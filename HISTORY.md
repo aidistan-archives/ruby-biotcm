@@ -1,6 +1,12 @@
 History
 ===============
 
+### By now 2015-03-03
+* Bumped BioTCM::Databases::HGNC to v0.2.2
+	* Fixed the potential risk of ambiguous symbols
+* Bumped BioTCM::Apps::GeneDetector to v0.1.1
+	* Pre-transformed the text to find more genes
+
 ### 0.2.0 2015-01-25
 * 2 major enhancements
 	* Started to use Travis CI
