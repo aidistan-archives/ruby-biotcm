@@ -156,7 +156,7 @@ class BioTCM::Databases::HGNC
   end
 
   # Current version of HGNC
-  VERSION = '0.2.1'
+  VERSION = '0.2.2'
   # Meta key for the download url of default HGNC table
   META_KEY = 'HGNC_DOWNLOAD_URL'
   # Identifers available in BioTCM::Databases::HGNC by now mapped to headline in HGNC table.
@@ -202,6 +202,16 @@ class BioTCM::Databases::HGNC
   #     hgnc.symbol2entrez["ASIC1"] # => ArgumentError
   create_converters
   # @!endgroup
+
+  # Return ambiguous symbols
+  #
+  # Symbol, who may refer to more than one gene, is listed here with the
+  # official symbols of those genes and deleted from @symbol2hgncid hash unless
+  # it's an official one.
+  # @return [Hash]
+  # @example
+  #   hgnc.ambiguous_symbol.keys & hgnc.symbol2hgncid.keys # are all official symbols
+  attr_reader :ambiguous_symbol
 
   # Make sure methods in String are working
   def self.ensure
@@ -335,12 +345,29 @@ class BioTCM::Databases::HGNC
       else # Array
         %{
           unless column[#{index}] == nil
-            column[#{index}].split(", ").each { |id| @#{identifer}2hgncid[id] = column[#{index_hgncid}] if @#{identifer}2hgncid[id].nil? }
+            column[#{index}].split(", ").each do |id|
+#{ identifer == 'symbol' ? %{
+              if @ambiguous_symbol[id]
+                @ambiguous_symbol[id] << @hgncid2symbol[column[#{index_hgncid}]]
+              elsif @symbol2hgncid[id].nil?
+                @symbol2hgncid[id] = column[#{index_hgncid}]
+              else
+                @ambiguous_symbol[id] = [@hgncid2symbol[column[#{index_hgncid}]]]
+                unless @hgncid2symbol[@symbol2hgncid[id]] == id
+                  @ambiguous_symbol[id] << @hgncid2symbol[@symbol2hgncid[id]]
+                  @symbol2hgncid.delete(id)
+                end
+              end
+} : %{
+              @#{identifer}2hgncid[id] = column[#{index_hgncid}] if @#{identifer}2hgncid[id].nil?
+} }
+            end
           end }
       end
     end.join
 
-    # Content
+    # Process the content
+    @ambiguous_symbol = {}
     eval %{fin.each do |line|\n column = line.chomp.split("\\t", -1)} + process_one_line + 'end'
     nil
   end
