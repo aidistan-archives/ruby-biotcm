@@ -4,8 +4,8 @@ require 'rake'
 Gem::Specification.new do |s|
   s.name        = 'biotcm'
   s.version     = BioTCM::VERSION
-  s.summary     = 'A base gem to build advanced applications on Bioinformatics.'
-  s.description = 'BioTCM is designed as a base gem to build advanced applications on Bioinformatics.'
+  s.summary     = 'A base gem to build advanced bioinformatics applications.'
+  s.description = 'BioTCM is designed as a base gem to build advanced bioinformatics applications.'
   s.license     = 'MIT'
 
   s.platform    = Gem::Platform::RUBY
