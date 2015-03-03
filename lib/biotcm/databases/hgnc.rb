@@ -221,7 +221,7 @@ class BioTCM::Databases::HGNC
     if file_path
       fail ArgumentError, "#{file_path} not exists" unless File.exist?(file_path)
     else
-      # Load the default HGNC table (may download if in need)
+      # Load the default HGNC table (may download it if in need)
       file_path = self.class.path_to('hgnc_set.txt')
       unless File.exist?(file_path)
         BioTCM.logger.info('HGNC') { 'Since default HGNC table not exists, trying to download one... (This may cost several minutes.)' }
@@ -313,10 +313,14 @@ class BioTCM::Databases::HGNC
       elsif name.is_a?(String)
         index2identifier[names.index(name)] = identifer if names.index(name)
       else
-        # For each index, whose value in index2identifier is a
-        #   Symbol,  will be mapped to single item
-        #   String,  will be mapped to list item
-        name.each_with_index { |n, i| index2identifier[names.index(n)] =  (i == 0 ? identifer : identifer.to_s) if names.index(n) }
+        name.each_with_index do |n, i|
+          if names.index(n)
+            # For each index, whose value in index2identifier is a
+            #   Symbol,  will be mapped to single item
+            #   String,  will be mapped to list item
+            index2identifier[names.index(n)] =  (i == 0 ? identifer : identifer.to_s)
+          end
+        end
       end
     end
 
@@ -337,7 +341,7 @@ class BioTCM::Databases::HGNC
     end.join
 
     # Content
-    eval %{fin.each do |line|\n column = line.chomp.split("\\t")} + process_one_line + 'end'
+    eval %{fin.each do |line|\n column = line.chomp.split("\\t", -1)} + process_one_line + 'end'
     nil
   end
   # Try to rescue a gene symbol
