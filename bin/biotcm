@@ -35,7 +35,7 @@ Available apps:
 elsif built_in_apps.include?(cmd)
   BioTCM::Apps.const_get(apps[cmd][1]).new.run
 elsif gem_apps.include?(cmd)
-  require 'biotcm-' + cmd
+  require apps[cmd][0]
   BioTCM::Apps.const_get(apps[cmd][1]).new.run
 else
   # Error message
