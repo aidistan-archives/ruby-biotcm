@@ -21,8 +21,8 @@ apps.reject! { |k, _| /^__/ =~ k }
 
 # Get lists of apps
 available_gems = `gem list biotcm- --no-versions`.split("\n")
-gem_apps = apps.keys.select { |k| available_gems.include? apps[k][0] }
-built_in_apps = apps.keys.select { |k| apps[k][0] == '(built-in)' }
+gem_apps = apps.keys.select { |k| available_gems.include? apps[k]['gem-name'] }
+built_in_apps = apps.keys.select { |k| apps[k]['gem-name'] == '(built-in)' }
 
 if (cmd = ARGV.shift).nil? || cmd == '-h'
   # Help message
@@ -33,10 +33,10 @@ Available apps:
   END_OF_DOC
   (built_in_apps + gem_apps).sort.each { |app| puts '  ' + app }
 elsif built_in_apps.include?(cmd)
-  BioTCM::Apps.const_get(apps[cmd][1]).new.run
+  BioTCM::Apps.const_get(apps[cmd]['class-name']).new.run
 elsif gem_apps.include?(cmd)
-  require apps[cmd][0]
-  BioTCM::Apps.const_get(apps[cmd][1]).new.run
+  require apps[cmd]['gem-name']
+  BioTCM::Apps.const_get(apps[cmd]['class-name']).new.run
 else
   # Error message
   puts "Sorry. BioTCM can't find app \"#{cmd}\"."

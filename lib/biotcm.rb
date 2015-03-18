@@ -29,9 +29,9 @@ module BioTCM
   # Default working directory
   DEFAULT_WORKING_DIRECTORY = File.expand_path('~/.gem/biotcm')
   # Default url of the meta file
-  DEFAULT_META_FILE = 'http://biotcm.github.io/biotcm/meta/meta.json'
+  DEFAULT_META_FILE = 'http://biotcm.github.io/meta/meta.json'
   # Default url of the apps file
-  DEFAULT_APPS_FILE = 'http://biotcm.github.io/biotcm/meta/apps.json'
+  DEFAULT_APPS_FILE = 'http://biotcm.github.io/meta/apps.json'
 
   module_function
 
