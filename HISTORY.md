@@ -1,7 +1,7 @@
 History
 ===============
 
-### By now 2015-03-18
+### v0.2.1 2015-03-18
 * Update the URLs of meta data
 * Bumped BioTCM::Databases::HGNC to v0.2.2
 	* Fixed the potential risk of ambiguous symbols
