@@ -32,6 +32,15 @@ Usage: biotcm app [OPTIONS]
 Available apps:
   END_OF_DOC
   (built_in_apps + gem_apps).sort.each { |app| puts '  ' + app }
+elsif cmd == '-v'
+  date = 'unknown'
+  File.open(File.expand_path('../../HISTORY.md', __FILE__)).each do |line|
+    next unless line =~ /^\#\#\#/
+    next unless (col = line.split(/\s/))[1] == "v#{BioTCM::VERSION}"
+    date = col[2]
+    break
+  end
+  puts "biotcm #{BioTCM::VERSION} (#{date})"
 elsif built_in_apps.include?(cmd)
   BioTCM::Apps.const_get(apps[cmd]['class-name']).new.run
 elsif gem_apps.include?(cmd)
