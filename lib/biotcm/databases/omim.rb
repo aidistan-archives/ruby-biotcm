@@ -10,7 +10,7 @@ class BioTCM::Databases::OMIM
   # (change it to your private key if in need)
   API_KEY = BioTCM.get_meta(META_KEY)
   # Url of the mim2gene.txt
-  MIM2GENE_URL = 'http://biotcm.github.io/biotcm/meta/OMIM/mim2gene.txt'
+  MIM2GENE_URL = 'http://biotcm.github.io/meta/OMIM/mim2gene.txt'
 
   # OMIM ID
   attr_reader :id
