@@ -1,12 +1,15 @@
 History
 ===============
 
+### v0.2.2 2015-03-18
+* Fix a bug in BioTCM::Databases::OMIM
+
 ### v0.2.1 2015-03-18
 * Update the URLs of meta data
-* Bumped BioTCM::Databases::HGNC to v0.2.2
-	* Fixed the potential risk of ambiguous symbols
-* Bumped BioTCM::Apps::GeneDetector to v0.1.1
-	* Pre-transformed the text to find more genes
+* Bump BioTCM::Databases::HGNC to v0.2.2
+	* Fix the potential risk of ambiguous symbols
+* Bump BioTCM::Apps::GeneDetector to v0.1.1
+	* Pre-transform the text to find more genes
 
 ### v0.2.0 2015-01-25
 * 2 major enhancements
