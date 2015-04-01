@@ -3,6 +3,7 @@ History
 
 ### By now 2015-04-01
 * Add -v option for bin/biotcm
+* Add BioTCM::Interfaces
 
 ### v0.2.2 2015-03-18
 * Fix a bug in BioTCM::Databases::OMIM

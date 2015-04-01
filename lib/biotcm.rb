@@ -20,6 +20,7 @@ module BioTCM
   # autoloaders
   autoload(:VERSION, 'biotcm/version')
   autoload(:Modules, 'biotcm/modules')
+  autoload(:Interfaces, 'biotcm/interfaces')
   autoload(:Databases, 'biotcm/databases')
   autoload(:Apps, 'biotcm/apps')
 
