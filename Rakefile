@@ -5,6 +5,7 @@ require 'bundler/setup'
 # test
 require 'rake/testtask'
 Rake::TestTask.new do |t|
+  t.description = 'Run tests (as :default)'
   t.libs << 'test'
   t.test_files = FileList['test/**/test_*.rb']
   # t.verbose = true
@@ -13,56 +14,39 @@ task default: :test
 
 # cop
 namespace :cop do
-  task :default do
-    system('bundle exec rubocop')
-  end
+  desc 'Run RuboCop and output in simple format'
   task :simple do
     system('bundle exec rubocop --format s')
   end
+  desc 'Run RuboCop and output in files format'
   task :files do
     system('bundle exec rubocop --format files')
   end
+  desc 'Run RuboCop and output in html format'
   task :html do
     system('bundle exec rubocop --format html -o rubocop.html')
     system('firefox rubocop.html')
   end
 end
-desc 'Run RuboCop to check styles'
-task cop: 'cop:default'
 
 # doc
 namespace :doc do
-  task :default do
+  desc 'Build YARD docs'
+  task :build do
     system('bundle exec yard')
   end
-  task :server do
-    system('bundle exec yard server -r')
+  desc 'Open YARD server (as :doc)'
+  task :serve do
+    system('bundle exec yard server --port 4000 --reload')
   end
 end
-desc 'Open YARD doc server'
-task doc: 'doc:server'
+task doc: 'doc:serve'
 
 # clean
 desc 'Clean the directory'
 task :clean do
   FileList['.yardoc', 'doc', '*.gem'].each do |f|
     FileUtils.rm_r(f) if File.exist?(f) || Dir.exist?(f)
-  end
-end
-
-# clear
-desc 'Clear log files and temporary files in BioTCM.wd'
-task :clear do
-  %w(log tmp).map { |d| BioTCM.path_to(d) }.each do |d|
-    FileUtils.rm_r(d) if Dir.exist?(d)
-  end
-end
-
-# clear all
-desc 'Clear all files in BioTCM.wd'
-task clear_all: :clear do
-  %w(data).map { |d| BioTCM.path_to(d) }.each do |d|
-    FileUtils.rm_r(d) if Dir.exist?(d)
   end
 end
 
