@@ -1,7 +1,7 @@
 History
 ===============
 
-### By now 2015-04-01
+### v0.2.3 2015-04-01
 * Add -v option for bin/biotcm
 * Add BioTCM::Interfaces
 * Add BioTCM::Layer
