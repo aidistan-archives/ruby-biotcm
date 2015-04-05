@@ -4,6 +4,9 @@ require 'biotcm/table'
 # files, developed under <b>"strict entry and tolerant exit"</b> philosophy.
 #
 # Please refer to the test for details.
+#
+# @deprecated
+#
 class Graph
   # Valide interaction types
   INTERACTION_TYPES = ['--', '->']
