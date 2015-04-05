@@ -324,12 +324,11 @@ class BioTCM::Databases::HGNC
         index2identifier[names.index(name)] = identifer if names.index(name)
       else
         name.each_with_index do |n, i|
-          if names.index(n)
-            # For each index, whose value in index2identifier is a
-            #   Symbol,  will be mapped to single item
-            #   String,  will be mapped to list item
-            index2identifier[names.index(n)] =  (i == 0 ? identifer : identifer.to_s)
-          end
+          next unless names.index(n)
+          # For each index, whose value in index2identifier is a
+          #   Symbol,  will be mapped to single item
+          #   String,  will be mapped to list item
+          index2identifier[names.index(n)] =  (i == 0 ? identifer : identifer.to_s)
         end
       end
     end
@@ -343,10 +342,12 @@ class BioTCM::Databases::HGNC
             @hgncid2#{identifer}[column[#{index_hgncid}]] = column[#{index}]
           end )
       else # Array
-        %{
+        %(
           unless column[#{index}] == nil
             column[#{index}].split(", ").each do |id|
-#{ identifer == 'symbol' ? %{
+#{
+  if identifer == 'symbol'
+    %(
               if @ambiguous_symbol[id]
                 @ambiguous_symbol[id] << @hgncid2symbol[column[#{index_hgncid}]]
               elsif @symbol2hgncid[id].nil?
@@ -358,11 +359,16 @@ class BioTCM::Databases::HGNC
                   @symbol2hgncid.delete(id)
                 end
               end
-} : %{
+    )
+  else
+    %(
               @#{identifer}2hgncid[id] = column[#{index_hgncid}] if @#{identifer}2hgncid[id].nil?
-} }
+    )
+  end
+}
             end
-          end }
+          end
+        )
       end
     end.join
 

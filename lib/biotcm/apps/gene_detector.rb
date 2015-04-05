@@ -18,7 +18,7 @@ class BioTCM::Apps::GeneDetector < BioTCM::Apps::App
     [/(\s*|-*)alpha/i, 'A'],
     [/(\s*|-*)beta/i, 'B'],
     [/(\s*|-*)gamma/i, 'G'],
-    [/(\s*|-*)kappa/i, 'K'],
+    [/(\s*|-*)kappa/i, 'K']
   ]
 
   # Initialize a gene detector

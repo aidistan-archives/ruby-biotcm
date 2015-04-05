@@ -84,10 +84,10 @@ class Table
   # @return [Table]
   def clone
     self.class.build(
-        primary_key: @primary_key,
-        row_keys: @row_keys.clone,
-        col_keys: @col_keys.clone,
-        content: @content.collect(&:clone)
+      primary_key: @primary_key,
+      row_keys: @row_keys.clone,
+      col_keys: @col_keys.clone,
+      content: @content.collect(&:clone)
     )
   end
   # Access an element
@@ -260,10 +260,10 @@ class Table
 
     # Create a new table
     self.class.build(
-        primary_key: primary_key,
-        row_keys: row_keys,
-        col_keys: col_keys,
-        content: content
+      primary_key: primary_key,
+      row_keys: row_keys,
+      col_keys: col_keys,
+      content: content
     )
   end
   # Merge with another table
@@ -317,10 +317,10 @@ class Table
 
     # Create a new table
     self.class.build(
-        primary_key: primary_key,
-        row_keys: row_keys,
-        col_keys: col_keys,
-        content: content
+      primary_key: primary_key,
+      row_keys: row_keys,
+      col_keys: col_keys,
+      content: content
     )
   end
   # @private
@@ -377,10 +377,10 @@ class String
 
     # Build a table to return
     Table.build(
-        primary_key: primary_key,
-        row_keys: row_keys,
-        col_keys: col_keys,
-        content: content
+      primary_key: primary_key,
+      row_keys: row_keys,
+      col_keys: col_keys,
+      content: content
     )
   end
 end

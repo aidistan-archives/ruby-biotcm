@@ -1,9 +1,7 @@
 module BioTCM
   module Interfaces
-
     # Interface to MATLAB
     module Matlab
-
       include Interface
 
       # Run MATLAB script
@@ -28,7 +26,6 @@ module BioTCM
         new_script.close
         run_matlab_script(script_path, matlab_path: matlab_path)
       end
-
     end
   end
 end

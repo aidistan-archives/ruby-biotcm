@@ -1,9 +1,7 @@
 module BioTCM
   module Interfaces
-
     # Interface to R
     module R
-
       include Interface
 
       # Run R script
@@ -18,7 +16,6 @@ module BioTCM
         fail ArgumentError, 'A valid R script template required' unless /\.R\.erb$/i =~ template_path
         run_r_script(render_template(template_path, context).path, rscript_path: rscript_path)
       end
-
     end
   end
 end

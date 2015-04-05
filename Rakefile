@@ -24,8 +24,8 @@ namespace :cop do
   end
   desc 'Run RuboCop and output in html format'
   task :html do
-    system('bundle exec rubocop --format html -o rubocop.html')
-    system('firefox rubocop.html')
+    system('bundle exec rubocop --format html -o doc/rubocop.html')
+    system('firefox doc/rubocop.html')
   end
 end
 
