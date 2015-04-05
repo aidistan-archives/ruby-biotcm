@@ -1,6 +1,9 @@
 # Ruby
 *.gem
 
-# YARD artifacts
+# Bundler
+Gemfile.lock
+
+# YARD
 .yardoc
 doc/
