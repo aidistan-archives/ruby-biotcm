@@ -45,6 +45,7 @@ module BioTCM
   def init
     require 'biotcm/logger'
     require 'biotcm/table'
+    require 'biotcm/layer'
     require 'biotcm/graph'
     BioTCM.wd = BioTCM::DEFAULT_WORKING_DIRECTORY
     nil
