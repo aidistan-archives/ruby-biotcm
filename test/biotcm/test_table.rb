@@ -103,6 +103,9 @@ describe Table do
       assert_equal('-', @tab.ele('4', 'E'))
       @tab.ele('5', 'F', '-')
       assert_equal('-', @tab.ele('5', 'F'))
+
+      @tab['5', 'F'] = '='
+      assert_equal('=', @tab['5', 'F'])
     end
 
     it 'must return rows' do
@@ -120,6 +123,10 @@ describe Table do
       @tab.row('4', ['-', '', '-'])
       assert_equal('-', @tab.row('4')['A'])
       assert_equal('',  @tab.row('4')['B'])
+
+      @tab['4', nil] = ['', '=', '']
+      assert_equal('',  @tab['4', nil]['A'])
+      assert_equal('=', @tab['4', nil]['B'])
     end
 
     it 'must return columns' do
@@ -137,6 +144,10 @@ describe Table do
       @tab.col('D', ['-', '', '-'])
       assert_equal('-', @tab.col('D')['1'])
       assert_equal('',  @tab.col('D')['2'])
+
+      @tab[nil, 'D'] = ['', '=', '']
+      assert_equal('',  @tab[nil, 'D']['1'])
+      assert_equal('=', @tab[nil, 'D']['2'])
     end
 
     it 'must return selected rows and columns as a Table' do

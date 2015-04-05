@@ -4,19 +4,23 @@
 #
 # For more details, please refer to the test.
 class Table
-  # Primary key used in this table
-  attr_accessor :primary_key
+  # Version
+  VERSION = '0.3.0'
 
+  # Primary key
+  attr_accessor :primary_key
+  #
   def primary_key=(val)
     fail ArgumentError, 'Not a String' unless val.is_a?(String)
     @primary_key = val
   end
   # Keys of rows
   attr_accessor :row_keys
+  #
   def row_keys
     @row_keys.keys
   end
-
+  #
   def row_keys=(val)
     fail ArgumentError, 'Illegal agrument type' unless val.is_a?(Array)
     # Make size right
@@ -34,10 +38,11 @@ class Table
   end
   # Keys of columns
   attr_accessor :col_keys
+  #
   def col_keys
     @col_keys.keys
   end
-
+  #
   def col_keys=(val)
     fail ArgumentError, 'Illegal agrument type' unless val.is_a?(Array)
     # Make size right
@@ -45,7 +50,9 @@ class Table
     val[@col_keys.size - 1] = nil if val.size < @col_keys.size
     # Replace
     @col_keys = {}
-    val.each_with_index { |key, index| key ? @col_keys[key] = index : @col_keys["column_#{index + 1}"] = index }
+    val.each_with_index do |k, i|
+      @col_keys[k ? k : "column_#{i + 1}"] = i
+    end
   end
 
   # @private
@@ -89,6 +96,36 @@ class Table
       col_keys: @col_keys.clone,
       content: @content.collect(&:clone)
     )
+  end
+  # Getter for table content
+  # @return [String, nil]
+  # @example
+  #   tab[r, nil] # <=> tab.row(c)
+  #   tab[nil, c] # <=> tab.col(c)
+  #   tab[r, c]   # <=> tab.ele(r, c)
+  def [](row, col)
+    if row && col
+      ele(row,col)
+    elsif row && col.nil?
+      row(row)
+    elsif row.nil? && col
+      col(col)
+    else
+      nil
+    end
+  end
+  # Setter for table content
+  # @return [String, nil]
+  def []=(row, col, val)
+    if row && col
+      ele(row,col, val)
+    elsif row && col.nil?
+      row(row, val)
+    elsif row.nil? && col
+      col(col, val)
+    else
+      nil
+    end
   end
   # Access an element
   # @overload ele(row, col)
