@@ -79,7 +79,7 @@ class BioTCM::Databases::KEGG
     case pathway_id
     when PATTERNS[:pathway][:official]    then pathway_id
     when PATTERNS[:pathway][:alternative] then organism + pathway_id
-    else nil
+    else return nil
     end
   end
   # Check if pathway_id is a valid KEGG pathway id

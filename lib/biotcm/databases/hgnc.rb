@@ -205,9 +205,9 @@ class BioTCM::Databases::HGNC
 
   # Return ambiguous symbols
   #
-  # Symbol, who may refer to more than one gene, is listed here with the
-  # official symbols of those genes and deleted from @symbol2hgncid hash unless
-  # it's an official one.
+  # Symbol who may refer to more than one gene is removed from the dictionary
+  # but listed here paired with the corresponding official symbol, unless it's
+  # an official one.
   # @return [Hash]
   # @example
   #   hgnc.ambiguous_symbol.keys & hgnc.symbol2hgncid.keys # are all official symbols

@@ -1,41 +1,49 @@
-Metrics/LineLength:
+Lint/Eval:
   Enabled: false
-Metrics/BlockNesting:
-  Max: 5
-Metrics/AbcSize:
-  Enabled: false
-Metrics/MethodLength:
-  Enabled: false
+
 Metrics/ClassLength:
   Enabled: false
-Metrics/CyclomaticComplexity:
+
+# When define classes and modules, we use
+#   nested style for those who are independent from BioTCM
+#   compact style for  those who are not
+Style/ClassAndModuleChildren:
   Enabled: false
-Metrics/PerceivedComplexity:
+
+# Example usage:
+#
+#   def print_msg(index = nil)
+#     msg = messages[index] or return nil
+#     ...
+#   end
+Style/AndOr:
   Enabled: false
 
 Style/ClassVars:
   Enabled: false
-Style/TrivialAccessors:
-  ExactNameMatch: true
-Style/SpaceAfterSemicolon:
-  Enabled: false
-# It's OK to use 'and' and 'or'.
-#
-# Example:
-#   value = hash[key] or return false
-Style/AndOr:
-  Enabled: false
-# We define modules/classes in a compact style. Nested definitions only used for
-# those class that could be loaded seperately from BioTCM
-Style/ClassAndModuleChildren:
-  Enabled: false
-# We handle documentation with YARD
+
 Style/Documentation:
   Enabled: false
-# We may return nil in else
-Style/EmptyElse:
-  Enabled: false
 
-# We use eval for dynamic programming
-Lint/Eval:
-  Enabled: false
+Style/TrivialAccessors:
+  ExactNameMatch: true
+
+# TOFIX
+
+Metrics/MethodLength:
+  Max: 72
+
+Metrics/LineLength:
+  Max: 405
+
+Metrics/BlockNesting:
+  Max: 4
+
+Metrics/AbcSize:
+  Max: 117
+
+Metrics/CyclomaticComplexity:
+  Max: 17
+
+Metrics/PerceivedComplexity:
+  Max: 17
