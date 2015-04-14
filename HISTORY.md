@@ -1,6 +1,10 @@
 History
 ===============
 
+### By now 2015-04-14
+* Bump BioTCM::Layer to v0.2.0
+	* Change path conventions in BioTCM::Layer
+
 ### v0.2.3 2015-04-01
 * Add -v option for bin/biotcm
 * Add BioTCM::Interfaces

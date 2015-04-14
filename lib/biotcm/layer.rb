@@ -9,22 +9,22 @@ module BioTCM
   # Load a layer
   #
   #   layer = BioTCM::Layer.load('co-occurrence')
-  #   #   co-occurrence/node.tab
-  #   #   co-occurrence/edge.tab
+  #   #   co-occurrence/nodes.tab
+  #   #   co-occurrence/edges.tab
   #
   #   layer = BioTCM::Layer.load('co-occurrence', prefix: '[20150405]')
-  #   #   co-occurrence/[20150405]node.tab
-  #   #   co-occurrence/[20150405]edge.tab
+  #   #   co-occurrence/[20150405]nodes.tab
+  #   #   co-occurrence/[20150405]edges.tab
   #
   # Save the layer
   #
   #   layer.save('co-occurrence', prefix: '[20150405]')
-  #   #   co-occurrence/[20150405]node.tab
-  #   #   co-occurrence/[20150405]edge.tab
+  #   #   co-occurrence/[20150405]nodes.tab
+  #   #   co-occurrence/[20150405]edges.tab
   #
   class Layer
     # Version
-    VERSION = '0.1.0'
+    VERSION = '0.2.0'
 
     # Table of nodes
     # @return [Table]
@@ -46,10 +46,11 @@ module BioTCM
     )
       # Path convention
       if path
-        edge_path = File.expand_path(prefix + 'edge.tab', path)
-        node_path = File.expand_path(prefix + 'node.tab', path)
+        edge_path = File.expand_path(prefix + 'edges.tab', path)
+        node_path = File.expand_path(prefix + 'nodes.tab', path)
       end
       fin = File.open(edge_path)
+
       # Headline
       col = fin.gets.chomp.split("\t")
       unless (i_src = col.index(colname[:source]))
@@ -68,6 +69,7 @@ module BioTCM
         i_typ = nil
       end
       col.compact!
+
       # Initialize members
       node_tab = Table.new
       edge_tab = Table.new(primary_key: [colname[:source], colname[:interaction], colname[:target]].compact.join("\t"), col_keys: col)
@@ -79,9 +81,11 @@ module BioTCM
         src = col[i_src]
         tgt = col[i_tgt]
         typ = i_typ ? col[i_typ] : nil
+
         # Insert nodes
         node_tab.row(src, []) unless node_in_table[src]
         node_tab.row(tgt, []) unless node_in_table[tgt]
+
         # Insert edge
         col[i_src] = col[i_tgt] = nil
         col[i_typ] = nil if i_typ
@@ -89,6 +93,7 @@ module BioTCM
         fail ArgumentError, "Row size inconsistent in line #{fin.lineno + 2}" unless col.size == col_size
         edge_tab.row([src, typ, tgt].compact.join("\t"), col)
       end
+
       # Load node_file
       if node_path
         tab = Table.load(node_path)
@@ -101,14 +106,14 @@ module BioTCM
 
     #
     def initialize(edge_tab: nil, node_tab: nil)
-      @edge_tab = edge_tab || Table.new(primary_key: 'Edge')
+      @edge_tab = edge_tab || Table.new(primary_key: "Source\tTarget")
       @node_tab = node_tab || Table.new(primary_key: 'Node')
     end
     # Save the layer to disk
     def save(path, prefix = '')
       FileUtils.mkdir_p(path)
-      @edge_tab.save(File.expand_path(prefix + 'edge.tab', path))
-      @node_tab.save(File.expand_path(prefix + 'node.tab', path))
+      @edge_tab.save(File.expand_path(prefix + 'edges.tab', path))
+      @node_tab.save(File.expand_path(prefix + 'nodes.tab', path))
     end
   end
 end
