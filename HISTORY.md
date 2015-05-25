@@ -1,9 +1,11 @@
 History
 ===============
 
-### By now 2015-04-14
-* Bump BioTCM::Layer to v0.2.0
-	* Change path conventions in BioTCM::Layer
+### By now 2015-05-26
+- Bump BioTCM::Layer to v0.2.0
+	- Change path conventions in BioTCM::Layer
+- Bump BioTCM::Table to
+	- Relocate to a place under BioTCM namesapce
 
 ### v0.2.3 2015-04-01
 * Add -v option for bin/biotcm

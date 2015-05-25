@@ -27,10 +27,10 @@ module BioTCM
     VERSION = '0.2.0'
 
     # Table of nodes
-    # @return [Table]
+    # @return [BioTCM::Table]
     attr_reader :node_tab
     # Table of edges
-    # @return [Table]
+    # @return [BioTCM::Table]
     attr_reader :edge_tab
 
     # Load a layer from disk
@@ -71,8 +71,8 @@ module BioTCM
       col.compact!
 
       # Initialize members
-      node_tab = Table.new
-      edge_tab = Table.new(primary_key: [colname[:source], colname[:interaction], colname[:target]].compact.join("\t"), col_keys: col)
+      node_tab = BioTCM::Table.new
+      edge_tab = BioTCM::Table.new(primary_key: [colname[:source], colname[:interaction], colname[:target]].compact.join("\t"), col_keys: col)
       # Load edge_file
       node_in_table = node_tab.instance_variable_get(:@row_keys)
       col_size = edge_tab.col_keys.size
@@ -96,7 +96,7 @@ module BioTCM
 
       # Load node_file
       if node_path
-        tab = Table.load(node_path)
+        tab = BioTCM::Table.load(node_path)
         node_tab.primary_key = tab.primary_key
         node_tab = node_tab.merge(tab)
       end
@@ -106,8 +106,8 @@ module BioTCM
 
     #
     def initialize(edge_tab: nil, node_tab: nil)
-      @edge_tab = edge_tab || Table.new(primary_key: "Source\tTarget")
-      @node_tab = node_tab || Table.new(primary_key: 'Node')
+      @edge_tab = edge_tab || BioTCM::Table.new(primary_key: "Source\tTarget")
+      @node_tab = node_tab || BioTCM::Table.new(primary_key: 'Node')
     end
     # Save the layer to disk
     def save(path, prefix = '')

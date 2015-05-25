@@ -4,7 +4,7 @@ require 'biotcm'
 require 'json'
 
 # Get the list of all apps
-apps_file = BioTCM.path_to('data/apps.json', secure:true)
+apps_file = BioTCM.path_to('data/apps.json', secure: true)
 apps = JSON.parse(
   begin
     # Try to use the latest

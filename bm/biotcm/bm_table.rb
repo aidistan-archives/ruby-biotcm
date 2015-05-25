@@ -10,7 +10,7 @@ MyBenchmark.group 'Table initialization' do |b|
     fin = File.open('bm_table/table_1.txt')
     # Fill column names
     col_names = fin.gets.chomp.split("\t")
-    tab = Table.new(primary_key: col_names.shift, col_keys: col_names)
+    tab = BioTCM::Table.new(primary_key: col_names.shift, col_keys: col_names)
     # Insert rows
     fin.each do |line|
       col = line.chomp.split("\t", -1)
@@ -23,7 +23,7 @@ MyBenchmark.group 'Table initialization' do |b|
     fin = File.open('bm_table/table_1.txt')
     # Fill column names
     col_names = fin.gets.chomp.split("\t")
-    tab = Table.new(primary_key: col_names.shift, col_keys: col_names)
+    tab = BioTCM::Table.new(primary_key: col_names.shift, col_keys: col_names)
     # Insert rows
     fin.each do |line|
       col = line.chomp.split("\t", -1)
@@ -32,8 +32,8 @@ MyBenchmark.group 'Table initialization' do |b|
   end
 end
 
-@tab1 = Table.load('bm_table/table_1.txt')
-@tab2 = Table.load('bm_table/table_2.txt')
+@tab1 = BioTCM::Table.load('bm_table/table_1.txt')
+@tab2 = BioTCM::Table.load('bm_table/table_2.txt')
 
 MyBenchmark.group 'Table operation' do |b|
   b.report('merge') do

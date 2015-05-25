@@ -1,20 +1,20 @@
 require_relative '../test_helper'
 require 'tempfile'
 
-describe Table do
+describe BioTCM::Table do
   it 'has three ways to get instances' do
     # Table.build (used internally)
-    assert_instance_of(Table, Table.build)
+    assert_instance_of(BioTCM::Table, BioTCM::Table.build)
 
     # Table.load
     file = Tempfile.new('test')
     file.write "ID\tA\tB\n1\tC++\tgood\n2\tRuby\tbetter\n"
     file.flush
-    assert_instance_of(Table, Table.load(file.path))
+    assert_instance_of(BioTCM::Table, BioTCM::Table.load(file.path))
     file.close!
 
     # Table#new
-    @tab = Table.new(primary_key: 'id', row_keys: %w(1 2), col_keys: %w(A B))
+    @tab = BioTCM::Table.new(primary_key: 'id', row_keys: %w(1 2), col_keys: %w(A B))
     assert_equal('id', @tab.primary_key)
   end
 
@@ -26,21 +26,21 @@ describe Table do
       file = Tempfile.new('test')
       file.write "ID\tA\tA\n1\tC++\tgood\n2\tRuby\tbetter\n"
       file.flush
-      assert_raises(ArgumentError) { Table.load(file.path) }
+      assert_raises(ArgumentError) { BioTCM::Table.load(file.path) }
       file.close!
 
       # Duplicated primary keys
       file = Tempfile.new('test')
       file.write "ID\tA\tB\n1\tC++\tgood\n1\tRuby\tbetter\n"
       file.flush
-      assert_raises(ArgumentError) { Table.load(file.path) }
+      assert_raises(ArgumentError) { BioTCM::Table.load(file.path) }
       file.close!
 
       # Inconsistent-size row
       file = Tempfile.new('test')
       file.write "ID\tA\tA\n1\tC++\tgood\n2\tRuby\n"
       file.flush
-      assert_raises(ArgumentError) { Table.load(file.path) }
+      assert_raises(ArgumentError) { BioTCM::Table.load(file.path) }
       file.close!
     end
   end
@@ -189,7 +189,7 @@ describe Table do
 
       tab = @tab.merge("ID\tB\tD\n1\tab\t1\n4\tuc\t4".to_table)
       refute_same(@tab, tab)
-      assert_instance_of(Table, tab)
+      assert_instance_of(BioTCM::Table, tab)
       assert_equal('', tab.ele('4', 'A'))
       assert_equal('', tab.ele('2', 'D'))
       assert_equal('6', tab.ele('3', 'B'))

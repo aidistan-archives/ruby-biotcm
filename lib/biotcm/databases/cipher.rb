@@ -103,7 +103,7 @@ class BioTCM::Databases::Cipher
     @table.keys
   end
   # Get the table of omim_id
-  # @return [Table] Gene symbol as the primary key
+  # @return [BioTCM::Table] Gene symbol as the primary key
   # @example
   #   cipher.table("137280").to_s
   #   # =>

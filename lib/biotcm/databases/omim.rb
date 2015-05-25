@@ -51,7 +51,7 @@ class BioTCM::Databases::OMIM
       fout.puts BioTCM.get(MIM2GENE_URL)
       fout.close
     end
-    @@entry_tab = Table.load(file_path) unless self.class.class_variable_defined?(:@@entry_tab)
+    @@entry_tab = BioTCM::Table.load(file_path) unless self.class.class_variable_defined?(:@@entry_tab)
     # Check
     fail ArgumentError, 'OMIM number not exists' unless (@id = @@entry_tab.row(omim_id.to_s))
     # Get the hash

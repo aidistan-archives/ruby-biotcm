@@ -49,9 +49,9 @@ class Graph
     col.compact!
 
     # Initialize members
-    @node_table = Table.new
+    @node_table = BioTCM::Table.new
     @node_table.primary_key = 'Node'
-    @edge_table = Table.new
+    @edge_table = BioTCM::Table.new
     @edge_table.primary_key = 'Edge'
     col.each { |c| @edge_table.col(c, {}) }
 
@@ -78,7 +78,7 @@ class Graph
 
     # Load node_file
     if node_file
-      node_table = Table.new(node_file)
+      node_table = BioTCM::Table.new(node_file)
       @node_table.primary_key = node_table.primary_key
       @node_table = @node_table.merge(node_table)
     end
