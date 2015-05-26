@@ -6,6 +6,7 @@ History
 	- Change path conventions in BioTCM::Layer
 - Bump BioTCM::Table to
 	- Relocate to a place under BioTCM namesapce
+- Remove Graph
 
 ### v0.2.3 2015-04-01
 * Add -v option for bin/biotcm
