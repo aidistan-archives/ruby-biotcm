@@ -17,7 +17,7 @@ apps = JSON.parse(
     File.read(apps_file)
   end
 )
-apps.reject! { |k, _| /^__/ =~ k }
+apps.reject! { |k| /^__/ =~ k }
 
 # Get lists of apps
 available_gems = `gem list biotcm- --no-versions`.split("\n")
