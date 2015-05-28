@@ -12,8 +12,11 @@ module BioTCM
     attr_accessor :primary_key
     #
     def primary_key=(val)
-      fail ArgumentError, 'Not a String' unless val.is_a?(String)
-      @primary_key = val
+      if val.respond_to?(:to_s)
+        @primary_key = val.to_s
+      else
+        fail ArgumentError, 'Non-string assigned to the primary key'
+      end
     end
     # Keys of rows
     attr_accessor :row_keys
@@ -24,18 +27,8 @@ module BioTCM
     #
     def row_keys=(val)
       fail ArgumentError, 'Illegal agrument type' unless val.is_a?(Array)
-      # Make size right
-      val.take(@row_keys.size)
-      val[@row_keys.size - 1] = nil if val.size < @row_keys.size
-      # Replace
-      @row_keys = {}
-      val.each_with_index do |key, index|
-        if key
-          @row_keys[key] = index
-        else
-          @row_keys["column_#{index + 1}"] = index
-        end
-      end
+      fail ArgumentError, 'Unmatched size' if val.size < @row_keys.size
+      @row_keys = val.map.with_index { |v, i| [v, i] }.to_h
     end
     # Keys of columns
     attr_accessor :col_keys
@@ -46,32 +39,44 @@ module BioTCM
     #
     def col_keys=(val)
       fail ArgumentError, 'Illegal agrument type' unless val.is_a?(Array)
-      # Make size right
-      val.take(@col_keys.size)
-      val[@col_keys.size - 1] = nil if val.size < @col_keys.size
-      # Replace
-      @col_keys = {}
-      val.each_with_index do |k, i|
-        @col_keys[k ? k : "column_#{i + 1}"] = i
+      fail ArgumentError, 'Unmatched size' if val.size < @col_keys.size
+      @col_keys = val.map.with_index { |v, i| [v, i] }.to_h
+    end
+    # Comments
+    attr_accessor :comments
+    #
+    def comments=(val)
+      if val.respond_to?(:collect)
+        @comments = val.collect do |v|
+          if v.respond_to?(:to_s)
+            v.to_s
+          else
+            fail ArgumentError, 'Illegal agrument type'
+          end
+        end
+      elsif val.respond_to?(:to_s)
+        @comments = [val.to_s]
       end
     end
 
     # @private
     # Factory method
     # @return [Table]
-    def self.build(primary_key:'_id', row_keys:{}, col_keys:{}, content:[])
+    def self.build(primary_key: '_id', row_keys: {}, col_keys: {}, content: [], comments: [])
       @tab = new
       @tab.instance_variable_set(:@primary_key, primary_key)
       @tab.instance_variable_set(:@row_keys, row_keys)
       @tab.instance_variable_set(:@col_keys, col_keys)
       @tab.instance_variable_set(:@content, content)
+      @tab.instance_variable_set(:@comments, comments)
       @tab
     end
     # Load a table from a file
     # @param filepath [String]
     # @param encoding [String]
     # @param seperator [String]
-    def self.load(filepath, encoding:Encoding.default_external, seperator:"\t")
+    # @return [Table]
+    def self.load(filepath, encoding: Encoding.default_external, seperator: "\t")
       fail ArgumentError, 'Illegal argument type for Table.load' unless filepath.is_a?(String)
       File.open(filepath, "r:#{encoding}").read.to_table(seperator: seperator)
     end
@@ -80,13 +85,12 @@ module BioTCM
     # @param primary_key [String]
     # @param row_keys [Array]
     # @param col_keys [Array]
-    def initialize(primary_key:'_id', row_keys:[], col_keys:[])
+    def initialize(primary_key: '_id', row_keys: [], col_keys: [], comments: [])
       @primary_key = primary_key
-      @row_keys = {}
-      @col_keys = {}
-      @content = []
-      row_keys.each_with_index { |k, i| @row_keys[k] = i }
-      col_keys.each_with_index { |k, i| @col_keys[k] = i }
+      @row_keys = row_keys.map.with_index { |r, ri| [r, ri] }.to_h
+      @col_keys = col_keys.map.with_index { |c, ci| [c, ci] }.to_h
+      @content = [[''] * col_keys.size] * row_keys.size
+      @comments = comments
     end
     # Clone this table
     # @return [Table]
@@ -95,34 +99,9 @@ module BioTCM
         primary_key: @primary_key,
         row_keys: @row_keys.clone,
         col_keys: @col_keys.clone,
-        content: @content.collect(&:clone)
+        content: @content.collect(&:clone),
+        comments: @comments.clone
       )
-    end
-    # Getter for table content
-    # @return [String, nil]
-    # @example
-    #   tab[r, nil] # <=> tab.row(c)
-    #   tab[nil, c] # <=> tab.col(c)
-    #   tab[r, c]   # <=> tab.ele(r, c)
-    def [](row, col)
-      if row && col
-        ele(row, col)
-      elsif row && col.nil?
-        row(row)
-      elsif row.nil? && col
-        col(col)
-      end
-    end
-    # Setter for table content
-    # @return [String, nil]
-    def []=(row, col, val)
-      if row && col
-        ele(row, col, val)
-      elsif row && col.nil?
-        row(row, val)
-      elsif row.nil? && col
-        col(col, val)
-      end
     end
     # Access an element
     # @overload ele(row, col)
@@ -139,25 +118,25 @@ module BioTCM
         row = @row_keys[row]
         col = @col_keys[col]
         return row && col ? @content[row][col] : nil
-      else
-        unless row.is_a?(String) && col.is_a?(String) && val.is_a?(String)
-          fail ArgumentError, 'Illegal argument type'
-        end
-
-        unless @row_keys[row]
-          @row_keys[row] = @row_keys.size
-          @content << ([''] * @col_keys.size)
-        end
-
-        unless @col_keys[col]
-          @col_keys[col] = @col_keys.size
-          @content.each { |arr| arr << '' }
-        end
-
-        row = @row_keys[row]
-        col = @col_keys[col]
-        @content[row][col] = val
       end
+
+      unless row.is_a?(String) && col.is_a?(String) && val.respond_to?(:to_s)
+        fail ArgumentError, 'Illegal argument type'
+      end
+
+      unless @row_keys[row]
+        @row_keys[row] = @row_keys.size
+        @content << ([''] * @col_keys.size)
+      end
+
+      unless @col_keys[col]
+        @col_keys[col] = @col_keys.size
+        @content.each { |arr| arr << '' }
+      end
+
+      row = @row_keys[row]
+      col = @col_keys[col]
+      @content[row][col] = val.to_s
 
       self
     end
@@ -173,9 +152,7 @@ module BioTCM
       # Getter
       if val.nil?
         row = @row_keys[row] or return nil
-        rtn = {}
-        @col_keys.each { |n, i| rtn[n] = @content[row][i] }
-        return rtn
+        return @col_keys.map { |c, ci| [c, @content[row][ci]] }.to_h
       end
 
       # Setter
@@ -221,9 +198,7 @@ module BioTCM
       # Getter
       if val.nil?
         col = @col_keys[col] or return nil
-        rtn = {}
-        @row_keys.each { |n, i| rtn[n] = @content[i][col] }
-        return rtn
+        return @row_keys.map { |r, ri| [r, @content[ri][col]] }.to_h
       end
 
       # Setter
@@ -256,6 +231,26 @@ module BioTCM
       end
 
       self
+    end
+    # Iterate by row
+    def each_row
+      if block_given?
+        @row_keys.each_key { |r| yield(r, row(r)) }
+      else
+        Enumerator.new do |y|
+          @row_keys.each_key { |r| y << [r, row(r)] }
+        end
+      end
+    end
+    # Iterate by col
+    def each_col
+      if block_given?
+        @col_keys.each_key { |c| yield(c, col(c)) }
+      else
+        Enumerator.new do |y|
+          @col_keys.each_key { |c| y << [c, col(c)] }
+        end
+      end
     end
     # Select row(s) to build a new table
     # @return [Table]
@@ -297,7 +292,8 @@ module BioTCM
         primary_key: primary_key,
         row_keys: row_keys,
         col_keys: col_keys,
-        content: content
+        content: content,
+        comments: comments
       )
     end
     # Merge with another table
@@ -354,7 +350,8 @@ module BioTCM
         primary_key: primary_key,
         row_keys: row_keys,
         col_keys: col_keys,
-        content: content
+        content: content,
+        comments: comments + tab.comments
       )
     end
     # @private
@@ -368,12 +365,19 @@ module BioTCM
           @row_keys.keys.sort_by { |k| @row_keys[k] }.inspect
         } content=#{
           @content.inspect
+        } comments=#{
+          @comments.join.inspect
         }>"
     end
     # @private
     # Convert to {String}
     def to_s
-      @row_keys.keys.zip(@content).unshift([@primary_key, @col_keys.keys]).collect { |a| a.join("\t") }.join("\n")
+      (
+        @comments.collect { |line| '# ' + line } +
+        @row_keys.keys.zip(@content)
+          .unshift([@primary_key, @col_keys.keys])
+          .collect { |a| a.join("\t") }
+      ).join("\n")
     end
     # Print in a file
     # @param filepath [String]
@@ -386,10 +390,14 @@ module BioTCM
 end
 
 class String
-  # Create a {Table} based on a String or fill the given table
+  # Create a {BioTCM::Table} based on a String or fill the given table
   # @param seperator [String]
   def to_table(seperator:"\t")
     stuff = split(/\r\n|\n/)
+
+    # Comments
+    comments = []
+    comments << stuff.shift.gsub(/^\# /, '') while(stuff[0] =~ /\# /)
 
     # Headline
     col_keys = stuff.shift.split(seperator)
@@ -415,7 +423,8 @@ class String
       primary_key: primary_key,
       row_keys: row_keys,
       col_keys: col_keys,
-      content: content
+      content: content,
+      comments: comments
     )
   end
 end

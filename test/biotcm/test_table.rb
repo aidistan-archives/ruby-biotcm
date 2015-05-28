@@ -16,6 +16,7 @@ describe BioTCM::Table do
     # Table#new
     @tab = BioTCM::Table.new(primary_key: 'id', row_keys: %w(1 2), col_keys: %w(A B))
     assert_equal('id', @tab.primary_key)
+    assert_equal('', @tab.ele('1', 'A'))
   end
 
   # Strict entry
@@ -49,7 +50,13 @@ describe BioTCM::Table do
 
   describe 'when method called' do
     before do
-      @tab = "ID\tA\tB\tC\n1\tab\t1\t0.8\n2\tde\t3\t0.2\n3\tfk\t6\t1.9".to_table
+      @tab = "\# Comments\nID\tA\tB\tC\n1\tab\t1\t0.8\n2\tde\t3\t0.2\n3\tfk\t6\t1.9".to_table
+    end
+
+    it 'must return comments' do
+      assert_equal(['Comments'], @tab.comments)
+      @tab.comments = []
+      assert_equal([], @tab.comments)
     end
 
     it 'must return primary key' do
@@ -84,7 +91,7 @@ describe BioTCM::Table do
     end
 
     it 'must print itself' do
-      tab_string = "ID\tA\tB\tC\n1\tab\t1\t0.8\n2\tde\t3\t0.2\n3\tfk\t6\t1.9"
+      tab_string = "\# Comments\nID\tA\tB\tC\n1\tab\t1\t0.8\n2\tde\t3\t0.2\n3\tfk\t6\t1.9"
       tab = tab_string.gsub("\t", ',').to_table(seperator: ',')
       assert_equal(tab_string, tab.to_s)
     end
@@ -103,9 +110,6 @@ describe BioTCM::Table do
       assert_equal('-', @tab.ele('4', 'E'))
       @tab.ele('5', 'F', '-')
       assert_equal('-', @tab.ele('5', 'F'))
-
-      @tab['5', 'F'] = '='
-      assert_equal('=', @tab['5', 'F'])
     end
 
     it 'must return rows' do
@@ -123,10 +127,6 @@ describe BioTCM::Table do
       @tab.row('4', ['-', '', '-'])
       assert_equal('-', @tab.row('4')['A'])
       assert_equal('',  @tab.row('4')['B'])
-
-      @tab['4', nil] = ['', '=', '']
-      assert_equal('',  @tab['4', nil]['A'])
-      assert_equal('=', @tab['4', nil]['B'])
     end
 
     it 'must return columns' do
@@ -144,10 +144,6 @@ describe BioTCM::Table do
       @tab.col('D', ['-', '', '-'])
       assert_equal('-', @tab.col('D')['1'])
       assert_equal('',  @tab.col('D')['2'])
-
-      @tab[nil, 'D'] = ['', '=', '']
-      assert_equal('',  @tab[nil, 'D']['1'])
-      assert_equal('=', @tab[nil, 'D']['2'])
     end
 
     it 'must return selected rows and columns as a Table' do
