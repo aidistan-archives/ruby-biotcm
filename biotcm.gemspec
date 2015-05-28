@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
 
   s.platform    = Gem::Platform::RUBY
-  s.required_ruby_version = '>= 2.0.0'
+  s.required_ruby_version = '>= 2.1.5'
 
   s.authors     = ['Aidi Stan', 'Ming Bai']
   s.email       = ['aidistan@live.cn', 'nmeter@126.com']
