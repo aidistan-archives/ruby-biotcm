@@ -71,9 +71,15 @@ def bump_version(which)
     if /^\s+VERSION/ =~ l
       /'(?<major>\d+)\.(?<minor>\d+).(?<patch>\d+)'/ =~ l
       case which
-      when :major then major = major.to_i + 1
-      when :minor then minor = minor.to_i + 1
-      when :patch then patch = patch.to_i + 1
+      when :major
+        major = major.to_i + 1
+        minor = 0
+        patch = 0
+      when :minor
+        minor = minor.to_i + 1
+        patch = 0
+      when :patch
+        patch = patch.to_i + 1
       end
       l.gsub(/'\d+\.\d+.\d+'/, "'#{major}.#{minor}.#{patch}'")
     else
