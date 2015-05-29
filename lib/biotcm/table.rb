@@ -236,6 +236,7 @@ module BioTCM
     def each_row
       if block_given?
         @row_keys.each_key { |r| yield(r, row(r)) }
+        self
       else
         Enumerator.new do |y|
           @row_keys.each_key { |r| y << [r, row(r)] }
@@ -246,6 +247,7 @@ module BioTCM
     def each_col
       if block_given?
         @col_keys.each_key { |c| yield(c, col(c)) }
+        self
       else
         Enumerator.new do |y|
           @col_keys.each_key { |c| y << [c, col(c)] }
