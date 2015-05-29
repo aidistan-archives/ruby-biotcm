@@ -6,7 +6,7 @@ module BioTCM
   # For more details, please refer to the test.
   class Table
     # Version
-    VERSION = '0.3.0'
+    VERSION = '0.4.0'
 
     # Primary key
     attr_accessor :primary_key

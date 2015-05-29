@@ -5,7 +5,7 @@ History
 - Increase the version of ruby we depend on
 - Bump BioTCM::Layer to v0.2.0
 	- Change path conventions in BioTCM::Layer
-- Bump BioTCM::Table to
+- Bump BioTCM::Table to v0.4.0
 	- Relocate to a place under BioTCM namesapce
 	- Handle comments properly
 - Remove Graph
