@@ -397,7 +397,11 @@ class String
 
     # Comments
     comments = []
-    comments << stuff.shift.gsub(/^\# /, '') while(stuff[0] =~ /\# /)
+    while stuff[0] =~ /\# /
+      # Some tables' head lines start with a '#', such as *mim2gene.txt* in OMIM
+      break if stuff[0] =~ /\# [\w ]+\t/
+      comments << stuff.shift.gsub(/^\# /, '')
+    end
 
     # Headline
     col_keys = stuff.shift.split(seperator)
