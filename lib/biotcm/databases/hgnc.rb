@@ -156,7 +156,7 @@ class BioTCM::Databases::HGNC
   end
 
   # Current version of HGNC
-  VERSION = '0.2.2'
+  VERSION = '0.2.3'
   # Meta key for the download url of default HGNC table
   META_KEY = 'HGNC_DOWNLOAD_URL'
   # Identifers available in BioTCM::Databases::HGNC by now mapped to headline in HGNC table.
@@ -214,8 +214,8 @@ class BioTCM::Databases::HGNC
   attr_reader :ambiguous_symbol
 
   # Make sure methods in String are working
-  def self.ensure
-    String.hgnc || new.as_dictionary
+  def self.ensure(file_path = nil)
+    String.hgnc || new(file_path).as_dictionary
   end
 
   # Create a new HGNC object based on the given flat file or a downloaded one
@@ -345,9 +345,7 @@ class BioTCM::Databases::HGNC
         %(
           unless column[#{index}] == nil
             column[#{index}].split(", ").each do |id|
-#{
-  if identifer == 'symbol'
-    %(
+#{ if identifer == 'symbol' then %(
               if @ambiguous_symbol[id]
                 @ambiguous_symbol[id] << @hgncid2symbol[column[#{index_hgncid}]]
               elsif @symbol2hgncid[id].nil?
@@ -359,13 +357,9 @@ class BioTCM::Databases::HGNC
                   @symbol2hgncid.delete(id)
                 end
               end
-    )
-  else
-    %(
+) else %(
               @#{identifer}2hgncid[id] = column[#{index_hgncid}] if @#{identifer}2hgncid[id].nil?
-    )
-  end
-}
+) end }
             end
           end
         )
@@ -479,14 +473,18 @@ class String
   end
 
   # Formalize the gene symbol
-  # @return "" if fails to formalize
+  # @return '' if fails to formalize
   def formalize_symbol
     symbol2hgncid.hgncid2symbol
   end
   # Formalize the gene symbol
-  # @return "" if fails to formalize
+  # @return '' if fails to formalize
   def formalize_symbol!
     replace(symbol2hgncid.hgncid2symbol)
+  end
+  # Check the gene symbol whether formal
+  def formalized?
+    self == self.formalize_symbol
   end
 end
 

@@ -9,6 +9,7 @@ History
 	- Relocate to a place under BioTCM namesapce
 	- Handle comments properly
 - Remove Graph
+- Bump BioTCM::Databases::HGNC to v0.2.3
 
 ### v0.2.3 2015-04-01
 * Add -v option for bin/biotcm
