@@ -1,7 +1,7 @@
 History
 ===============
 
-### By now 2015-05-26
+### v0.3.0 2015-05-26
 - Increase the version of ruby we depend on
 - Bump BioTCM::Layer to v0.2.0
 	- Change path conventions in BioTCM::Layer
