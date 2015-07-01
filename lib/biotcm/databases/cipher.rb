@@ -1,7 +1,8 @@
 require 'fileutils'
 
-# Cipher object gets top 1000 genes for each phenotype,
-# (described by OMIM ID), from one available Cipher website.
+# Cipher object gets top 1000 genes for each phenotype (identified by OMIM ID),
+# from one available Cipher website and stores the results as a hash.
+#
 # The process of Cipher is simple and can be described by following steps:
 # * fetch the disease list and the gene list
 # * search and download the corresponding Cipher gene table of each OMIM ID
@@ -26,7 +27,7 @@ class BioTCM::Databases::Cipher
   extend BioTCM::Modules::WorkingDir
 
   # Current version of Cipher
-  VERSION = '0.1.0'
+  VERSION = '0.2.0'
   # The url of Cipher website
   META_KEY = 'CIPHER_WEBSITE_URL'
 
@@ -42,10 +43,10 @@ class BioTCM::Databases::Cipher
 
     # Handle with omim_id
     omim_ids = case omim_id
-               when String then [omim_id]
-               when Array then omim_id
-               else fail ArgumentError
-               end
+      when String then [omim_id]
+      when Array  then omim_id
+      else fail ArgumentError
+    end
 
     # Load disease list
     @disease = {}
@@ -95,6 +96,13 @@ class BioTCM::Databases::Cipher
 
     BioTCM.logger.debug('Cipher') { 'New object ' + inspect }
   end
+
+  # Transmit method call
+  def method_missing(symbol, *args, &block)
+    super unless @table.respond_to?(symbol)
+    block ? @table.send(symbol, *args, &block) : @table.send(symbol, *args)
+  end
+
   # Get contained omim ids
   # @return [Array]
   # @example
@@ -102,29 +110,21 @@ class BioTCM::Databases::Cipher
   def omim_ids
     @table.keys
   end
+
   # Get the table of omim_id
   # @return [BioTCM::Table] Gene symbol as the primary key
   # @example
-  #   cipher.table("137280").to_s
-  #   # =>
-  #
+  #   cipher.table("137280")
   def table(omim_id)
     @table[omim_id]
   end
-  # Write tables to files
-  # @param path [String] absolute path where to create files
-  # @return [self]
-  def export(path)
-    FileUtils.mkdir_p(path)
-    @table.each do |key, table|
-      File.open(File.expand_path("#{key}.txt", path), 'w:UTF-8').puts table
-    end
-    self
-  end
+  alias_method :[], :table
+
   # @private
   def inspect
     "#<BioTCM::Databases::Cipher omim_ids=#{omim_ids}>"
   end
+
   # @private
   def to_s
     inspect
