@@ -10,7 +10,7 @@ module BioTCM
       #   @param url [String]
       #   @return [String] if success, the content
       #   @return [nil] if cannot recognize the scheme
-      #   @raise ArgumentError if return status is not 404
+      #   @raise RuntimeError if return status is not 200
       # @overload get(:stamp)
       #   Get a stamp string containing time and thread_id
       #   @return [String]
