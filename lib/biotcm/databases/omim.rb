@@ -3,14 +3,12 @@ class BioTCM::Databases::OMIM
   extend BioTCM::Modules::WorkingDir
 
   # Current version of OMIM
-  VERSION = '0.1.0'
+  VERSION = '0.2.0'
   # Meta key of API key
   META_KEY = 'OMIM_API_KEY'
   # Public API key
   # (change it to your private key if in need)
   API_KEY = BioTCM.get_meta(META_KEY)
-  # Url of the mim2gene.txt
-  MIM2GENE_URL = 'http://biotcm.github.io/meta/OMIM/mim2gene.txt'
 
   # OMIM ID
   attr_reader :id
@@ -42,36 +40,33 @@ class BioTCM::Databases::OMIM
   # Retrieve one OMIM entry
   # @raise ArgumentError if omim_id not exists
   def initialize(omim_id)
-    # Check
+    # Check HGNC
     BioTCM::Databases::HGNC.ensure
-    # Get the list of mimNumber
-    file_path = self.class.path_to 'mim2gene.txt'
-    unless File.exist?(file_path)
-      fout = File.open(file_path, 'w')
-      fout.puts BioTCM.get(MIM2GENE_URL)
-      fout.close
-    end
-    @@entry_tab = BioTCM::Table.load(file_path) unless self.class.class_variable_defined?(:@@entry_tab)
-    # Check
-    fail ArgumentError, 'OMIM number not exists' unless (@id = @@entry_tab.row(omim_id.to_s))
+
     # Get the hash
     file_path = self.class.path_to "#{omim_id}.txt"
-    unless File.exist?(file_path)
-      fout = File.open(file_path, 'w')
-      fout.puts BioTCM.get(self.class.url(omim_id))
-      fout.close
+    if File.exist?(file_path)
+      @content = eval(File.open(file_path).read.gsub("\n", ''))
+    else
+      @content = eval(BioTCM.get(self.class.url(omim_id)).gsub("\n", '')) rescue {'omim'=> { 'version'=> '1.0', 'entryList'=> [ ] } }
+      # Check validity
+      fail ArgumentError, 'OMIM number not exists' if @content['omim']['entryList'].empty?
+      # Save
+      File.open(file_path, 'w').puts @content.inspect
+
     end
-    @content = eval(File.open(file_path).read.gsub("\n", ''))['omim']['entryList'][0]['entry']
+    @content = @content['omim']['entryList'][0]['entry']
+
     # Find genes
     @@gene_detector = BioTCM::Apps::GeneDetector.new unless self.class.class_variable_defined?(:@@gene_detector)
     @genes = []
     @genes |= @content['phenotypeMapList']
-              .collect { |h| h['phenotypeMap']['geneSymbols'].split(', ') }
-              .flatten.formalize_symbol.uniq
-              .reject { |sym| sym == '' } if @content['phenotypeMapExists']
+      .collect { |h| h['phenotypeMap']['geneSymbols'].split(', ') }
+      .flatten.formalize_symbol.uniq
+      .reject { |sym| sym == '' } if @content['phenotypeMapExists']
     @genes |= @@gene_detector.detect(@content['textSectionList']
-              .collect { |h| h['textSection']['textSectionContent'] }
-              .join(' '))
+      .collect { |h| h['textSection']['textSectionContent'] }
+      .join(' '))
   end
   # Access the returned hash for the entry
   def method_missing(symbol, *args, &block)
