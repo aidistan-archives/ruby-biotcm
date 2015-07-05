@@ -12,8 +12,12 @@ describe BioTCM::Databases::OMIM do
 
   it 'must store one entry for new method' do
     assert_raises(ArgumentError) { BioTCM::Databases::OMIM.new('not_exist') }
+
     omim = BioTCM::Databases::OMIM.new(100_070)
     assert_equal(100_070, omim['mimNumber'])
     assert_includes(omim.genes, 'MMP3')
+
+    omim = BioTCM::Databases::OMIM.new(179_760)
+    assert_equal(179_760, omim['mimNumber'])
   end
 end

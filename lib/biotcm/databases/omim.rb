@@ -66,7 +66,7 @@ class BioTCM::Databases::OMIM
       .reject { |sym| sym == '' } if @content['phenotypeMapExists']
     @genes |= @@gene_detector.detect(@content['textSectionList']
       .collect { |h| h['textSection']['textSectionContent'] }
-      .join(' '))
+      .join(' ')) if @content['textSectionList']
   end
   # Access the returned hash for the entry
   def method_missing(symbol, *args, &block)
