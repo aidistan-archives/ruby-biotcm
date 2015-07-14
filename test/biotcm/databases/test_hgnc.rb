@@ -37,6 +37,10 @@ describe BioTCM::Databases::HGNC do
     assert_equal('TP53', @hgnc.formalize_symbol('p-53'))
     assert_equal(%w(TP53 TP53), @hgnc.formalize_symbol(['p-53', 'P-53']))
     assert_raises(RuntimeError) { @hgnc.formalize_symbol(53) }
+
+    assert_equal(true, 'TP53'.formalized?)
+    assert_equal(false, 'tp53'.formalized?)
+    assert_equal(false, ''.formalized?)
   end
 
   it 'also would try to resuce unrecognized symbols' do

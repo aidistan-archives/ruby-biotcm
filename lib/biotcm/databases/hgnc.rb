@@ -484,6 +484,7 @@ class String
   end
   # Check the gene symbol whether formal
   def formalized?
+    return false if self.empty?
     self == self.formalize_symbol
   end
 end
