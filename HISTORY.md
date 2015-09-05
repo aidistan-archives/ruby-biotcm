@@ -1,6 +1,12 @@
 History
 ===============
 
+### v0.3.1 2015-09-05
+- Bump BioTCM::Databases::Cipher to v0.2.0
+	- Refactor the class
+- Bump BioTCM::Databases::OMIM to v0.2.0
+	- Refactor BioTCM::Databases::OMIM#initialize
+
 ### v0.3.0 2015-05-26
 - Increase the version of ruby we depend on
 - Bump BioTCM::Layer to v0.2.0
