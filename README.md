@@ -20,7 +20,7 @@ Install BioTCM from the command prompt:
 
 	$ gem install biotcm
 
-We believe in self-documentation coding, so you could find all APIs, examples and guides you need in [documents](http://biotcm.github.io/biotcm/doc/frames.html).
+We believe in self-documentation coding, so you could find all APIs, examples and guides you need in the [documents](http://biotcm.github.io/biotcm/doc/frames.html).
 
 
 ## Getting Involved
@@ -29,8 +29,7 @@ We believe in self-documentation coding, so you could find all APIs, examples an
 
 Feel free to send pull requests. You could help us
 
-- integrate your awesome application into BioTCM framework
-- implement new features to get through [our roadmap](http://libreboard.com/boards/k7ojKM7FNXM9MBk3M/biotcm-roadmap)
+- integrate your awesome application into BioTCM ecosystem
 - refactor codes to improve [the code climate](https://codeclimate.com/github/biotcm/biotcm)
 - write more tests to increase [the test coverage](https://codeclimate.com/github/biotcm/biotcm)
 - refine [docs](http://inch-ci.org/github/biotcm/biotcm) to help more users
