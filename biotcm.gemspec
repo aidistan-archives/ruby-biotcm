@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
 
   s.authors     = ['Aidi Stan', 'Ming Bai']
   s.email       = ['aidistan@live.cn', 'nmeter@126.com']
-  s.homepage    = 'http://biotcm.github.io/biotcm/'
+  s.homepage    = 'https://github.com/biotcm/biotcm'
 
-  s.files         = FileList['lib/**/*', 'test/**/*', 'bm/**/*', 'LICENSE', '*.md'].to_a
+  s.files         = FileList['lib/**/*', 'test/**/*', 'LICENSE', '*.md'].to_a
   s.require_paths = ['lib']
   s.test_files    = FileList['test/**/*'].to_a
   s.executables  << 'biotcm'
