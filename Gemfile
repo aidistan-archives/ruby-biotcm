@@ -1,10 +1,8 @@
-source 'https://rubygems.org'
+source 'https://ruby.taobao.org'
 
-group :development do
-  # Use Rake to manage tasks
-  gem 'rake'
-  # Use YARD to document
-  gem 'yard'
+gemspec
+
+group :test do
   # Use minitest for tests
   gem 'minitest'
   # Use minitest-reporters to highlight test results
