@@ -1,8 +1,6 @@
-# Ruby
-*.gem
-
 # Bundler
 Gemfile.lock
+pkg/
 
 # YARD
 .yardoc

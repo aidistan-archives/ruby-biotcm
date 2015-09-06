@@ -1,6 +1,5 @@
-$LOAD_PATH.push File.expand_path('../lib', __FILE__)
-require 'biotcm'
 require 'bundler/setup'
+require 'bundler/gem_tasks'
 
 # test
 require 'rake/testtask'
@@ -14,7 +13,7 @@ task default: :test
 
 # cop
 namespace :cop do
-  desc 'Run RuboCop and output in simple format'
+  desc 'Run RuboCop and output in simple format (as :cop)'
   task :simple do
     system('bundle exec rubocop --format s')
   end
@@ -28,6 +27,7 @@ namespace :cop do
     system('firefox doc/rubocop.html')
   end
 end
+task cop: 'cop:simple'
 
 # doc
 namespace :doc do
@@ -45,7 +45,7 @@ task doc: 'doc:serve'
 # clean
 desc 'Clean the directory'
 task :clean do
-  FileList['.yardoc', 'doc', '*.gem'].each do |f|
+  FileList['.yardoc', 'doc', 'pkg'].each do |f|
     FileUtils.rm_r(f) if File.exist?(f) || Dir.exist?(f)
   end
 end
@@ -87,22 +87,4 @@ def bump_version(which)
     end
   end
   File.open('lib/biotcm/version.rb', 'w').puts lines
-end
-
-# gem
-desc 'Build the gem'
-task :gem do
-  system("gem build #{File.dirname(__FILE__)}" + '/biotcm.gemspec')
-end
-
-# install
-desc 'Install the gem'
-task install: :gem do
-  system("gem install biotcm-#{BioTCM::VERSION}.gem --local --no-document")
-end
-
-# uninstall
-desc 'Uninstall the gem'
-task :uninstall do
-  system('gem uninstall biotcm')
 end
