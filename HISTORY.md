@@ -1,6 +1,10 @@
 History
 ===============
 
+### v0.4.0-pre
+- Bump BioTCM::Apps::GeneDetector to v0.2.0
+	- Upgrade the interface from optparser-style to gli-style
+
 ### v0.3.1 2015-09-05
 - Bump BioTCM::Databases::Cipher to v0.2.0
 	- Refactor the class

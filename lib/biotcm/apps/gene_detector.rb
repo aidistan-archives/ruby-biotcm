@@ -1,9 +1,11 @@
-require 'optparse'
-
 # A built-in app for gene detection
+#
+# = Exampe Usage
+#   BioTCM::Apps::GeneDetector.new.detect(str)
+#
 class BioTCM::Apps::GeneDetector < BioTCM::Apps::App
   # Version of GeneDetector
-  VERSION = '0.1.1'
+  VERSION = '0.2.0'
   # Default patterns of genes to exclude
   DEFAULT_GENE_BLACKLIST = [
     '^\w$',
@@ -21,6 +23,11 @@ class BioTCM::Apps::GeneDetector < BioTCM::Apps::App
     [/(\s*|-*)kappa/i, 'K']
   ]
 
+  # Setup gli parser
+  def self.setup_gli(c)
+    c.action { puts new.detect(STDIN.read) }
+  end
+
   # Initialize a gene detector
   def initialize(
     gene_blacklist: [],
@@ -31,6 +38,7 @@ class BioTCM::Apps::GeneDetector < BioTCM::Apps::App
     @text_changelist = text_changelist
     @if_formalize = if_formalize
   end
+
   # Detect genes appearing in text
   # @param text [String]
   # @return [Array] list of symbols
@@ -52,26 +60,5 @@ class BioTCM::Apps::GeneDetector < BioTCM::Apps::App
     rtn = text.split(/\.\s|\s?[,:!?#()\[\]{}]\s?|\s/).uniq & @symbols
     # Return approved symbols
     @if_formalize ? rtn.formalize_symbol.uniq : rtn
-  end
-  # Run
-  def run
-    # Get options
-    options = {
-      output: 'gene-detector.out.txt'
-    }
-    optparser = OptionParser.new do |opts|
-      opts.banner = 'Usage: biotcm gene-detector input_file [OPTIONS]'
-
-      opts.on('-o', '--output [FILE]', String, 'Output to FILE') do |v|
-        options[:output] = v
-      end
-    end
-    optparser.parse!
-    # Run the app
-    if ARGV[0]
-      File.open(options[:output], 'w').puts detect(File.open(ARGV.shift).read)
-    else
-      puts optparser.to_s
-    end
   end
 end
