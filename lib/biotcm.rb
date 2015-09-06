@@ -12,7 +12,7 @@ require 'json'
 #
 # Sometimes custom initialization fits your need better. Override configs
 # according to {BioTCM.init}, right immediately after you require {BioTCM},
-# to make sure that nothing will not affect your final result.
+# to make sure that nothing will affect your final result.
 #   require 'biotcm'
 #   BioTCM.wd = "/home/aidistan/.biotcm"
 #

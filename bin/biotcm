@@ -1,52 +1,36 @@
 #!/usr/bin/env ruby
-$LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
+require 'gli'
 require 'biotcm'
-require 'json'
 
-# Get the list of all apps
-apps_file = BioTCM.path_to('data/apps.json', secure: true)
-apps = JSON.parse(
-  begin
-    # Try to use the latest
-    json = BioTCM.get(BioTCM::DEFAULT_APPS_FILE)
-    File.open(apps_file, 'w').write json
-    json
-  rescue
-    # Or use the one downloaded previously
-    raise 'Please connect to Internet to get the latest list of apps' unless File.exist?(apps_file)
-    File.read(apps_file)
+extend GLI::App
+
+program_desc 'An app store for bioinformatics tools in Ruby'
+version BioTCM::VERSION
+subcommand_option_handling :normal
+
+desc 'Create a new BioTCM app gem'
+arg 'app_name'
+command :init do |c|
+  c.action do |_global_options, _options, _args|
+    exit_now!('Not implemented yet.')
   end
-)
-apps.reject! { |k| /^__/ =~ k }
-
-# Get lists of apps
-available_gems = `gem list biotcm- --no-versions`.split("\n")
-gem_apps = apps.keys.select { |k| available_gems.include? apps[k]['gem-name'] }
-built_in_apps = apps.keys.select { |k| apps[k]['gem-name'] == '(built-in)' }
-
-if (cmd = ARGV.shift).nil? || cmd == '-h'
-  # Help message
-  puts <<-END_OF_DOC
-Usage: biotcm app [OPTIONS]
-
-Available apps:
-  END_OF_DOC
-  (built_in_apps + gem_apps).sort.each { |app| puts '  ' + app }
-elsif cmd == '-v'
-  date = 'unknown'
-  File.open(File.expand_path('../../HISTORY.md', __FILE__)).each do |line|
-    next unless line =~ /^\#\#\#/
-    next unless (col = line.split(/\s/))[1] == "v#{BioTCM::VERSION}"
-    date = col[2]
-    break
-  end
-  puts "biotcm #{BioTCM::VERSION} (#{date})"
-elsif built_in_apps.include?(cmd)
-  BioTCM::Apps.const_get(apps[cmd]['class-name']).new.run
-elsif gem_apps.include?(cmd)
-  require apps[cmd]['gem-name']
-  BioTCM::Apps.const_get(apps[cmd]['class-name']).new.run
-else
-  # Error message
-  puts "Sorry. BioTCM can't find app \"#{cmd}\"."
 end
+
+desc 'Run an installed BioTCM app'
+arg 'app_name'
+command :run do |c|
+  BioTCM::Apps.apps.each do |app, app_attr|
+    c.desc app_attr['description']
+    c.command app do |subc|
+      require app_attr['gem-name'] if app_attr['gem-name']
+      BioTCM::Apps.const_get(app_attr['class-name']).setup_gli(subc)
+    end
+  end
+end
+
+desc 'Run BioTCM in console'
+command :console do |c|
+  c.action { BioTCM.console }
+end
+
+exit run(ARGV)
