@@ -20,8 +20,10 @@ Gem::Specification.new do |s|
   s.test_files    = FileList['test/**/*'].to_a
   s.executables << 'biotcm'
 
-  s.add_runtime_dependency 'gli', '>= 2.13.2', '< 3.0'
-  s.add_development_dependency 'bundler', '>= 1.7', '< 2.0'
+  s.add_runtime_dependency 'gli', '~> 2.12'
+  s.add_development_dependency 'bundler', '~> 1.7'
   s.add_development_dependency 'rake', '~> 10.0'
   s.add_development_dependency 'yard', '~> 0.8'
+  s.add_development_dependency 'minitest', '~> 5.0'
+  s.add_development_dependency 'minitest-reporters', '~> 1.0'
 end
