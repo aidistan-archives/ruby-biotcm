@@ -36,6 +36,7 @@ class BioTCM::Databases::Medline
     def esearch(params)
       BioTCM.get('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?' + parameterize(params))
     end
+
     # EFetch (data record downloads)
     #
     # Responds to a list of UIDs in a given database with the corresponding data records in a specified format.
@@ -119,7 +120,7 @@ class BioTCM::Databases::Medline
   # OR operation search
   # @return [self]
   def |(other)
-    search("%23#{@query_key}+OR+" +
+    search "%23#{@query_key}+OR+" +
       case other
       when String
         other
@@ -128,14 +129,13 @@ class BioTCM::Databases::Medline
       else
         fail ArgumentError, 'illegal query'
       end
-    )
     self
   end
 
   # AND operation search
   # @return [self]
   def &(other)
-    search("%23#{@query_key}+AND+" +
+    search "%23#{@query_key}+AND+" +
       case other
       when String
         other
@@ -144,7 +144,6 @@ class BioTCM::Databases::Medline
       else
         fail ArgumentError, 'illegal query'
       end
-    )
     self
   end
 
@@ -163,7 +162,7 @@ class BioTCM::Databases::Medline
         retmax: retmax,
         query_key: @query_key,
         webenv: @webenv
-      ).scan(/<Id>(\d+)<\/Id>/).flatten
+      ).scan(%r{<Id>(\d+)</Id>}).flatten
 
       retstart += retmax
       retstart = total_count unless retstart < total_count

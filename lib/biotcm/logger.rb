@@ -30,10 +30,12 @@ module BioTCM
     def inspect
       '#<Bioinfo::Logger.instance>'
     end
+
     # @private
     def to_s
       inspect
     end
+
     #
     def respond_to?(sym)
       super(sym) ? true : @screen_logger.respond_to?(sym)
@@ -53,6 +55,7 @@ module BioTCM
       @file_logger.level = ::Logger::DEBUG
       @file_logger.datetime_format = '%Y-%m-%d %H:%M:%S.%6N '
     end
+
     # Transmit method call if std-lib Logger can respond to it
     def method_missing(symbol, *args, &block)
       super unless @screen_logger.respond_to?(symbol)

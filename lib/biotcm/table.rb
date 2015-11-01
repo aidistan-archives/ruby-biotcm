@@ -10,54 +10,12 @@ module BioTCM
 
     # Primary key
     attr_accessor :primary_key
-    #
-    def primary_key=(val)
-      if val.respond_to?(:to_s)
-        @primary_key = val.to_s
-      else
-        fail ArgumentError, 'Non-string assigned to the primary key'
-      end
-    end
     # Keys of rows
     attr_accessor :row_keys
-    #
-    def row_keys
-      @row_keys.keys
-    end
-    #
-    def row_keys=(val)
-      fail ArgumentError, 'Illegal agrument type' unless val.is_a?(Array)
-      fail ArgumentError, 'Unmatched size' if val.size < @row_keys.size
-      @row_keys = val.map.with_index { |v, i| [v, i] }.to_h
-    end
     # Keys of columns
     attr_accessor :col_keys
-    #
-    def col_keys
-      @col_keys.keys
-    end
-    #
-    def col_keys=(val)
-      fail ArgumentError, 'Illegal agrument type' unless val.is_a?(Array)
-      fail ArgumentError, 'Unmatched size' if val.size < @col_keys.size
-      @col_keys = val.map.with_index { |v, i| [v, i] }.to_h
-    end
     # Comments
     attr_accessor :comments
-    #
-    def comments=(val)
-      if val.respond_to?(:collect)
-        @comments = val.collect do |v|
-          if v.respond_to?(:to_s)
-            v.to_s
-          else
-            fail ArgumentError, 'Illegal agrument type'
-          end
-        end
-      elsif val.respond_to?(:to_s)
-        @comments = [val.to_s]
-      end
-    end
 
     # @private
     # Factory method
@@ -71,6 +29,7 @@ module BioTCM
       @tab.instance_variable_set(:@comments, comments)
       @tab
     end
+
     # Load a table from a file
     # @param filepath [String]
     # @param encoding [String]
@@ -92,6 +51,7 @@ module BioTCM
       @content = [[''] * col_keys.size] * row_keys.size
       @comments = comments
     end
+
     # Clone this table
     # @return [Table]
     def clone
@@ -103,6 +63,55 @@ module BioTCM
         comments: @comments.clone
       )
     end
+
+    #
+    def primary_key=(val)
+      if val.respond_to?(:to_s)
+        @primary_key = val.to_s
+      else
+        fail ArgumentError, 'Non-string assigned to the primary key'
+      end
+    end
+
+    #
+    def row_keys
+      @row_keys.keys
+    end
+
+    #
+    def row_keys=(val)
+      fail ArgumentError, 'Illegal agrument type' unless val.is_a?(Array)
+      fail ArgumentError, 'Unmatched size' if val.size < @row_keys.size
+      @row_keys = val.map.with_index { |v, i| [v, i] }.to_h
+    end
+
+    #
+    def col_keys
+      @col_keys.keys
+    end
+
+    #
+    def col_keys=(val)
+      fail ArgumentError, 'Illegal agrument type' unless val.is_a?(Array)
+      fail ArgumentError, 'Unmatched size' if val.size < @col_keys.size
+      @col_keys = val.map.with_index { |v, i| [v, i] }.to_h
+    end
+
+    #
+    def comments=(val)
+      if val.respond_to?(:collect)
+        @comments = val.collect do |v|
+          if v.respond_to?(:to_s)
+            v.to_s
+          else
+            fail ArgumentError, 'Illegal agrument type'
+          end
+        end
+      elsif val.respond_to?(:to_s)
+        @comments = [val.to_s]
+      end
+    end
+
     # Access an element
     # @overload ele(row, col)
     #   Get an element
@@ -140,6 +149,7 @@ module BioTCM
 
       self
     end
+
     # Access a row
     # @overload row(row)
     #   Get a row
@@ -186,6 +196,7 @@ module BioTCM
 
       self
     end
+
     # Access a column
     # @overload col(col)
     #   Get a column
@@ -232,6 +243,7 @@ module BioTCM
 
       self
     end
+
     # Iterate by row
     def each_row
       if block_given?
@@ -243,6 +255,7 @@ module BioTCM
         end
       end
     end
+
     # Iterate by col
     def each_col
       if block_given?
@@ -254,16 +267,19 @@ module BioTCM
         end
       end
     end
+
     # Select row(s) to build a new table
     # @return [Table]
     def select_row(rows)
       select(rows, :all)
     end
+
     # Select column(s) to build a new table
     # @return [Table]
     def select_col(cols)
       select(:all, cols)
     end
+
     # Select row(s) and column(s) to build a new table
     # @return [Table]
     def select(rows, cols)
@@ -298,6 +314,7 @@ module BioTCM
         comments: comments
       )
     end
+
     # Merge with another table
     # @param tab [Table]
     def merge(tab)
@@ -312,13 +329,15 @@ module BioTCM
       (@col_keys.keys | tab.col_keys).each { |col| col_keys[col] = col_keys.size }
       row_keys.size.times { content << Array.new(col_keys.size, '') }
 
+      # rubocop:disable Style/SpaceInsideStringInterpolation
+
       # Fill content with self
       eval <<-END_OF_DOC
         @row_keys.each do |row, o_ri| # old row index
           n_ri = row_keys[row] # new row index
           #{
             str = []
-            @col_keys.each do |col, o_ci| # old column index
+            @col_keys.map do |col, o_ci| # old column index
               n_ci = col_keys[col] # new column index
               str << "content[n_ri][#{n_ci}] = @content[o_ri][#{o_ci}]"
             end
@@ -346,6 +365,7 @@ module BioTCM
       END_OF_DOC
 
       # rubocop:enable Lint/UselessAssignment
+      # rubocop:enable Style/SpaceInsideStringInterpolation
 
       # Create a new table
       self.class.build(
@@ -356,21 +376,18 @@ module BioTCM
         comments: comments + tab.comments
       )
     end
+
     # @private
     # For inspection
     def inspect
-      "#<Table primary_key=#{
-          @primary_key.inspect
-        } col_keys=#{
-          @col_keys.keys.sort_by { |k| @col_keys[k] }.inspect
-        } row_keys=#{
-          @row_keys.keys.sort_by { |k| @row_keys[k] }.inspect
-        } content=#{
-          @content.inspect
-        } comments=#{
-          @comments.join.inspect
-        }>"
+      '#<Table primary_key=' + @primary_key.inspect +
+        ' col_keys=' + @col_keys.keys.sort_by { |k| @col_keys[k] }.inspect +
+        ' row_keys=' + @row_keys.keys.sort_by { |k| @row_keys[k] }.inspect +
+        ' content=' + @content.inspect +
+        ' comments=' + @comments.join.inspect +
+        '>'
     end
+
     # @private
     # Convert to {String}
     def to_s
@@ -381,6 +398,7 @@ module BioTCM
           .collect { |a| a.join("\t") }
       ).join("\n")
     end
+
     # Print in a file
     # @param filepath [String]
     # @return [self]

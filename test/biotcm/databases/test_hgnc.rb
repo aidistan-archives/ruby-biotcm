@@ -3,7 +3,7 @@ require_relative '../../test_helper'
 describe BioTCM::Databases::HGNC do
   before do
     BioTCM::Databases::HGNC.ensure
-    @hgnc  = String.hgnc
+    @hgnc = String.hgnc
   end
 
   it 'could convert identifiers in Hash way' do

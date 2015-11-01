@@ -87,6 +87,7 @@ class BioTCM::Databases::HGNC
       end
       nil
     end
+
     # Called by create_converters
     def self.create_direct_converter(*syms)
       syms.each do |sym|
@@ -120,6 +121,7 @@ class BioTCM::Databases::HGNC
       end
       nil
     end
+
     # Called by create_converters
     def self.create_indirect_converter(*syms)
       syms.each do |sym|
@@ -213,6 +215,10 @@ class BioTCM::Databases::HGNC
   #   hgnc.ambiguous_symbol.keys & hgnc.symbol2hgncid.keys # are all official symbols
   attr_reader :ambiguous_symbol
 
+  # Return current rescue method
+  # @return [Symbol] :manual or :auto
+  attr_reader :rescue_method
+
   # Make sure methods in String are working
   def self.ensure(file_path = nil)
     String.hgnc || new(file_path).as_dictionary
@@ -242,22 +248,26 @@ class BioTCM::Databases::HGNC
 
     BioTCM.logger.debug('HGNC') { 'New object ' + inspect }
   end
+
   # Use self as the dictionary for String & Array extention
   # @return [self]
   def as_dictionary
     String.hgnc = self
   end
+
   # Formalize the gene symbol(s)
   # @return "" if fails to formalize
   def formalize_symbol(obj)
     fail 'Unkwown object to formalize' unless obj.respond_to?(:formalize_symbol)
     obj.formalize_symbol
   end
+
   # Returns true if rescue symbol
   # @return [Boolean]
   def rescue_symbol?
     @rescue_symbol
   end
+
   # When set to true, try to rescue unrecognized symbol (default is true)
   # @param boolean [Boolean]
   def rescue_symbol=(boolean)
@@ -276,15 +286,14 @@ class BioTCM::Databases::HGNC
     end
     @rescue_symbol
   end
-  # Return current rescue method
-  # @return [Symbol] :manual or :auto
-  attr_reader :rescue_method
+
   # When set to :manual, user has to explain every new unrecognized symbol;
   # otherwise, HGNC will try to do this by itself.
   # @param symbol [Symbol] :manual or :auto
   def rescue_method=(symbol)
     @rescue_method = (symbol == :manual ? :manual : :auto)
   end
+
   # Return the statistics hash
   # @return [Hash]
   # @example
@@ -299,10 +308,12 @@ class BioTCM::Databases::HGNC
     end
     @stat
   end
+
   # @private
   def inspect
     "#<BioTCM::Databases::HGNC @stat=#{stat.inspect}>"
   end
+
   # @private
   def to_s
     inspect
@@ -328,7 +339,7 @@ class BioTCM::Databases::HGNC
           # For each index, whose value in index2identifier is a
           #   Symbol,  will be mapped to single item
           #   String,  will be mapped to list item
-          index2identifier[names.index(n)] =  (i == 0 ? identifer : identifer.to_s)
+          index2identifier[names.index(n)] = (i == 0 ? identifer : identifer.to_s)
         end
       end
     end
@@ -371,6 +382,7 @@ class BioTCM::Databases::HGNC
     eval %{fin.each do |line|\n column = line.chomp.split("\\t", -1)} + process_one_line + 'end'
     nil
   end
+
   # Try to rescue a gene symbol
   # @param symbol [String] Gene symbol
   # @param method [Symbol] :auto or :manual
@@ -385,12 +397,12 @@ class BioTCM::Databases::HGNC
         auto_rescue = symbol.upcase
       elsif @symbol2hgncid[symbol.downcase]
         auto_rescue = symbol.downcase
-      elsif @symbol2hgncid[symbol.gsub('-', '')]
-        auto_rescue = symbol.gsub('-', '')
-      elsif @symbol2hgncid[symbol.upcase.gsub('-', '')]
-        auto_rescue = symbol.upcase.gsub('-', '')
-      elsif @symbol2hgncid[symbol.downcase.gsub('-', '')]
-        auto_rescue = symbol.downcase.gsub('-', '')
+      elsif @symbol2hgncid[symbol.delete('-')]
+        auto_rescue = symbol.delete('-')
+      elsif @symbol2hgncid[symbol.upcase.delete('-')]
+        auto_rescue = symbol.upcase.delete('-')
+      elsif @symbol2hgncid[symbol.downcase.delete('-')]
+        auto_rescue = symbol.downcase.delete('-')
         # Add more rules here
       end
       # Record
@@ -441,11 +453,13 @@ class BioTCM::Databases::HGNC
   # Use method way other than hash way to introduce in the rescue function
   String.class_eval do
     def symbol2hgncid
-      String.hgnc.symbol2hgncid(self) rescue raise 'HGNC dictionary not given'
+      fail 'HGNC dictionary not given' unless String.hgnc.is_a?(BioTCM::Databases::HGNC)
+      String.hgnc.symbol2hgncid(self)
     end
 
     def symbol2hgncid!
-      replace(String.hgnc.symbol2hgncid(self)) rescue raise 'HGNC dictionary not given'
+      fail 'HGNC dictionary not given' unless String.hgnc.is_a?(BioTCM::Databases::HGNC)
+      replace(String.hgnc.symbol2hgncid(self))
     end
   end
 end
@@ -477,15 +491,17 @@ class String
   def formalize_symbol
     symbol2hgncid.hgncid2symbol
   end
+
   # Formalize the gene symbol
   # @return '' if fails to formalize
   def formalize_symbol!
     replace(symbol2hgncid.hgncid2symbol)
   end
+
   # Check the gene symbol whether formal
   def formalized?
     return false if self.empty?
-    self == self.formalize_symbol
+    self == formalize_symbol
   end
 end
 
@@ -495,6 +511,7 @@ class Array
   def formalize_symbol
     collect { |sym| sym.symbol2hgncid.hgncid2symbol }
   end
+
   # Formalize gene symbols
   # @return "" if fails to formalize
   def formalize_symbol!

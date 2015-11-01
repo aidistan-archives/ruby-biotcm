@@ -21,6 +21,7 @@ class BioTCM::Databases::OMIM
     return nil unless api_key
     "http://api.omim.org/api/entry?mimNumber=#{omim_id}&apiKey=#{api_key}&include=all&format=ruby"
   end
+
   # Create a batch of OMIM objects
   # @param omim_ids [Array]
   # @return [Hash]
@@ -46,9 +47,9 @@ class BioTCM::Databases::OMIM
     # Get the hash
     file_path = self.class.path_to "#{omim_id}.txt"
     if File.exist?(file_path)
-      @content = eval(File.open(file_path).read.gsub("\n", ''))
+      @content = eval(File.open(file_path).read.delete("\n"))
     else
-      @content = eval(BioTCM.get(self.class.url(omim_id)).gsub("\n", '')) rescue {'omim'=> { 'version'=> '1.0', 'entryList'=> [ ] } }
+      @content = eval(BioTCM.get(self.class.url(omim_id)).delete("\n")) rescue { 'omim' => { 'version' => '1.0', 'entryList' => [] } }
       # Check validity
       fail ArgumentError, 'OMIM number not exists' if @content['omim']['entryList'].empty?
       # Save
@@ -60,19 +61,23 @@ class BioTCM::Databases::OMIM
     # Find genes
     @@gene_detector = BioTCM::Apps::GeneDetector.new unless self.class.class_variable_defined?(:@@gene_detector)
     @genes = []
-    @genes |= @content['phenotypeMapList']
+    @genes |=
+      @content['phenotypeMapList']
       .collect { |h| h['phenotypeMap']['geneSymbols'].split(', ') }
       .flatten.formalize_symbol.uniq
       .reject { |sym| sym == '' } if @content['phenotypeMapExists']
-    @genes |= @@gene_detector.detect(@content['textSectionList']
+    @genes |=
+      @@gene_detector.detect(@content['textSectionList']
       .collect { |h| h['textSection']['textSectionContent'] }
       .join(' ')) if @content['textSectionList']
   end
+
   # Access the returned hash for the entry
   def method_missing(symbol, *args, &block)
     super unless @content.respond_to?(symbol)
     block ? @content.send(symbol, *args, &block) : @content.send(symbol, *args)
   end
+
   # Jump over method_missing to speed up
   # @private
   def [](key)

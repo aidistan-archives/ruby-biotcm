@@ -20,6 +20,7 @@ module BioTCM
       def wd
         @wd || fail("The working directory of #{self} is undefined.")
       end
+
       # Set current working directory
       #
       # If not exists, the method will try to mkdir one
@@ -28,6 +29,7 @@ module BioTCM
         FileUtils.mkdir_p(val)
         @wd = val
       end
+
       # Expand a relative path to absolute one based on @wd
       # @param relative_path [String]
       # @param secure [Boolean] If true, make sure that parent directories exist

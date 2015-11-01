@@ -82,6 +82,7 @@ class BioTCM::Databases::KEGG
     else return nil
     end
   end
+
   # Check if pathway_id is a valid KEGG pathway id
   # @return [Boolean]
   def self.valid_pathway_id?(pathway_id)
@@ -89,6 +90,7 @@ class BioTCM::Databases::KEGG
     return true if pathway_id =~ PATTERNS[:pathway][:alternative]
     false
   end
+
   # Get the list of all pathways of given organism
   # @param organism [String]
   # @return [Array]
@@ -108,6 +110,7 @@ class BioTCM::Databases::KEGG
     File.open(file_path).each { |line| list << Regexp.last_match[1] if line.match(pattern) }
     list
   end
+
   # Get the pathway specified by pathway_id
   # @param pathway_id [String] KEGG pathway id (using {DEFAULT_ORGANISM} if not specified)
   # @return [Pathway]
@@ -229,6 +232,7 @@ class BioTCM::Databases::KEGG
     @pathways = {}
     pathway_ids.each { |id| @pathways[id] = self.class.get_pathway(id) }
   end
+
   # Extend to associated pathways
   # @return [self]
   def extend_to_associated
@@ -237,6 +241,7 @@ class BioTCM::Databases::KEGG
     (pathway_ids - @pathways.keys).each { |id| @pathways[id] = self.class.get_pathway(id) }
     self
   end
+
   # Merge pathways into one
   # @return [Pathway]
   def merge
@@ -248,10 +253,12 @@ class BioTCM::Databases::KEGG
     end
     merged
   end
+
   # @private
   def inspect
     "#<BioTCM::Databases::KEGG pathways.keys=#{@pathways.keys.inspect}>"
   end
+
   # @private
   def to_s
     inspect

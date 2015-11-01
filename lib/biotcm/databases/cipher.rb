@@ -43,10 +43,10 @@ class BioTCM::Databases::Cipher
 
     # Handle with omim_id
     omim_ids = case omim_id
-      when String then [omim_id]
-      when Array  then omim_id
-      else fail ArgumentError
-    end
+               when String then [omim_id]
+               when Array  then omim_id
+               else fail ArgumentError
+               end
 
     # Load disease list
     @disease = {}

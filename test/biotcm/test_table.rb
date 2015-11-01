@@ -92,7 +92,7 @@ describe BioTCM::Table do
 
     it 'must print itself' do
       tab_string = "\# Comments\nID\tA\tB\tC\n1\tab\t1\t0.8\n2\tde\t3\t0.2\n3\tfk\t6\t1.9"
-      tab = tab_string.gsub("\t", ',').to_table(seperator: ',')
+      tab = tab_string.tr("\t", ',').to_table(seperator: ',')
       assert_equal(tab_string, tab.to_s)
     end
 

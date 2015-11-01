@@ -37,7 +37,9 @@ module BioTCM
     # @param path [String]
     # @param colname [Hash] A hash for column name mapping
     # @return [Layer]
-    def self.load(path = nil, prefix: '',
+    def self.load(
+      path = nil,
+      prefix: '',
       colname: {
         source: 'Source',
         target: 'Target',
@@ -109,6 +111,7 @@ module BioTCM
       @edge_tab = edge_tab || BioTCM::Table.new(primary_key: "Source\tTarget")
       @node_tab = node_tab || BioTCM::Table.new(primary_key: 'Node')
     end
+
     # Save the layer to disk
     def save(path, prefix = '')
       FileUtils.mkdir_p(path)
