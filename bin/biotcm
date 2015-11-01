@@ -11,8 +11,11 @@ subcommand_option_handling :normal
 desc 'Create a new BioTCM app gem'
 arg 'app_name'
 command :init do |c|
-  c.action do |_global_options, _options, _args|
-    exit_now!('Not implemented yet.')
+  c.action do |_global_options, _options, args|
+    app_name = args.shift
+    exit_now!('app_name not given.') unless app_name
+    app_name = 'biotcm-' + app_name.gsub(/^biotcm-/, '')
+    system("bundle gem #{app_name}")
   end
 end
 
