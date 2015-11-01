@@ -1,7 +1,8 @@
 History
 ===============
 
-### v0.4.0-pre
+### v0.4.0 2015-11-01
+- Implement `biotcm init app_name`
 - Bump BioTCM::Apps::GeneDetector to v0.2.0
 	- Upgrade the interface from optparser-style to gli-style
 
