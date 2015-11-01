@@ -40,6 +40,7 @@ module BioTCM
   def console
     system "irb -I #{File.dirname(__FILE__)} -r biotcm -r irb/completion --simple-prompt"
   end
+
   # Default initialization
   # @return [nil]
   def init
@@ -49,11 +50,13 @@ module BioTCM
     BioTCM.wd = BioTCM::DEFAULT_WORKING_DIRECTORY
     nil
   end
+
   # Get the instance of Logger
   # @return [Logger]
   def logger
     Logger.instance(path_to("log/#{get(:stamp)}.log", secure: true))
   end
+
   # Get meta value
   def get_meta(key)
     return @meta[key] if @meta

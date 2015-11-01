@@ -23,7 +23,7 @@ command :run do |c|
     c.desc app_attr['description']
     c.command app do |subc|
       require app_attr['gem-name'] if app_attr['gem-name']
-      BioTCM::Apps.const_get(app_attr['class-name']).setup_gli(subc)
+      BioTCM::Apps.const_get(app_attr['class-name']).gli(subc)
     end
   end
 end
