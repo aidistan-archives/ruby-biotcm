@@ -23,9 +23,15 @@ class BioTCM::Apps::GeneDetector < BioTCM::Apps::App
     [/(\s*|-*)kappa/i, 'K']
   ]
 
-  # Setup gli parser
-  def self.setup_gli(c)
-    c.action { puts new.detect(STDIN.read) }
+  # GLI parser
+  def self.gli(c)
+    c.action do
+      if ARGV.size > 0 && File.exist?(ARGV[0])
+        puts new.detect(File.read(ARGV[0]))
+      else
+        puts new.detect(STDIN.read)
+      end
+    end
   end
 
   # Initialize a gene detector
