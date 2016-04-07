@@ -1,4 +1,4 @@
-# Detect gene symbols in text
+# To detect gene symbols in text
 #
 # == Exampe Usage
 #   BioTCM::Apps::GeneDetector.new.detect(str)
