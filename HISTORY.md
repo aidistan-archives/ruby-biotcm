@@ -1,5 +1,7 @@
-History
-===============
+# History
+
+### By now 2016-04-07
+Make things clearer and easier
 
 ### v0.4.0 2015-11-01
 - Implement `biotcm init app_name`

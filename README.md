@@ -1,9 +1,6 @@
 # BioTCM
 
 [![Gem Version](https://badge.fury.io/rb/biotcm.svg)](http://badge.fury.io/rb/biotcm)
-[![Build Status](https://travis-ci.org/biotcm/biotcm.svg?branch=master)](https://travis-ci.org/biotcm/biotcm)
-[![Code Climate](https://codeclimate.com/github/biotcm/biotcm/badges/gpa.svg)](https://codeclimate.com/github/biotcm/biotcm)
-[![Test Coverage](https://codeclimate.com/github/biotcm/biotcm/badges/coverage.svg)](https://codeclimate.com/github/biotcm/biotcm)
 [![Docs Status](http://inch-ci.org/github/biotcm/biotcm.svg?branch=master)](http://inch-ci.org/github/biotcm/biotcm)
 
 BioTCM is designed as a base gem to build advanced applications on Bioinformatics.
@@ -13,7 +10,6 @@ BioTCM is designed as a base gem to build advanced applications on Bioinformatic
 * Development version on Github:
 	[Homepage](http://biotcm.github.io/biotcm) | [Documents](http://biotcm.github.io/biotcm/doc/frames.html)
 
-
 ## Getting Started
 
 Install BioTCM from the command prompt:
@@ -21,7 +17,6 @@ Install BioTCM from the command prompt:
 	$ gem install biotcm
 
 We believe in self-documentation coding, so you could find all APIs, examples and guides you need in the [documents](http://biotcm.github.io/biotcm/doc/frames.html).
-
 
 ## Getting Involved
 
@@ -83,7 +78,6 @@ Having no explicit map of our gem, we add new Class or Module when we need it, w
 
 It's hard to decide when to test but better to write some tests for you module/class to make others understand the design purpose more easily.
 
-
 ## License
 
-Copyright (c) 2014-2015 BioTCM group under [the MIT license](https://github.com/biotcm/biotcm/blob/master/LICENSE).
+Copyright (c) 2014-2016 BioTCM group under [the MIT license](https://github.com/biotcm/biotcm/blob/master/LICENSE).

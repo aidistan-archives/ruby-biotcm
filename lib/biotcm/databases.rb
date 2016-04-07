@@ -1,5 +1,4 @@
-# Namespace of all classes who interactive with databases
-# directly or indirectly
+# Namespace of all classes who interacts with databases directly or indirectly
 module BioTCM::Databases
   autoload(:HGNC, 'biotcm/databases/hgnc')
   autoload(:Cipher, 'biotcm/databases/cipher')

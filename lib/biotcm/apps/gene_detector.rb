@@ -1,9 +1,9 @@
-# A built-in app for gene detection
+# Detect gene symbols in text
 #
-# = Exampe Usage
+# == Exampe Usage
 #   BioTCM::Apps::GeneDetector.new.detect(str)
 #
-class BioTCM::Apps::GeneDetector < BioTCM::Apps::App
+class BioTCM::Apps::GeneDetector
   # Version of GeneDetector
   VERSION = '0.2.0'
   # Default patterns of genes to exclude
@@ -22,17 +22,6 @@ class BioTCM::Apps::GeneDetector < BioTCM::Apps::App
     [/(\s*|-*)gamma/i, 'G'],
     [/(\s*|-*)kappa/i, 'K']
   ]
-
-  # GLI parser
-  def self.gli(c)
-    c.action do
-      if ARGV.size > 0 && File.exist?(ARGV[0])
-        puts new.detect(File.read(ARGV[0]))
-      else
-        puts new.detect(STDIN.read)
-      end
-    end
-  end
 
   # Initialize a gene detector
   def initialize(

@@ -25,6 +25,9 @@ Style/ClassVars:
 Style/Documentation:
   Enabled: false
 
+Style/MutableConstant:
+  Enabled: false
+
 Style/TrivialAccessors:
   ExactNameMatch: true
 
