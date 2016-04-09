@@ -1,6 +1,6 @@
 # To detect gene symbols in text
 #
-# == Exampe Usage
+# = Exampe Usage
 #   BioTCM::Apps::GeneDetector.new.detect(str)
 #
 class BioTCM::Apps::GeneDetector

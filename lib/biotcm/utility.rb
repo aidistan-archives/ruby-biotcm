@@ -7,8 +7,7 @@ module BioTCM
 
     # Get an url
     # @param url [String]
-    # @return [String] if success, the content
-    # @return [nil] if cannot recognize the scheme
+    # @return [String/nil] the content as a string or nil if failed
     # @raise RuntimeError if return status is not 200
     def curl(url)
       uri = URI(url)

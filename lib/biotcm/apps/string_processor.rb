@@ -1,4 +1,13 @@
 # To extract ppi network from STRING
+#
+# = Example Usage
+#   BioTCM::Apps::StringProcessor.new(
+#     'protein.links.detailed.v10.txt',
+#     'species.v10.txt'
+#   ).extract_by_species(
+#     'protein.links.detailed.v10.homo.sapiens.txt', 'Homo sapiens'
+#   )
+#
 class BioTCM::Apps::StringProcessor
   # Version of StringProcessor
   VERSION = '0.1.0'
