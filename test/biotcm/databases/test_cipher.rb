@@ -2,14 +2,10 @@ require_relative '../../test_helper'
 
 describe BioTCM::Databases::Cipher do
   before do
-    @cipher = BioTCM::Databases::Cipher.new(%w(137280 100050))
+    @cipher = BioTCM::Databases::Cipher.get('137280')
   end
 
-  it 'must return omim ids' do
-    assert_equal(%w(137280 100050), @cipher.omim_ids)
-  end
-
-  it 'must build gene tables' do
-    assert_instance_of(BioTCM::Table, @cipher.table('137280'))
+  it 'must return the gene table' do
+    assert_instance_of(BioTCM::Table, @cipher)
   end
 end
