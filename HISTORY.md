@@ -1,7 +1,8 @@
 # History
 
-### By now 2016-04-07
+### v0.5.0 2016-04-09
 Make things clearer and easier
+- Bump BioTCM::Databases::Cipher to v0.3.0
 
 ### v0.4.0 2015-11-01
 - Implement `biotcm init app_name`
