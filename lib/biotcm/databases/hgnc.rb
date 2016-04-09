@@ -1,9 +1,9 @@
 # HGNC object loads in any given HGNC flat file and builds
 # hashes storing the conversion pairs, using HGNC ID as the primary key.
 #
-# == Example Usage
+# = Example Usage
 #
-# === Instantiation
+# == Instantiation
 # Create an HGNC using default downloaded table is the most common way. It
 # may take minutes to download the table at the first time.
 #   hgnc = BioTCM::Databases::HGNC.new
@@ -11,7 +11,7 @@
 # Or you want to create an instance with your own HGNC table.
 #   hgnc = BioTCM::Databases::HGNC.new("path_to_your_table/hgnc_custom.txt")
 #
-# === Convert in hash way
+# == Convert in hash way
 # Using HGNC object in hash way is the most effective way but without symbol
 # rescue. (Direct converters only)
 #   hgnc.entrez2hgncid["ASIC1"] # => "HGNC:100"
@@ -23,7 +23,7 @@
 # And the hash does not rescue symbols if fail to index.
 #   hgnc.symbol2hgncid["ada"] # => nil
 #
-# === Convert in method way
+# == Convert in method way
 # Using HGNC object to convert identifers in method way would rescue symbol
 # while costs a little more.
 #   hgnc.entrez2symbol("100") # => "ADA"
@@ -35,7 +35,7 @@
 # Method will rescue symbols if fail to query.
 #   hgnc.symbol2entrez("ada") # => "100"
 #
-# === Convert String or Array
+# == Convert String or Array
 # Using extended String or Array is a more "Ruby" way (as far as I think).
 # Just claim an HGNC object as the dictionary at first.
 #   BioDB::HGNC.new.as_dictionary
@@ -53,18 +53,17 @@
 #   ["APC", "IL1"].symbol2entrez # => ["324","3552"]
 #   nil.entrez2ensembl # NoMethodError
 #
-# == About HGNC Database
+# = About HGNC Database
 # The HUGO Gene Nomenclature Committee (HGNC) is the only worldwide authority
 # that assigns standardised nomenclature to human genes. For each known human
 # gene their approve a gene name and symbol (short-form abbreviation).  All
 # approved symbols are stored in the HGNC database. Each symbol is unique and
 # HGNC ensures that each gene is only given one approved gene symbol.
 #
-# == Reference
+# = Reference
 # {http://www.genenames.org/ HUGO Gene Nomenclature Committee at the European Bioinformatics Institute}
+#
 class BioTCM::Databases::HGNC
-  extend BioTCM::Modules::WorkingDir
-
   #
   # Provide some macros to define converter methods
   #
@@ -238,10 +237,10 @@ class BioTCM::Databases::HGNC
       fail ArgumentError, "#{file_path} not exists" unless File.exist?(file_path)
     else
       # Load the default HGNC table (may download it if in need)
-      file_path = self.class.path_to('hgnc_set.txt')
+      file_path = BioTCM.path_to('hgnc/hgnc_set.txt')
       unless File.exist?(file_path)
         BioTCM.logger.info('HGNC') { 'Since default HGNC table not exists, trying to download one... (This may cost several minutes.)' }
-        File.open(file_path, 'w:UTF-8').puts BioTCM.get(BioTCM.get_meta(META_KEY))
+        File.open(file_path, 'w:UTF-8').puts BioTCM.curl(BioTCM.meta[META_KEY])
       end
     end
     load_hgnc_table(File.open(file_path))
@@ -276,7 +275,7 @@ class BioTCM::Databases::HGNC
     # Load in rescue history if exists
     if @rescue_symbol && !self.class.class_variable_defined?(:@@rescue_history)
       @@rescue_history = {}
-      @@rescue_history_filename = self.class.path_to('rescue_history.txt')
+      @@rescue_history_filename = BioTCM.path_to('hgnc/rescue_history.txt')
       if FileTest.exists?(@@rescue_history_filename)
         File.open(@@rescue_history_filename).each do |line|
           column = line.chomp.split("\t")
@@ -518,5 +517,3 @@ class Array
     self.collect! { |sym| sym.symbol2hgncid.hgncid2symbol }
   end
 end
-
-BioTCM::Databases::HGNC.wd = BioTCM.path_to('data/hgnc')

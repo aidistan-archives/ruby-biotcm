@@ -6,7 +6,7 @@ describe BioTCM::Databases::KEGG do
   end
 
   it 'must download KGMLs' do
-    filename = BioTCM::Databases::KEGG.path_to('hsa05010.xml')
+    filename = BioTCM.path_to('kegg/hsa05010.xml')
     File.delete(filename) if FileTest.exist?(filename)
     BioTCM::Databases::KEGG.get_pathway('05010')
     assert(FileTest.exist?(filename))

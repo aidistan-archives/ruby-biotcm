@@ -1,5 +1,3 @@
-require 'fileutils'
-
 # Cipher object gets top 1000 genes for each phenotype (identified by OMIM ID),
 # from one available Cipher website and stores the results as a hash.
 #
@@ -10,22 +8,20 @@ require 'fileutils'
 #   * delete ones without approved symbols
 #   * delete redundant symbols who rank lower
 #
-# == About Cipher
+# = About Cipher
 # Correlating protein Interaction network and PHEnotype network to pRedict
 # disease genes (CIPHER), is a computational framework that integrates human
 # protein-protein interactions, disease phenotype similarities, and known
 # gene-phenotype associations to capture the complex relationships between
 # phenotypes and genotypes.
 #
-# == Reference
+# = Reference
 # {http://www.nature.com/msb/journal/v4/n1/full/msb200827.html
 # Xuebing Wu, Rui Jiang, Michael Q. Zhang, Shao Li.
 # Network-based global inference of human disease genes.
 # Molecular Systems Biology, 2008, 4:189.}
 #
 class BioTCM::Databases::Cipher
-  extend BioTCM::Modules::WorkingDir
-
   # Current version of Cipher
   VERSION = '0.2.0'
   # The url of Cipher website
@@ -39,19 +35,19 @@ class BioTCM::Databases::Cipher
   def initialize(omim_id)
     # Ensurance
     BioTCM::Databases::HGNC.ensure
-    base_url = BioTCM.get_meta(META_KEY)
+    base_url = BioTCM.meta[META_KEY]
 
     # Handle with omim_id
     omim_ids = case omim_id
                when String then [omim_id]
                when Array  then omim_id
-               else fail ArgumentError
+               else raise ArgumentError
                end
 
     # Load disease list
     @disease = {}
-    filename = self.class.path_to('landscape_phenotype.txt')
-    File.open(filename, 'w:UTF-8').puts BioTCM.get(base_url + '/landscape_phenotype.txt') unless File.exist?(filename)
+    filename = BioTCM.path_to('cipher/landscape_phenotype.txt')
+    File.open(filename, 'w:UTF-8').puts BioTCM.curl(base_url + '/landscape_phenotype.txt') unless File.exist?(filename)
     File.open(filename).each do |line|
       col = line.chomp.split("\t")
       @disease[col[1]] = col[0]
@@ -59,8 +55,8 @@ class BioTCM::Databases::Cipher
 
     # Load gene list (inner_id2symbol)
     @gene = [nil]
-    filename = self.class.path_to('landscape_extended_id.txt')
-    File.open(filename, 'w:UTF-8').puts BioTCM.get(base_url + '/landscape_extended_id.txt') unless File.exist?(filename)
+    filename = BioTCM.path_to('cipher/landscape_extended_id.txt')
+    File.open(filename, 'w:UTF-8').puts BioTCM.curl(base_url + '/landscape_extended_id.txt') unless File.exist?(filename)
     File.open(filename).each do |line|
       col = line.chomp.split("\t")
       gene   = String.hgnc.symbol2hgncid[col[4]]
@@ -79,8 +75,8 @@ class BioTCM::Databases::Cipher
       end
 
       # Download if need
-      filename = self.class.path_to("#{omim_id}.txt")
-      File.open(filename, 'w:UTF-8').puts BioTCM.get(base_url + "/top1000data/#{@disease[omim_id]}.txt") unless File.exist?(filename)
+      filename = BioTCM.path_to("cipher/#{omim_id}.txt")
+      File.open(filename, 'w:UTF-8').puts BioTCM.curl(base_url + "/top1000data/#{@disease[omim_id]}.txt") unless File.exist?(filename)
 
       # Make table
       tab = "Approved Symbol\tCipher Rank\tCipher Score".to_table
@@ -118,7 +114,7 @@ class BioTCM::Databases::Cipher
   def table(omim_id)
     @table[omim_id]
   end
-  alias_method :[], :table
+  alias [] table
 
   # @private
   def inspect
@@ -130,5 +126,3 @@ class BioTCM::Databases::Cipher
     inspect
   end
 end
-
-BioTCM::Databases::Cipher.wd = BioTCM.path_to('data/cipher')

@@ -5,6 +5,9 @@ unless $LOAD_PATH.include?(File.expand_path('../../lib', __FILE__))
 end
 require 'biotcm'
 
+# Suppress log output
+BioTCM.logger.level = Logger::FATAL
+
 # Our benchmark DSL
 module MyBenchmark
   def self.group(title = nil, &block)

@@ -34,7 +34,7 @@ class BioTCM::Databases::Medline
     # @option params :webenv [String]  web environment used
     # @option params :usehistory ["y" or "n"] ('y') whether to use history server
     def esearch(params)
-      BioTCM.get('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?' + parameterize(params))
+      BioTCM.curl('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?' + parameterize(params))
     end
 
     # EFetch (data record downloads)
@@ -51,7 +51,7 @@ class BioTCM::Databases::Medline
     # @option params :query_key [String] query key used
     # @option params :webenv [String] web environment used
     def efetch(params)
-      BioTCM.get('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?' + parameterize(params))
+      BioTCM.curl('http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?' + parameterize(params))
     end
     # # EInfo (database statistics)
     # # Provides the number of records indexed in each field of a given database, the date of the last update of the database, and the available links from the database to other Entrez databases.
@@ -120,30 +120,16 @@ class BioTCM::Databases::Medline
   # OR operation search
   # @return [self]
   def |(other)
-    search "%23#{@query_key}+OR+" +
-      case other
-      when String
-        other
-      when self.class
-        '%23' + other.query_key
-      else
-        fail ArgumentError, 'illegal query'
-      end
+    other = '%23' + other.query_key if other.is_a?(self.class)
+    search("%23#{@query_key}+OR+#{other}")
     self
   end
 
   # AND operation search
   # @return [self]
   def &(other)
-    search "%23#{@query_key}+AND+" +
-      case other
-      when String
-        other
-      when self.class
-        '%23' + other.query_key
-      else
-        fail ArgumentError, 'illegal query'
-      end
+    other = '%23' + other.query_key if other.is_a?(self.class)
+    search("%23#{@query_key}+AND+#{other}")
     self
   end
 
@@ -228,7 +214,7 @@ class BioTCM::Databases::Medline
     @query_key = Regexp.last_match[2]
     @webenv = Regexp.last_match[3]
 
-    File.open(BioTCM.path_to("tmp/MineLiteratureInPubMed #{@webenv} ##{@query_key}.txt", secure: true), 'w').puts @xml
+    File.open(BioTCM.path_to("tmp/MineLiteratureInPubMed_#{@webenv}_##{@query_key}.txt"), 'w').puts @xml
     BioTCM.logger.debug('Medline') { "Object updated by searching => #{self}" }
   end
 end

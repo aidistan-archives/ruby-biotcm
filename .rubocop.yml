@@ -4,19 +4,14 @@ Lint/Eval:
 Metrics/ClassLength:
   Enabled: false
 
-# When define classes and modules, we use
-#   nested style for those who are independent from BioTCM
-#   compact style for  those who are not
-Style/ClassAndModuleChildren:
+# Allow to use `or` sometimes for its simplicity
+Style/AndOr:
   Enabled: false
 
-# Example usage:
-#
-#   def print_msg(index = nil)
-#     msg = messages[index] or return nil
-#     ...
-#   end
-Style/AndOr:
+# We use
+#   nested style for those who are independent from BioTCM
+#   compact style for those who are not
+Style/ClassAndModuleChildren:
   Enabled: false
 
 Style/ClassVars:
@@ -26,6 +21,9 @@ Style/Documentation:
   Enabled: false
 
 Style/MutableConstant:
+  Enabled: false
+
+Style/MultilineMethodCallIndentation:
   Enabled: false
 
 Style/TrivialAccessors:

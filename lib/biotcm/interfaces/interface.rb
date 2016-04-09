@@ -9,7 +9,7 @@ module BioTCM::Interfaces::Interface
   # @return [Tempfile] a tempfile containing rendered script
   def render_template(template_path, context)
     # Check extension
-    fail ArgumentError unless /\.erb$/i =~ template_path
+    raise ArgumentError unless /\.erb$/i =~ template_path
 
     # Prepare
     template = ERB.new(File.read(template_path))

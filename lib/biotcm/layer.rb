@@ -56,15 +56,15 @@ module BioTCM
       # Headline
       col = fin.gets.chomp.split("\t")
       unless (i_src = col.index(colname[:source]))
-        fail ArgumentError, "Cannot find source node column: #{colname[:source]}"
+        raise ArgumentError, "Cannot find source node column: #{colname[:source]}"
       end
       unless (i_tgt = col.index(colname[:target]))
-        fail ArgumentError, "Cannot find target node column: #{colname[:target]}"
+        raise ArgumentError, "Cannot find target node column: #{colname[:target]}"
       end
       col[i_src] = col[i_tgt] = nil
       if colname[:interaction]
         unless (i_typ = col.index(colname[:interaction]))
-          fail ArgumentError, "Cannot find interaction type column: #{colname[:interaction]}"
+          raise ArgumentError, "Cannot find interaction type column: #{colname[:interaction]}"
         end
         col[i_typ] = nil
       else
@@ -92,7 +92,7 @@ module BioTCM
         col[i_src] = col[i_tgt] = nil
         col[i_typ] = nil if i_typ
         col.compact!
-        fail ArgumentError, "Row size inconsistent in line #{fin.lineno + 2}" unless col.size == col_size
+        raise ArgumentError, "Row size inconsistent in line #{fin.lineno + 2}" unless col.size == col_size
         edge_tab.row([src, typ, tgt].compact.join("\t"), col)
       end
 
