@@ -6,7 +6,7 @@ describe BioTCM do
   end
 
   it 'must curl urls' do
-    assert_match(/^<!doctype html>/i, BioTCM.curl('http://biotcm.github.io/'))
+    assert_match(/^<!doctype html>/i, BioTCM.curl('http://www.baidu.com/'))
     assert_nil(BioTCM.curl('unknown'))
   end
 

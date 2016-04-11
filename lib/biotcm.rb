@@ -13,7 +13,7 @@ module BioTCM
   # Default data directory
   DEFAULT_DATA_DIRECTORY = File.expand_path('~/.gem/biotcm')
   # Default url of the meta file
-  DEFAULT_META_FILE_URL = 'http://biotcm.github.io/meta/meta.json'
+  DEFAULT_META_FILE_URL = 'http://aidistan.github.io/ruby-biotcm/meta.json'
 
   module_function
 
