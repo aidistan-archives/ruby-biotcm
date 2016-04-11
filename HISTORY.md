@@ -1,5 +1,8 @@
 # History
 
+### v0.6.0 2016-04-11
+- Change repo urls
+
 ### v0.5.0 2016-04-09
 Make things clearer and easier
 - Bump BioTCM::Databases::Cipher to v0.3.0
