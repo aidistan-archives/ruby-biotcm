@@ -5,12 +5,15 @@ module BioTCM
       include Interface
 
       # Run MATLAB script
+      # @param script_path [String] path to the script
+      # @param matlab_path [String] path to matlab
       def run_matlab_script(script_path, matlab_path: 'matlab')
         raise ArgumentError, 'A valid MATLAB script required' unless /\.m$/i =~ script_path
         system("#{matlab_path} -nojvm -r 'run #{script_path}; exit'")
       end
 
       # Evaluate MATLAB script
+      # @param matlab_path [String] path to matlab
       # @see Interface#render_template
       def evaluate_matlab_script(template_path, context, matlab_path: 'matlab')
         raise ArgumentError, 'A valid MATLAB template script required' unless /\.m\.erb$/i =~ template_path

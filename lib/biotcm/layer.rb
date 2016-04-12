@@ -106,13 +106,17 @@ module BioTCM
       new(edge_tab: edge_tab, node_tab: node_tab)
     end
 
-    #
+    # Create a layer from an edge tab and a node tab
+    # @param edge_tab [Table]
+    # @param node_tab [Table]
     def initialize(edge_tab: nil, node_tab: nil)
       @edge_tab = edge_tab || BioTCM::Table.new(primary_key: "Source\tTarget")
       @node_tab = node_tab || BioTCM::Table.new(primary_key: 'Node')
     end
 
     # Save the layer to disk
+    # @param path [String] path to output directory
+    # @param prefix [String]
     def save(path, prefix = '')
       FileUtils.mkdir_p(path)
       @edge_tab.save(File.expand_path(prefix + 'edges.tab', path))

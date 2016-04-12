@@ -24,6 +24,9 @@ class BioTCM::Apps::GeneDetector
   ]
 
   # Initialize a gene detector
+  # @param gene_blacklist [Array]
+  # @param text_changelist [Array]
+  # @param if_formalize [Boolean]
   def initialize(
     gene_blacklist: [],
     text_changelist: [],

@@ -36,7 +36,7 @@ module BioTCM
     # @param seperator [String]
     # @return [Table]
     def self.load(filepath, encoding: Encoding.default_external, seperator: "\t")
-      fail ArgumentError, 'Illegal argument type for Table.load' unless filepath.is_a?(String)
+      raise ArgumentError, 'Illegal argument type for Table.load' unless filepath.is_a?(String)
       File.open(filepath, "r:#{encoding}").read.to_table(seperator: seperator)
     end
 
@@ -64,49 +64,45 @@ module BioTCM
       )
     end
 
-    #
+    # Set the primary key
+    # @param val [String]
     def primary_key=(val)
-      if val.respond_to?(:to_s)
-        @primary_key = val.to_s
-      else
-        fail ArgumentError, 'Non-string assigned to the primary key'
-      end
+      @primary_key = val.to_s
     end
 
-    #
+    # Get row keys
+    # @return [Array]
     def row_keys
       @row_keys.keys
     end
 
-    #
+    # Set row keys
+    # @param val [Array]
     def row_keys=(val)
-      fail ArgumentError, 'Illegal agrument type' unless val.is_a?(Array)
-      fail ArgumentError, 'Unmatched size' if val.size < @row_keys.size
+      raise ArgumentError, 'Illegal agrument type' unless val.is_a?(Array)
+      raise ArgumentError, 'Unmatched size' if val.size < @row_keys.size
       @row_keys = val.map.with_index { |v, i| [v, i] }.to_h
     end
 
-    #
+    # Get col keys
+    # @return [Array]
     def col_keys
       @col_keys.keys
     end
 
-    #
+    # Set col keys
+    # @param val [Array]
     def col_keys=(val)
-      fail ArgumentError, 'Illegal agrument type' unless val.is_a?(Array)
-      fail ArgumentError, 'Unmatched size' if val.size < @col_keys.size
+      raise ArgumentError, 'Illegal agrument type' unless val.is_a?(Array)
+      raise ArgumentError, 'Unmatched size' if val.size < @col_keys.size
       @col_keys = val.map.with_index { |v, i| [v, i] }.to_h
     end
 
-    #
+    # Set comments
+    # @param val [Array/String]
     def comments=(val)
       if val.respond_to?(:collect)
-        @comments = val.collect do |v|
-          if v.respond_to?(:to_s)
-            v.to_s
-          else
-            fail ArgumentError, 'Illegal agrument type'
-          end
-        end
+        @comments = val.map(&:to_s)
       elsif val.respond_to?(:to_s)
         @comments = [val.to_s]
       end
@@ -130,7 +126,7 @@ module BioTCM
       end
 
       unless row.is_a?(String) && col.is_a?(String) && val.respond_to?(:to_s)
-        fail ArgumentError, 'Illegal argument type'
+        raise ArgumentError, 'Illegal argument type'
       end
 
       unless @row_keys[row]
@@ -167,9 +163,9 @@ module BioTCM
 
       # Setter
       if !row.is_a?(String) || (!val.is_a?(Hash) && !val.is_a?(Array))
-        fail ArgumentError, 'Illegal argument type'
+        raise ArgumentError, 'Illegal argument type'
       elsif val.is_a?(Array) && val.size != col_keys.size
-        fail ArgumentError, 'Column size not match'
+        raise ArgumentError, 'Column size not match'
       end
 
       case val
@@ -214,9 +210,9 @@ module BioTCM
 
       # Setter
       if !col.is_a?(String) || (!val.is_a?(Hash) && !val.is_a?(Array))
-        fail ArgumentError, 'Illegal argument type'
+        raise ArgumentError, 'Illegal argument type'
       elsif val.is_a?(Array) && val.size != row_keys.size
-        fail ArgumentError, 'Row size not match'
+        raise ArgumentError, 'Row size not match'
       end
 
       case val
@@ -269,18 +265,22 @@ module BioTCM
     end
 
     # Select row(s) to build a new table
+    # @param rows [Array]
     # @return [Table]
     def select_row(rows)
       select(rows, :all)
     end
 
     # Select column(s) to build a new table
+    # @param cols [Array]
     # @return [Table]
     def select_col(cols)
       select(:all, cols)
     end
 
     # Select row(s) and column(s) to build a new table
+    # @param rows [Array]
+    # @param cols [Array]
     # @return [Table]
     def select(rows, cols)
       # Prune rows
@@ -288,7 +288,7 @@ module BioTCM
         row_keys = @row_keys.clone
         content = @content.collect(&:clone)
       else
-        fail ArgumentError, 'Illegal argument type' unless rows.is_a?(Array)
+        raise ArgumentError, 'Illegal argument type' unless rows.is_a?(Array)
         row_keys = {}
         (rows & @row_keys.keys).each { |row| row_keys[row] = row_keys.size }
         content = []
@@ -299,7 +299,7 @@ module BioTCM
       if cols == :all
         col_keys = @col_keys.clone
       else
-        fail ArgumentError, 'Illegal argument type' unless cols.is_a?(Array)
+        raise ArgumentError, 'Illegal argument type' unless cols.is_a?(Array)
         col_keys = {}
         (cols & @col_keys.keys).each { |col| col_keys[col] = col_keys.size }
         eval 'content.collect! { |arr| [' + col_keys.keys.collect { |col| "arr[#{@col_keys[col]}]" }.join(',') + '] }'
@@ -318,8 +318,8 @@ module BioTCM
     # Merge with another table
     # @param tab [Table]
     def merge(tab)
-      fail ArgumentError, 'Only tables could be merged' unless tab.is_a?(self.class)
-      fail ArgumentError, 'Primary keys not the same' unless tab.primary_key == primary_key
+      raise ArgumentError, 'Only tables could be merged' unless tab.is_a?(self.class)
+      raise ArgumentError, 'Primary keys not the same' unless tab.primary_key == primary_key
 
       # Empty content
       content = []
@@ -425,7 +425,7 @@ class String
 
     # Headline
     col_keys = stuff.shift.split(seperator)
-    fail ArgumentError, 'Duplicated column names' unless col_keys.uniq!.nil?
+    raise ArgumentError, 'Duplicated column names' unless col_keys.uniq!.nil?
     primary_key = col_keys.shift
     col_keys_hash = {}
     col_keys.each_with_index { |n, i| col_keys_hash[n] = i }
@@ -436,8 +436,8 @@ class String
     content = []
     stuff.each_with_index do |line, line_index|
       col = line.split(seperator, -1)
-      fail ArgumentError, "Row size inconsistent in line #{line_index + 2}" unless col.size == col_keys.size + 1
-      fail ArgumentError, "Duplicated primary key: #{col[0]}" if row_keys[col[0]]
+      raise ArgumentError, "Row size inconsistent in line #{line_index + 2}" unless col.size == col_keys.size + 1
+      raise ArgumentError, "Duplicated primary key: #{col[0]}" if row_keys[col[0]]
       row_keys[col.shift] = row_keys.size
       content << col
     end

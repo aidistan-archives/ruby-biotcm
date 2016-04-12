@@ -90,6 +90,7 @@ class BioTCM::Databases::Medline
     # end
 
     # Convert param hash into param string
+    # @param params [Hash]
     def parameterize(params)
       params.select { |_k, v| v }.map { |k, v| k.to_s + '=' + v.to_s }.join('&')
     end
@@ -118,6 +119,7 @@ class BioTCM::Databases::Medline
   end
 
   # OR operation search
+  # @param other [String/Medline]
   # @return [self]
   def |(other)
     other = '%23' + other.query_key if other.is_a?(self.class)
@@ -126,6 +128,7 @@ class BioTCM::Databases::Medline
   end
 
   # AND operation search
+  # @param other [String/Medline]
   # @return [self]
   def &(other)
     other = '%23' + other.query_key if other.is_a?(self.class)

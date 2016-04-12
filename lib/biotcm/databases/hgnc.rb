@@ -219,6 +219,7 @@ class BioTCM::Databases::HGNC
   attr_reader :rescue_method
 
   # Make sure methods in String are working
+  # @param file_path [String] the path of your HGNC table files if default not used
   def self.ensure(file_path = nil)
     String.hgnc || new(file_path).as_dictionary
   end

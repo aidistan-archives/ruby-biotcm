@@ -41,7 +41,7 @@ class BioTCM::Apps::StringProcessor
   end
 
   # Extract ppi network by species
-  # @param output [String] output file path
+  # @param filepath [String] path to output
   # @param species [String/Integer] species name or ID
   def extract_by_species(filepath, species = 'Homo sapiens')
     fout = File.new(filepath, 'w')
