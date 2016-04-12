@@ -1,6 +1,7 @@
-# BioTCM
+# Ruby Gem: BioTCM
 
 [![Gem Version](https://badge.fury.io/rb/biotcm.svg)](http://badge.fury.io/rb/biotcm)
+[![Build Status](https://travis-ci.org/aidistan/ruby-biotcm.svg?branch=master)](https://travis-ci.org/aidistan/ruby-biotcm)
 [![Docs Status](http://inch-ci.org/github/aidistan/ruby-biotcm.svg?branch=master)](http://inch-ci.org/github/aidistan/ruby-biotcm)
 
 BioTCM is designed as a base gem to build advanced applications on Bioinformatics.
