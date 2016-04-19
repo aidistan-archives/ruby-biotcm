@@ -6,7 +6,7 @@ module BioTCM
   # For more details, please refer to the test.
   class Table
     # Version
-    VERSION = '0.4.0'
+    VERSION = '0.4.1'
 
     # Primary key
     attr_accessor :primary_key
@@ -48,7 +48,7 @@ module BioTCM
       @primary_key = primary_key
       @row_keys = row_keys.map.with_index { |r, ri| [r, ri] }.to_h
       @col_keys = col_keys.map.with_index { |c, ci| [c, ci] }.to_h
-      @content = [[''] * col_keys.size] * row_keys.size
+      @content = row_keys.collect { col_keys.collect { '' } }
       @comments = comments
     end
 
