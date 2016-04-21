@@ -1,7 +1,8 @@
 require 'bundler/setup'
 require 'bundler/gem_tasks'
+require 'rainbow'
+CLOBBER.include '.yardoc', 'doc'
 
-# test
 require 'rake/testtask'
 Rake::TestTask.new do |t|
   t.description = 'Run tests (as :default)'
@@ -11,41 +12,24 @@ Rake::TestTask.new do |t|
 end
 task default: :test
 
-# cop
-namespace :cop do
-  desc 'Run RuboCop and output in simple format (as :cop)'
-  task :simple do
-    system('bundle exec rubocop --format s')
-  end
-  desc 'Run RuboCop and output in files format'
-  task :files do
-    system('bundle exec rubocop --format files')
-  end
-  desc 'Run RuboCop and output in html format'
-  task :html do
-    system('bundle exec rubocop --format html -o doc/rubocop.html')
-    system('firefox doc/rubocop.html')
-  end
+desc 'Serve YARD documents'
+task :doc do
+  system('bundle exec yard server --port 4000 --reload')
 end
-task cop: 'cop:simple'
 
-# doc
-namespace :doc do
-  desc 'Build YARD docs'
-  task :build do
-    system('bundle exec yard')
-  end
-  desc 'Open YARD server (as :doc)'
-  task :serve do
-    system('bundle exec yard server --port 4000 --reload')
-  end
-end
-task doc: 'doc:serve'
+desc 'Check before release'
+namespace :release do
+  task :check do
+    unchanged_files =
+      %w(lib/biotcm/version.rb HISTORY.md Gemfile.lock) -
+      `git diff-files`.split("\n").map { |l| l.split("\t").last }
 
-# clean
-desc 'Clean the directory'
-task :clean do
-  FileList['.yardoc', 'doc', 'pkg'].each do |f|
-    FileUtils.rm_r(f) if File.exist?(f) || Dir.exist?(f)
+    if unchanged_files.empty?
+      puts Rainbow('All files updated').green
+    else
+      unchanged_files.each do |file|
+        puts "#{Rainbow(file).bright} has not been updated"
+      end
+    end
   end
 end
