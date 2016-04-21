@@ -1,5 +1,9 @@
 # History
 
+### v0.6.1 2016-04-21
+- Update BioTCM::Table to v0.4.1
+	- Fix a critical bug in Table#initialize
+
 ### v0.6.0 2016-04-11
 - Change repo urls
 
