@@ -2,11 +2,9 @@
 # class BioTCM::Databases::OMIM
 #   # Current version of OMIM
 #   VERSION = '0.2.0'
-#   # Meta key of API key
-#   META_KEY = 'OMIM_API_KEY'
 #   # Public API key
 #   # (change it to your private key if in need)
-#   API_KEY = BioTCM.meta[META_KEY]
+#   API_KEY = BioTCM.meta['OMIM']['API_KEY']
 #
 #   # OMIM ID
 #   attr_reader :id

@@ -2,7 +2,7 @@ require_relative 'test_helper'
 
 describe BioTCM do
   it 'must get meta data' do
-    assert_equal('meta.json', BioTCM.meta['__filename'])
+    assert(BioTCM.meta['VERSION'])
   end
 
   it 'must curl urls' do

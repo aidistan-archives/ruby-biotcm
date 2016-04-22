@@ -1,7 +1,7 @@
 require 'fileutils'
-require 'json'
 require 'logger'
 require 'net/http'
+require 'yaml'
 
 # Top level namespace of BioTCM
 module BioTCM
@@ -13,7 +13,7 @@ module BioTCM
   # Default data directory
   DEFAULT_DATA_DIRECTORY = File.expand_path('~/.gem/biotcm')
   # Default url of the meta file
-  DEFAULT_META_FILE_URL = 'http://aidistan.github.io/ruby-biotcm/meta.json'
+  DEFAULT_META_FILE_URL = 'http://aidistan.github.io/ruby-biotcm/meta.yaml'
 
   module_function
 
@@ -41,7 +41,7 @@ module BioTCM
   # Get meta values
   # @return [Hash]
   def meta
-    @meta ||= JSON.parse(curl(DEFAULT_META_FILE_URL))
+    @meta ||= YAML.load(curl(DEFAULT_META_FILE_URL))
   end
 
   # Get the path to a gem data file

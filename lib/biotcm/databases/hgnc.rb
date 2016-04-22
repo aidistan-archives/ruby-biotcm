@@ -158,8 +158,6 @@ class BioTCM::Databases::HGNC
 
   # Current version of HGNC
   VERSION = '0.2.3'
-  # Meta key for the download url of default HGNC table
-  META_KEY = 'HGNC_DOWNLOAD_URL'
   # Identifers available in BioTCM::Databases::HGNC by now mapped to headline in HGNC table.
   # @note Single-item column comes first (at position 0) before multiple-item columns.
   IDENTIFIERS = {
@@ -241,7 +239,7 @@ class BioTCM::Databases::HGNC
       file_path = BioTCM.path_to('hgnc/hgnc_set.txt')
       unless File.exist?(file_path)
         BioTCM.logger.info('HGNC') { 'Since default HGNC table not exists, trying to download one... (This may cost several minutes.)' }
-        File.open(file_path, 'w:UTF-8').puts BioTCM.curl(BioTCM.meta[META_KEY])
+        File.open(file_path, 'w:UTF-8').puts BioTCM.curl(BioTCM.meta['HGNC']['DOWNLOAD_URL'])
       end
     end
     load_hgnc_table(File.open(file_path))

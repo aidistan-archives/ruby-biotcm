@@ -24,8 +24,6 @@
 module BioTCM::Databases::Cipher
   # Current version of Cipher
   VERSION = '0.3.0'
-  # The url of Cipher website
-  META_KEY = 'CIPHER_WEBSITE_URL'
 
   # Get Cipher results
   # @param omim_id [String]
@@ -35,7 +33,7 @@ module BioTCM::Databases::Cipher
   def self.get(omim_id)
     # Ensurance
     BioTCM::Databases::HGNC.ensure
-    base_url = BioTCM.meta[META_KEY]
+    base_url = BioTCM.meta['CIPHER']['WEBSITE_URL']
 
     # Load disease list
     @disease = {}
