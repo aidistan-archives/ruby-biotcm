@@ -1,5 +1,9 @@
 # History
 
+### v0.7.0 2016-04-22
+- Add BioTCM::Databases::OMIM back
+- Use `meta.yaml` instead of `meta.json`
+
 ### v0.6.1 2016-04-21
 - Update BioTCM::Table to v0.4.1
 	- Fix a critical bug in Table#initialize
