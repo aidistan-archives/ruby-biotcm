@@ -68,7 +68,7 @@ module BioTCM::Databases::Cipher
     File.open(filename, 'w:UTF-8').puts BioTCM.curl(base_url + "/top1000data/#{@disease[omim_id]}.txt") unless File.exist?(filename)
 
     # Make table
-    tab = "Gene\tCipher Rank\tCipher Score".to_table
+    tab = BioTCM::Table.new(primary_key: 'Gene', col_keys: ['Cipher Rank', 'Cipher Score'])
     tab_genes = tab.instance_variable_get(:@row_keys)
     File.open(filename).each_with_index do |line, line_no|
       col = line.chomp.split("\t")
