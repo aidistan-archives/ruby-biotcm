@@ -1,5 +1,9 @@
 # History
 
+### v0.8.0 2016-05-04
+- Update BioTCM::Table to v0.5.0
+	- Allow primary_key to be nil
+
 ### v0.7.0 2016-04-22
 - Add BioTCM::Databases::OMIM back
 - Use `meta.yaml` instead of `meta.json`

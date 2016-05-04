@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    biotcm (0.7.0)
+    biotcm (0.8.0)
 
 GEM
   remote: https://rubygems.org/
