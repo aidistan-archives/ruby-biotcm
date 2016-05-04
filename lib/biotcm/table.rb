@@ -6,7 +6,7 @@ module BioTCM
   # For more details, please refer to the test.
   class Table
     # Version
-    VERSION = '0.4.1'
+    VERSION = '0.5.0'
 
     # Primary key
     attr_accessor :primary_key
@@ -20,7 +20,7 @@ module BioTCM
     # @private
     # Factory method
     # @return [Table]
-    def self.build(primary_key: '_id', row_keys: {}, col_keys: {}, content: [], comments: [])
+    def self.build(primary_key: nil, row_keys: {}, col_keys: {}, content: [], comments: [])
       @tab = new
       @tab.instance_variable_set(:@primary_key, primary_key)
       @tab.instance_variable_set(:@row_keys, row_keys)
@@ -44,7 +44,7 @@ module BioTCM
     # @param primary_key [String]
     # @param row_keys [Array]
     # @param col_keys [Array]
-    def initialize(primary_key: '_id', row_keys: [], col_keys: [], comments: [])
+    def initialize(primary_key: nil, row_keys: [], col_keys: [], comments: [])
       @primary_key = primary_key
       @row_keys = row_keys.map.with_index { |r, ri| [r, ri] }.to_h
       @col_keys = col_keys.map.with_index { |c, ci| [c, ci] }.to_h
@@ -67,7 +67,11 @@ module BioTCM
     # Set the primary key
     # @param val [String]
     def primary_key=(val)
-      @primary_key = val.to_s
+      if val.nil?
+        @primary_key = nil
+      else
+        @primary_key = val.to_s
+      end
     end
 
     # Get row keys
@@ -113,11 +117,13 @@ module BioTCM
     #   Get an element
     #   @param row [String]
     #   @param col [String]
+    #   @return [String]
     # @overload ele(row, col, val)
     #   Set an element
     #   @param row [String]
     #   @param col [String]
     #   @param val [String]
+    #   @return [Table]
     def ele(row, col, val = nil)
       if val.nil?
         row = @row_keys[row]
@@ -150,10 +156,12 @@ module BioTCM
     # @overload row(row)
     #   Get a row
     #   @param row [String]
+    #   @return [Hash]
     # @overload row(row, val)
     #   Set a row
     #   @param row [String]
     #   @param val [Hash, Array]
+    #   @return [Table]
     def row(row, val = nil)
       # Getter
       if val.nil?
@@ -197,10 +205,12 @@ module BioTCM
     # @overload col(col)
     #   Get a column
     #   @param col [String]
+    #   @return [Hash]
     # @overload col(col, val)
     #   Set a column
     #   @param col [String]
     #   @param val [Hash, Array]
+    #   @return [Table]
     def col(col, val = nil)
       # Getter
       if val.nil?
@@ -391,12 +401,13 @@ module BioTCM
     # @private
     # Convert to {String}
     def to_s
-      (
-        @comments.collect { |line| '# ' + line } +
-        @row_keys.keys.zip(@content)
-          .unshift([@primary_key, @col_keys.keys])
-          .collect { |a| a.join("\t") }
-      ).join("\n")
+      [
+        @comments.collect { |line| '# ' + line },
+        @primary_key.nil? ?
+          @col_keys.keys.join("\t") :
+          [@primary_key, @col_keys.keys].join("\t"),
+        @row_keys.keys.zip(@content).collect { |a| a.join("\t") }
+      ].join("\n")
     end
 
     # Print in a file
@@ -426,18 +437,25 @@ class String
     # Headline
     col_keys = stuff.shift.split(seperator)
     raise ArgumentError, 'Duplicated column names' unless col_keys.uniq!.nil?
-    primary_key = col_keys.shift
-    col_keys_hash = {}
-    col_keys.each_with_index { |n, i| col_keys_hash[n] = i }
-    col_keys = col_keys_hash
+    if stuff.first && stuff.first.split(seperator).size == col_keys.size + 1
+      primary_key = nil
+    else
+      primary_key = col_keys.shift
+    end
+    col_keys = col_keys.map.with_index { |n, i| [n, i] }.to_h
 
     # Table content
     row_keys = {}
     content = []
     stuff.each_with_index do |line, line_index|
       col = line.split(seperator, -1)
-      raise ArgumentError, "Row size inconsistent in line #{line_index + 2}" unless col.size == col_keys.size + 1
-      raise ArgumentError, "Duplicated primary key: #{col[0]}" if row_keys[col[0]]
+
+      if col.size != col_keys.size + 1
+        raise ArgumentError, "Row size inconsistent in line #{line_index + 2}"
+      elsif row_keys[col[0]]
+        raise ArgumentError, "Duplicated primary key: #{col[0]}"
+      end
+
       row_keys[col.shift] = row_keys.size
       content << col
     end
