@@ -6,7 +6,7 @@ module BioTCM
   # For more details, please refer to the test.
   class Table
     # Version
-    VERSION = '0.5.0'
+    VERSION = '0.5.1'
 
     # Primary key
     attr_accessor :primary_key
@@ -407,7 +407,7 @@ module BioTCM
           @col_keys.keys.join("\t") :
           [@primary_key, @col_keys.keys].join("\t"),
         @row_keys.keys.zip(@content).collect { |a| a.join("\t") }
-      ].join("\n")
+      ].flatten.join("\n")
     end
 
     # Print in a file
