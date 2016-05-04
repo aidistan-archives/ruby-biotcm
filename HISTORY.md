@@ -1,5 +1,9 @@
 # History
 
+### v0.8.1 2016-05-04
+- Update BioTCM::Table to v0.5.1
+	- Fix a bug in BioTCM::Table#to_s
+
 ### v0.8.0 2016-05-04
 - Update BioTCM::Table to v0.5.0
 	- Allow primary_key to be nil
