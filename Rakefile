@@ -14,7 +14,7 @@ task default: :test
 
 desc 'Serve YARD documents'
 task :doc do
-  system('bundle exec yard server --port 4000 --reload')
+  system('bundle exec yard server --reload')
 end
 
 desc 'Check before release'

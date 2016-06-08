@@ -10,7 +10,7 @@
 #
 class BioTCM::Apps::StringProcessor
   # Version of StringProcessor
-  VERSION = '0.1.0'
+  VERSION = '0.1.0'.freeze
 
   # Open STRING data files
   # @param protein_links_filepath [String]
@@ -65,14 +65,14 @@ class BioTCM::Apps::StringProcessor
     # Start to extract
     @f_protein_links.each do |line|
       col = line.chomp.split(' ')
-      col[0] =~ /(\d+)\.(.*)$/
-      next if $1.to_i < species
-      break if $1.to_i > species
+      col[0] =~ /(?<species_id>\d+)\.(?<protein_id>.*)$/
+      next if species_id.to_i < species
+      break if species_id.to_i > species
 
       # Handle proteins' names
-      col[0] = $2
-      col[1] =~ /\d+\.(.*)$/
-      col[1] = $1
+      col[0] = protein_id
+      col[1] =~ /\d+\.(?<protein_id>.*)$/
+      col[1] = protein_id
 
       fout.puts col.join("\t")
       counter += 1

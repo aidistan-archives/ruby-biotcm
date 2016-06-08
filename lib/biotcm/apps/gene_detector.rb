@@ -5,12 +5,14 @@
 #
 class BioTCM::Apps::GeneDetector
   # Version of GeneDetector
-  VERSION = '0.2.0'
+  VERSION = '0.2.1'.freeze
+
   # Default patterns of genes to exclude
   DEFAULT_GENE_BLACKLIST = [
     '^\w$',
     '^\d'
-  ]
+  ].freeze
+
   # Default patterns of text to transform
   DEFAULT_TEXT_CHANGELIST = [
     [/ type I receptor/i, 'R1'],
@@ -21,7 +23,7 @@ class BioTCM::Apps::GeneDetector
     [/(\s*|-*)beta/i, 'B'],
     [/(\s*|-*)gamma/i, 'G'],
     [/(\s*|-*)kappa/i, 'K']
-  ]
+  ].freeze
 
   # Initialize a gene detector
   # @param gene_blacklist [Array]
@@ -32,8 +34,8 @@ class BioTCM::Apps::GeneDetector
     text_changelist: [],
     if_formalize: true
   )
-    @gene_regexp = Regexp.new('(' + (DEFAULT_GENE_BLACKLIST + gene_blacklist).join(')|(') + ')')
-    @text_changelist = text_changelist
+    @gene_blacklist = Regexp.new('(' + (DEFAULT_GENE_BLACKLIST + gene_blacklist).join(')|(') + ')')
+    @text_changelist = DEFAULT_TEXT_CHANGELIST + text_changelist
     @if_formalize = if_formalize
   end
 
@@ -43,20 +45,22 @@ class BioTCM::Apps::GeneDetector
   def detect(text)
     # Check dependency
     BioTCM::Databases::HGNC.ensure
-    # Prepare symbol list
-    unless @symbols
-      @symbols = String.hgnc.symbol2hgncid.keys
-      # Exclude symbol patterns
-      @symbols.reject! { |sym| sym =~ @gene_regexp }
+
+    # Prepare symbols
+    unless instance_variable_defined?(:@symbols)
+      @symbols = BioTCM::Databases::HGNC.symbol2hgncid.keys
+      @symbols.reject! { |sym| sym =~ @gene_blacklist }
     end
+
     # Transform text
-    (DEFAULT_TEXT_CHANGELIST + @text_changelist).each do |item|
+    @text_changelist.each do |item|
       text.gsub!(item[0], item[1])
     end
 
     # Split sentences into words and eliminate redundancies
     rtn = text.split(/\.\s|\s?[,:!?#()\[\]{}]\s?|\s/).uniq & @symbols
+
     # Return approved symbols
-    @if_formalize ? rtn.formalize_symbol.uniq : rtn
+    @if_formalize ? rtn.map(&:to_formal_symbol).uniq : rtn
   end
 end

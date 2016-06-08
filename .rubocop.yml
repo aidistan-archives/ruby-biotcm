@@ -1,50 +1,44 @@
-Lint/Eval:
+#
+# General
+#
+
+Metrics/LineLength:
+  Enabled: false
+
+Style/Alias:
+  EnforcedStyle: prefer_alias_method
+
+Style/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+
+Style/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Style/NestedParenthesizedCalls:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+
+#
+# Specific
+#
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Metrics/AbcSize:
   Enabled: false
 
 Metrics/ClassLength:
   Enabled: false
 
-# Allow to use `or` sometimes for its simplicity
-Style/AndOr:
+Metrics/ModuleLength:
   Enabled: false
-
-# We use
-#   nested style for those who are independent from BioTCM
-#   compact style for those who are not
-Style/ClassAndModuleChildren:
-  Enabled: false
-
-Style/ClassVars:
-  Enabled: false
-
-Style/Documentation:
-  Enabled: false
-
-Style/MutableConstant:
-  Enabled: false
-
-Style/MultilineMethodCallIndentation:
-  Enabled: false
-
-Style/TrivialAccessors:
-  ExactNameMatch: true
-
-# TOFIX
-
-Metrics/MethodLength:
-  Max: 72
-
-Metrics/LineLength:
-  Max: 405
-
-Metrics/BlockNesting:
-  Max: 4
-
-Metrics/AbcSize:
-  Max: 117
 
 Metrics/CyclomaticComplexity:
-  Max: 17
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
 
 Metrics/PerceivedComplexity:
-  Max: 17
+  Enabled: false

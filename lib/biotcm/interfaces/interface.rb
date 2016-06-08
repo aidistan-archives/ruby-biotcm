@@ -1,5 +1,6 @@
-require 'tempfile'
 require 'erb'
+require 'ostruct'
+require 'tempfile'
 
 # Common methods for interfaces
 module BioTCM::Interfaces::Interface

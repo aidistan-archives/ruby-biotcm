@@ -6,16 +6,12 @@ module BioTCM
   # For more details, please refer to the test.
   class Table
     # Version
-    VERSION = '0.5.1'
+    VERSION = '0.6.0'.freeze
 
     # Primary key
-    attr_accessor :primary_key
-    # Keys of rows
-    attr_accessor :row_keys
-    # Keys of columns
-    attr_accessor :col_keys
+    attr_reader :primary_key
     # Comments
-    attr_accessor :comments
+    attr_reader :comments
 
     # @private
     # Factory method
@@ -67,11 +63,7 @@ module BioTCM
     # Set the primary key
     # @param val [String]
     def primary_key=(val)
-      if val.nil?
-        @primary_key = nil
-      else
-        @primary_key = val.to_s
-      end
+      @primary_key = val.nil? ? nil : val.to_s
     end
 
     # Get row keys
@@ -124,26 +116,37 @@ module BioTCM
     #   @param col [String]
     #   @param val [String]
     #   @return [Table]
+    # @deprecated Use {#get_ele} and {#set_ele} instead
     def ele(row, col, val = nil)
       if val.nil?
-        row = @row_keys[row]
-        col = @col_keys[col]
-        return row && col ? @content[row][col] : nil
+        get_ele(row, col)
+      else
+        set_ele(row, col, val)
       end
+    end
 
+    # Get an element
+    # @param row [String]
+    # @param col [String]
+    # @return [String]
+    def get_ele(row, col)
+      row = @row_keys[row]
+      col = @col_keys[col]
+      row && col ? @content[row][col] : nil
+    end
+
+    # Set an element
+    # @param row [String]
+    # @param col [String]
+    # @param val [String]
+    # @return [Table]
+    def set_ele(row, col, val)
       unless row.is_a?(String) && col.is_a?(String) && val.respond_to?(:to_s)
         raise ArgumentError, 'Illegal argument type'
       end
 
-      unless @row_keys[row]
-        @row_keys[row] = @row_keys.size
-        @content << ([''] * @col_keys.size)
-      end
-
-      unless @col_keys[col]
-        @col_keys[col] = @col_keys.size
-        @content.each { |arr| arr << '' }
-      end
+      set_row(row, [''] * @col_keys.size) unless @row_keys[row]
+      set_col(col, [''] * @row_keys.size) unless @col_keys[col]
 
       row = @row_keys[row]
       col = @col_keys[col]
@@ -162,13 +165,28 @@ module BioTCM
     #   @param row [String]
     #   @param val [Hash, Array]
     #   @return [Table]
+    # @deprecated Use {#get_row} and {#set_row} instead
     def row(row, val = nil)
-      # Getter
       if val.nil?
-        row = @row_keys[row] or return nil
-        return @col_keys.map { |c, ci| [c, @content[row][ci]] }.to_h
+        get_row(row)
+      else
+        set_row(row, val)
       end
+    end
 
+    # Get a row
+    # @param row [String]
+    # @return [Hash]
+    def get_row(row)
+      row = @row_keys[row]
+      row.nil? ? nil : @col_keys.map { |c, ci| [c, @content[row][ci]] }.to_h
+    end
+
+    # Set a row
+    # @param row [String]
+    # @param val [Hash, Array]
+    # @return [Table]
+    def set_row(row, val)
       # Setter
       if !row.is_a?(String) || (!val.is_a?(Hash) && !val.is_a?(Array))
         raise ArgumentError, 'Illegal argument type'
@@ -193,8 +211,8 @@ module BioTCM
 
         row = @row_keys[row]
         val.each do |k, v|
-          col = @col_keys[k] or next
-          @content[row][col] = v
+          col = @col_keys[k]
+          @content[row][col] = v if col
         end
       end
 
@@ -211,14 +229,28 @@ module BioTCM
     #   @param col [String]
     #   @param val [Hash, Array]
     #   @return [Table]
+    # @deprecated Use {#get_col} and {#set_col} instead
     def col(col, val = nil)
-      # Getter
       if val.nil?
-        col = @col_keys[col] or return nil
-        return @row_keys.map { |r, ri| [r, @content[ri][col]] }.to_h
+        get_col(col)
+      else
+        set_col(col, val)
       end
+    end
 
-      # Setter
+    # Get a column
+    # @param col [String]
+    # @return [Hash]
+    def get_col(col)
+      col = @col_keys[col]
+      col.nil? ? nil : @row_keys.map { |r, ri| [r, @content[ri][col]] }.to_h
+    end
+
+    # Set a column
+    # @param col [String]
+    # @param val [Hash, Array]
+    # @return [Table]
+    def set_col(col, val)
       if !col.is_a?(String) || (!val.is_a?(Hash) && !val.is_a?(Array))
         raise ArgumentError, 'Illegal argument type'
       elsif val.is_a?(Array) && val.size != row_keys.size
@@ -242,8 +274,8 @@ module BioTCM
 
         col = @col_keys[col]
         val.each do |k, v|
-          row = @row_keys[k] or next
-          @content[row][col] = v
+          row = @row_keys[k]
+          @content[row][col] = v if row
         end
       end
 
@@ -312,7 +344,7 @@ module BioTCM
         raise ArgumentError, 'Illegal argument type' unless cols.is_a?(Array)
         col_keys = {}
         (cols & @col_keys.keys).each { |col| col_keys[col] = col_keys.size }
-        eval 'content.collect! { |arr| [' + col_keys.keys.collect { |col| "arr[#{@col_keys[col]}]" }.join(',') + '] }'
+        eval 'content.collect! { |arr| [' + col_keys.keys.collect { |col| "arr[#{@col_keys[col]}]" }.join(',') + '] }' # rubocop:disable Lint/Eval
       end
 
       # Create a new table
@@ -333,49 +365,44 @@ module BioTCM
 
       # Empty content
       content = []
-      row_keys = {}
-      (@row_keys.keys | tab.row_keys).each { |row| row_keys[row] = row_keys.size }
-      col_keys = {}
-      (@col_keys.keys | tab.col_keys).each { |col| col_keys[col] = col_keys.size }
+      row_keys = (@row_keys.keys | tab.row_keys).map.with_index { |row, i| [row, i] }.to_h
+      col_keys = (@col_keys.keys | tab.col_keys).map.with_index { |col, i| [col, i] }.to_h
       row_keys.size.times { content << Array.new(col_keys.size, '') }
 
-      # rubocop:disable Style/SpaceInsideStringInterpolation
+      # rubocop:disable Lint/Eval, Style/SpaceInsideStringInterpolation
 
       # Fill content with self
       eval <<-END_OF_DOC
-        @row_keys.each do |row, o_ri| # old row index
-          n_ri = row_keys[row] # new row index
+        @row_keys.each do |row, old_ri|
+          new_ri = row_keys[row]
           #{
             str = []
-            @col_keys.map do |col, o_ci| # old column index
-              n_ci = col_keys[col] # new column index
-              str << "content[n_ri][#{n_ci}] = @content[o_ri][#{o_ci}]"
+            @col_keys.map do |col, old_ci|
+              new_ci = col_keys[col]
+              str << "content[new_ri][#{new_ci}] = @content[old_ri][#{old_ci}]"
             end
             str.join("\n" + ' ' * 8)
           }
         end
       END_OF_DOC
-
-      # rubocop:disable Lint/UselessAssignment
 
       # Fill content with tab
-      tab_content = tab.instance_variable_get(:@content)
+      @content_merged_with = tab.instance_variable_get(:@content)
       eval <<-END_OF_DOC
-        tab.row_keys.each_with_index do |row, o_ri| # old row index
-          n_ri = row_keys[row] # new row index
+        tab.row_keys.each_with_index do |row, old_ri|
+          new_ri = row_keys[row]
           #{
             str = []
-            tab.col_keys.each_with_index do |col, o_ci| # old column index
-              n_ci = col_keys[col] # new column index
-              str << "content[n_ri][#{n_ci}] = tab_content[o_ri][#{o_ci}]"
+            tab.col_keys.each_with_index do |col, old_ci|
+              new_ci = col_keys[col]
+              str << "content[new_ri][#{new_ci}] = @content_merged_with[old_ri][#{old_ci}]"
             end
             str.join("\n" + ' ' * 8)
           }
         end
       END_OF_DOC
 
-      # rubocop:enable Lint/UselessAssignment
-      # rubocop:enable Style/SpaceInsideStringInterpolation
+      # rubocop:enable Lint/Eval, Style/SpaceInsideStringInterpolation, Lint/UselessAssignment
 
       # Create a new table
       self.class.build(
@@ -399,13 +426,11 @@ module BioTCM
     end
 
     # @private
-    # Convert to {String}
+    # Convert to String
     def to_s
       [
         @comments.collect { |line| '# ' + line },
-        @primary_key.nil? ?
-          @col_keys.keys.join("\t") :
-          [@primary_key, @col_keys.keys].join("\t"),
+        @primary_key.nil? ? @col_keys.keys.join("\t") : [@primary_key, @col_keys.keys].join("\t"),
         @row_keys.keys.zip(@content).collect { |a| a.join("\t") }
       ].flatten.join("\n")
     end
@@ -417,56 +442,58 @@ module BioTCM
       File.open(filepath, 'w').puts self
       self
     end
-  end
-end
 
-class String
-  # Create a {BioTCM::Table} based on a String or fill the given table
-  # @param seperator [String]
-  def to_table(seperator:"\t")
-    stuff = split(/\r\n|\n/)
+    # {Table}'s extention to core classes
+    module Extensions
+      # {Table}'s extention to String
+      module String
+        # Create a {BioTCM::Table} based on a String or fill the given table
+        # @param seperator [String]
+        def to_table(seperator: "\t")
+          stuff = split(/\r\n|\n/)
 
-    # Comments
-    comments = []
-    while stuff[0] =~ /\# /
-      # Some tables' head lines start with a '#', such as *mim2gene.txt* in OMIM
-      break if stuff[0] =~ /\# [\w ]+\t/
-      comments << stuff.shift.gsub(/^\# /, '')
-    end
+          # Comments
+          comments = []
+          while stuff[0] =~ /\# /
+            # Some tables' head lines start with a '#', such as *mim2gene.txt* in OMIM
+            break if stuff[0] =~ /\# [\w ]+\t/
+            comments << stuff.shift.gsub(/^\# /, '')
+          end
 
-    # Headline
-    col_keys = stuff.shift.split(seperator)
-    raise ArgumentError, 'Duplicated column names' unless col_keys.uniq!.nil?
-    if stuff.first && stuff.first.split(seperator).size == col_keys.size + 1
-      primary_key = nil
-    else
-      primary_key = col_keys.shift
-    end
-    col_keys = col_keys.map.with_index { |n, i| [n, i] }.to_h
+          # Headline
+          col_keys = stuff.shift.split(seperator)
+          raise ArgumentError, 'Duplicated column names' unless col_keys.uniq!.nil?
+          primary_key = stuff.first && stuff.first.split(seperator).size == col_keys.size + 1 ? nil : col_keys.shift
+          col_keys = col_keys.map.with_index { |n, i| [n, i] }.to_h
 
-    # Table content
-    row_keys = {}
-    content = []
-    stuff.each_with_index do |line, line_index|
-      col = line.split(seperator, -1)
+          # Table content
+          row_keys = {}
+          content = []
+          stuff.each_with_index do |line, line_index|
+            col = line.split(seperator, -1)
 
-      if col.size != col_keys.size + 1
-        raise ArgumentError, "Row size inconsistent in line #{line_index + 2}"
-      elsif row_keys[col[0]]
-        raise ArgumentError, "Duplicated primary key: #{col[0]}"
+            if col.size != col_keys.size + 1
+              raise ArgumentError, "Row size inconsistent in line #{line_index + 2}"
+            elsif row_keys[col[0]]
+              raise ArgumentError, "Duplicated primary key: #{col[0]}"
+            end
+
+            row_keys[col.shift] = row_keys.size
+            content << col
+          end
+
+          # Build a table to return
+          BioTCM::Table.build(
+            primary_key: primary_key,
+            row_keys: row_keys,
+            col_keys: col_keys,
+            content: content,
+            comments: comments
+          )
+        end
       end
-
-      row_keys[col.shift] = row_keys.size
-      content << col
     end
-
-    # Build a table to return
-    BioTCM::Table.build(
-      primary_key: primary_key,
-      row_keys: row_keys,
-      col_keys: col_keys,
-      content: content,
-      comments: comments
-    )
   end
 end
+
+String.include(BioTCM::Table::Extensions::String)

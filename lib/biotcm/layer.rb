@@ -24,7 +24,7 @@ module BioTCM
   #
   class Layer
     # Version
-    VERSION = '0.2.0'
+    VERSION = '0.2.0'.freeze
 
     # Table of nodes
     # @return [BioTCM::Table]

@@ -1,7 +1,19 @@
 # History
 
-- Update Databases::HGNC to v0.2.4
+- Update Table to v0.6.0
+  - Add #get_ele, #set_ele, #get_row, #set_row, #get_col, #set_col
+  - Deprecate #ele, #row, #col
+- Update Apps::GeneDetector to v0.2.1
+  - Refine the codes
+- Update Databases::Cipher to v0.4.0
+  - Refine the codes
+- Update Databases::HGNC to v0.3.0
+  - Change to a module instead of a class
   - Make downloading the HGNC table more robust
+- Update Databases::OMIM to v0.3.0
+  - Change to a module instead of a class
+- Update Databases::Medline to v0.2.1
+  - Refactor a little
 
 ### v0.8.1 2016-05-04
 - Update BioTCM::Table to v0.5.1

@@ -1,80 +1,57 @@
-# Class for retrieving OMIM entries
-class BioTCM::Databases::OMIM
+require 'yaml'
+
+# Module for retrieving OMIM entries
+module BioTCM::Databases::OMIM
   # Current version of OMIM
-  VERSION = '0.2.0'
+  VERSION = '0.3.0'.freeze
+
   # Public API key (change to your private key if in need)
   API_KEY = BioTCM.meta['OMIM']['API_KEY']
 
-  # OMIM ID
-  attr_reader :id
-  # Genes related
-  # @return [Array]
-  attr_reader :genes
-
   # Get the URL for retrieving given entry
-  def self.url(omim_id, api_key: API_KEY)
-    return nil unless api_key
+  def self.entry_url(omim_id, api_key: API_KEY)
     "http://api.omim.org/api/entry?mimNumber=#{omim_id}&apiKey=#{api_key}&include=all&format=ruby"
   end
 
-  # Create a batch of OMIM objects
-  # @param omim_ids [Array]
+  # Retrieve a OMIM entry
   # @return [Hash]
-  def self.batch(omim_ids)
-    raise ArgumentError unless omim_ids.is_a?(Array)
-    rtn = {}
-    omim_ids.each do |omim_id|
-      begin
-        rtn[omim_id.to_i] = new(omim_id)
-      rescue ArgumentError
-        BioTCM.logger.warn('OMIM') { "#{omim_id} is discarded due to non-existence" }
-      end
-    end
-    rtn
-  end
-
-  # Retrieve one OMIM entry
   # @raise ArgumentError if omim_id not exists
-  def initialize(omim_id)
-    # Check HGNC
+  def self.get(omim_id)
     BioTCM::Databases::HGNC.ensure
 
-    # Get the hash
-    file_path = BioTCM.path_to "omim/#{omim_id}.txt"
-    if File.exist?(file_path)
-      @content = eval(File.open(file_path).read.delete("\n"))
+    filepath = BioTCM.path_to "omim/#{omim_id}.yaml"
+    if File.exist?(filepath)
+      content = YAML.load_file(filepath)
     else
-      @content = eval(BioTCM.curl(self.class.url(omim_id)).delete("\n")) rescue { 'omim' => { 'version' => '1.0', 'entryList' => [] } }
-      # Check validity
-      raise ArgumentError, 'OMIM number not exists' if @content['omim']['entryList'].empty?
-      # Save
-      File.open(file_path, 'w').puts @content.inspect
+      begin
+        content = eval(BioTCM.curl(entry_url(omim_id)).delete("\n")) # rubocop:disable Lint/Eval
+        content = content['omim']['entryList'].fetch(0)['entry']
+        File.open(filepath, 'w').puts content.to_yaml
+      rescue
+        raise ArgumentError, 'OMIM number not exists'
+      end
     end
-    @content = @content['omim']['entryList'][0]['entry']
 
-    # Find genes
-    @@gene_detector = BioTCM::Apps::GeneDetector.new unless self.class.class_variable_defined?(:@@gene_detector)
-    @genes = []
-    @genes |=
-      @content['phenotypeMapList']
-      .collect { |h| h['phenotypeMap']['geneSymbols'].split(', ') }
-      .flatten.formalize_symbol.uniq
-      .reject { |sym| sym == '' } if @content['phenotypeMapExists']
-    @genes |=
-      @@gene_detector.detect(@content['textSectionList']
-      .collect { |h| h['textSection']['textSectionContent'] }
-      .join(' ')) if @content['textSectionList']
+    content
   end
 
-  # Access the returned hash for the entry
-  def method_missing(symbol, *args, &block)
-    super unless @content.respond_to?(symbol)
-    block ? @content.send(symbol, *args, &block) : @content.send(symbol, *args)
-  end
+  # Detect gene symbols in OMIM text content
+  # @return [Array]
+  def self.detect_genes(content)
+    @gene_detector ||= BioTCM::Apps::GeneDetector.new
+    genes = []
 
-  # Jump over method_missing to speed up
-  # @private
-  def [](key)
-    @content[key]
+    if content['phenotypeMapExists']
+      genes |= content['phenotypeMapList']
+        .collect { |hash| hash['phenotypeMap']['geneSymbols'].split(', ') }
+        .flatten.to_formal_symbols
+    end
+
+    if content['textSectionList']
+      text = content['textSectionList'].map { |hash| hash['textSection']['textSectionContent'] }.join(' ')
+      genes |= @gene_detector.detect(text)
+    end
+
+    genes.uniq - ['']
   end
 end

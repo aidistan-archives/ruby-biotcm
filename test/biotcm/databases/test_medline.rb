@@ -6,22 +6,21 @@ describe BioTCM::Databases::Medline do
   end
 
   it 'could search PubMed with logical operations' do
-    @medline = BioTCM::Databases::Medline.new('IL-2 IBD')
-    @medline | 'IL-2 CRC'
-    @medline & 'Cancer'
-    assert(@medline.count > 0)
+    medline = BioTCM::Databases::Medline.new('IL-2 IBD')
+    medline.or('IL-2 CRC').and('Cancer')
+    assert(medline.count > 0)
   end
 
   it 'could fetch all related pubmed ids' do
-    @medline = BioTCM::Databases::Medline.new('IL-2 IBD')
-    assert(@medline.fetch_pubmed_ids.size > 150)
+    medline = BioTCM::Databases::Medline.new('IL-2 IBD')
+    assert(medline.fetch_pubmed_ids.size > 150)
   end
 
   it 'could download the query result' do
     filename = __FILE__ + '.tmp'
     BioTCM::Databases::Medline.new('IL-2 IBD CRC').download_abstracts(filename)
     file = File.open(filename)
-    assert(file.readlines.size > 0)
+    assert(!file.readlines.empty?)
     file.close
     File.delete(filename)
   end

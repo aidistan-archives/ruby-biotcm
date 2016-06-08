@@ -13,23 +13,24 @@ module BioTCM
   # Default data directory
   DEFAULT_DATA_DIRECTORY = File.expand_path('~/.gem/biotcm')
   # Default url of the meta file
-  DEFAULT_META_FILE_URL = 'http://aidistan.github.io/ruby-biotcm/meta.yaml'
+  DEFAULT_META_FILE_URL = 'http://aidistan.github.io/ruby-biotcm/meta.yaml'.freeze
 
   module_function
 
   # Get an url
   # @param url [String]
-  # @return [String/nil] the content as a string or nil if failed
+  # @return [String] the responce body
   # @raise RuntimeError if return status is not 200
-  def curl(url)
-    uri = URI(url)
-    case uri.scheme
-    when 'http'
-      res = Net::HTTP.get_response(uri)
-      raise "HTTP status #{res.code} returned when #{uri} sent" unless res.is_a?(Net::HTTPOK)
-      return res.body
+  def curl(url, params: nil)
+    url += '?' + params.reject { |_, v| v.nil? }.map { |k, v| k.to_s + '=' + v.to_s }.join('&') if params
+
+    res = Net::HTTP.get_response(URI(url))
+
+    if res.is_a?(Net::HTTPOK)
+      res.body
+    else
+      raise "HTTP status #{res.code} returned when trying to get #{url.inspect}"
     end
-    nil
   end
 
   # Get the logger
@@ -44,7 +45,7 @@ module BioTCM
     @meta ||= YAML.load(curl(DEFAULT_META_FILE_URL))
   end
 
-  # Get the path to a gem data file
+  # Make a path for data
   # @param relative_path [String]
   # @return [String]
   def path_to(relative_path, mkdir_p: true)
@@ -62,11 +63,6 @@ module BioTCM
       .join('_').gsub(/-|:/, '')
   end
 end
-
-# Extention to Ruby's Core library
-class String; end
-# Extention to Ruby's Core library
-class Array; end
 
 # Require all necessary classes
 require 'biotcm/layer'

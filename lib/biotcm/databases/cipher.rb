@@ -8,6 +8,15 @@
 #   * delete ones without approved symbols
 #   * delete redundant symbols who rank lower
 #
+# = Usage
+# Use {Cipher.get} directly as following:
+#
+#   cipher_result = BioTCM::Databases::Cipher.get('137280')
+#
+#   cipher_result.inspect       # => #<Table ...>
+#   cipher_result.col_keys      # => ["Cipher Rank", "Cipher Score"]
+#   cipher_result.row_keys.size # => 721
+#
 # = About Cipher
 # Correlating protein Interaction network and PHEnotype network to pRedict
 # disease genes (CIPHER), is a computational framework that integrates human
@@ -23,60 +32,63 @@
 #
 module BioTCM::Databases::Cipher
   # Current version of Cipher
-  VERSION = '0.3.0'
+  VERSION = '0.4.0'.freeze
 
   # Get Cipher results
   # @param omim_id [String]
   # @return [Table]
   # @example
-  #   BioTCM::Databases::Cipher.get(137280) => #<Table ...>
+  #   BioTCM::Databases::Cipher.get(137280) # => #<Table ...>
   def self.get(omim_id)
     # Ensurance
     BioTCM::Databases::HGNC.ensure
-    base_url = BioTCM.meta['CIPHER']['WEBSITE_URL']
-
-    # Load disease list
-    @disease = {}
-    filename = BioTCM.path_to('cipher/landscape_phenotype.txt')
-    File.open(filename, 'w:UTF-8').puts BioTCM.curl(base_url + '/landscape_phenotype.txt') unless File.exist?(filename)
-    File.open(filename).each do |line|
-      col = line.chomp.split("\t")
-      @disease[col[1]] = col[0]
-    end
-
-    # Load gene list (inner_id2symbol)
-    @gene = [nil]
-    filename = BioTCM.path_to('cipher/landscape_extended_id.txt')
-    File.open(filename, 'w:UTF-8').puts BioTCM.curl(base_url + '/landscape_extended_id.txt') unless File.exist?(filename)
-    File.open(filename).each do |line|
-      col = line.chomp.split("\t")
-      gene   = String.hgnc.symbol2hgncid[col[4]]
-      gene ||= String.hgnc.uniprot2hgncid[col[2]]
-      gene ||= String.hgnc.refseq2hgncid[col[3]]
-      @gene.push(gene ? gene.hgncid2symbol : nil)
-    end
+    @base_url = BioTCM.meta['CIPHER']['WEBSITE_URL']
+    load_disease_list
+    load_gene_list
 
     # Check omim id
-    original_omim_id = omim_id
-    unless /(?<omim_id>\d+)/ =~ original_omim_id.to_s && @disease[omim_id]
-      BioTCM.logger.warn('Cipher') { "OMIM ID #{original_omim_id.inspect} discarded, since it doesn't exist in the disease list of Cipher" }
-      return nil
-    end
+    raise ArgumentError, 'omim_id not exist in CIPHER results' unless @disease[omim_id.to_s]
 
     # Download if need
     filename = BioTCM.path_to("cipher/#{omim_id}.txt")
-    File.open(filename, 'w:UTF-8').puts BioTCM.curl(base_url + "/top1000data/#{@disease[omim_id]}.txt") unless File.exist?(filename)
+    File.open(filename, 'w:UTF-8').puts BioTCM.curl(@base_url + "/top1000data/#{@disease[omim_id]}.txt") unless File.exist?(filename)
 
     # Make table
     tab = BioTCM::Table.new(primary_key: 'Gene', col_keys: ['Cipher Rank', 'Cipher Score'])
     tab_genes = tab.instance_variable_get(:@row_keys)
     File.open(filename).each_with_index do |line, line_no|
       col = line.chomp.split("\t")
-      gene = @gene[col[0].to_i] or next
-      next if tab_genes[gene]
+      gene = @gene[col[0].to_i]
+      next if gene.nil? || tab_genes[gene]
       tab.row(gene, [(line_no + 1).to_s, col[1]])
     end
 
     tab
+  end
+
+  # @private
+  def self.load_disease_list
+    @disease = {}
+    filename = BioTCM.path_to('cipher/landscape_phenotype.txt')
+    File.open(filename, 'w:UTF-8').puts BioTCM.curl(@base_url + '/landscape_phenotype.txt') unless File.exist?(filename)
+    File.open(filename).each do |line|
+      col = line.chomp.split("\t")
+      @disease[col[1]] = col[0]
+    end
+  end
+
+  # Load inner_id2symbol
+  # @private
+  def self.load_gene_list
+    @gene = [nil]
+    filename = BioTCM.path_to('cipher/landscape_extended_id.txt')
+    File.open(filename, 'w:UTF-8').puts BioTCM.curl(@base_url + '/landscape_extended_id.txt') unless File.exist?(filename)
+    File.open(filename).each do |line|
+      col = line.chomp.split("\t")
+      gene   = BioTCM::Databases::HGNC.symbol2hgncid[col[4]]
+      gene ||= BioTCM::Databases::HGNC.uniprot2hgncid[col[2]]
+      gene ||= BioTCM::Databases::HGNC.refseq2hgncid[col[3]]
+      @gene.push(gene ? gene.hgncid2symbol : nil)
+    end
   end
 end
