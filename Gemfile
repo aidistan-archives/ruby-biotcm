@@ -1,8 +1,6 @@
 source 'https://rubygems.org'
 
+# Specify your gem's dependencies in biotcm.gemspec
 gemspec
 
-group :test do
-  # Use Rubocop to analyze codes
-  gem 'rubocop', require: false
-end
+gem 'rubocop', require: false
