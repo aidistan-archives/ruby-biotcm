@@ -1,5 +1,6 @@
 # History
 
+### v0.9.0 2016-06-09
 - Update Table to v0.6.0
   - Add #get_ele, #set_ele, #get_row, #set_row, #get_col, #set_col
   - Deprecate #ele, #row, #col
