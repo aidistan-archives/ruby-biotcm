@@ -129,7 +129,7 @@ class BioTCM::Databases::Medline
     @query_key = Regexp.last_match[2]
     self.class.last_webenv = @webenv = Regexp.last_match[3]
 
-    File.open(BioTCM.path_to("tmp/medline_#{@webenv}_##{@query_key}.txt"), 'w').puts @xml
+    File.open(BioTCM.path_to("tmp/Medline_#{@webenv}_##{@query_key}.txt"), 'w').puts @xml
     BioTCM.logger.debug('Medline') { "Object updated to => #{self}" }
 
     self

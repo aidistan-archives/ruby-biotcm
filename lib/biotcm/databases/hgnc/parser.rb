@@ -6,7 +6,7 @@ module BioTCM::Databases::HGNC
     # an official one.
     # @return [Hash]
     # @example
-    #   HGNC.ambiguous_symbol.keys & HGNC.symbol2hgncid.keys # are all official symbols
+    #   HGNC.ambiguous_symbol.keys & HGNC.symbol2hgncid.keys # results are all ambiguous official symbols
     def ambiguous_symbol
       @ambiguous_symbol
     end

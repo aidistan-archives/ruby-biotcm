@@ -14,6 +14,7 @@
   - Change to a module instead of a class
 - Update Databases::Medline to v0.2.1
   - Refactor a little
+- Add Apps::PubmedGeneMiner
 
 ### v0.8.1 2016-05-04
 - Update BioTCM::Table to v0.5.1
