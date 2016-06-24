@@ -1,6 +1,6 @@
 # Interface to MATLAB
 module BioTCM::Interfaces::Matlab
-  include Interface
+  include BioTCM::Interfaces::Interface
 
   # Run MATLAB script
   # @param script_path [String] path to the script
@@ -24,7 +24,8 @@ module BioTCM::Interfaces::Matlab
     )
     new_script = File.open(script_path, 'w')
     new_script.write script.read
-    new_script.close
+    new_script.close # write to file from buffer
     run_matlab_script(script_path, matlab_path: matlab_path)
+    script.close # close the rendered file
   end
 end

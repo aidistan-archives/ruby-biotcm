@@ -1,6 +1,6 @@
 # Interface to R
 module BioTCM::Interfaces::R
-  include Interface
+  include BioTCM::Interfaces::Interface
 
   # Run R script
   # @param script_path [String] path to the script
@@ -15,6 +15,9 @@ module BioTCM::Interfaces::R
   # @see Interface#render_template
   def evaluate_r_script(template_path, context, rscript_path: 'Rscript')
     raise ArgumentError, 'A valid R script template required' unless /\.R\.erb$/i =~ template_path
-    run_r_script(render_template(template_path, context).path, rscript_path: rscript_path)
+
+    script = render_template(template_path, context)
+    run_r_script(script.path, rscript_path: rscript_path)
+    script.close # close the rendered file
   end
 end
