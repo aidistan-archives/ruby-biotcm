@@ -1,5 +1,8 @@
 # History
 
+- Update Table to v0.6.1
+  - Fix a bug when parsing tables
+
 ### v0.9.1 2016-06-24
 - Fix Interfaces::R and Interfaces::Matlab
 

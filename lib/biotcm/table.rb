@@ -6,7 +6,7 @@ module BioTCM
   # For more details, please refer to the test.
   class Table
     # Version
-    VERSION = '0.6.0'.freeze
+    VERSION = '0.6.1'.freeze
 
     # Primary key
     attr_reader :primary_key
@@ -463,7 +463,7 @@ module BioTCM
           # Headline
           col_keys = stuff.shift.split(seperator)
           raise ArgumentError, 'Duplicated column names' unless col_keys.uniq!.nil?
-          primary_key = stuff.first && stuff.first.split(seperator).size == col_keys.size + 1 ? nil : col_keys.shift
+          primary_key = stuff.first && stuff.first.split(seperator, -1).size == col_keys.size + 1 ? nil : col_keys.shift
           col_keys = col_keys.map.with_index { |n, i| [n, i] }.to_h
 
           # Table content
