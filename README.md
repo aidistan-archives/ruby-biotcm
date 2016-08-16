@@ -1,6 +1,7 @@
 # Ruby Gem: BioTCM
 
 [![Gem Version](https://badge.fury.io/rb/biotcm.svg)](https://rubygems.org/gems/biotcm)
+[![Dependency Status](https://gemnasium.com/badges/github.com/aidistan/ruby-biotcm.svg)](https://gemnasium.com/github.com/aidistan/ruby-biotcm)
 [![Build Status](https://travis-ci.org/aidistan/ruby-biotcm.svg?branch=master)](https://travis-ci.org/aidistan/ruby-biotcm)
 [![Docs Status](http://inch-ci.org/github/aidistan/ruby-biotcm.svg?branch=master)](http://www.rubydoc.info/gems/biotcm)
 
