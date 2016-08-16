@@ -1,5 +1,6 @@
 # History
 
+### v0.9.2 2016-08-17
 - Update Table to v0.6.1
   - Fix a bug when parsing tables
 
