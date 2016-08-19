@@ -1,5 +1,4 @@
 require_relative 'lib/biotcm/version'
-require 'rake'
 
 Gem::Specification.new do |s|
   s.name        = 'biotcm'
@@ -15,9 +14,9 @@ Gem::Specification.new do |s|
   s.email       = ['aidistan@live.cn', 'nmeter@126.com']
   s.homepage    = 'https://github.com/biotcm/biotcm'
 
-  s.files         = FileList['lib/**/*', 'test/**/*', 'LICENSE', '*.md'].to_a
+  s.files         = Dir['lib/**/*', 'test/**/*', 'LICENSE', '*.md']
   s.require_paths = ['lib']
-  s.test_files    = FileList['test/**/*'].to_a
+  s.test_files    = Dir['test/**/*']
 
   s.add_development_dependency 'bundler', '~> 1.7'
   s.add_development_dependency 'rake', '~> 11.0'
