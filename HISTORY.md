@@ -1,5 +1,6 @@
 # History
 
+### v0.10.0 2016-08-19
 - Update Apps::PubmedGeneMiner to v0.2.0
   - Return a list of PubMed IDs instead of only the count
 - Allow fallback to local meta data
