@@ -8,7 +8,7 @@
 #
 class BioTCM::Apps::PubmedGeneMiner
   # Current version
-  VERSION = '0.1.0'.freeze
+  VERSION = '0.2.0'.freeze
 
   # Setup a new miner
   # @param params options for the new miner
@@ -57,7 +57,7 @@ class BioTCM::Apps::PubmedGeneMiner
     term = as_medline(query).term
 
     @gene_set.map do |gene|
-      [gene, BioTCM::Databases::Medline.new("(#{term}) AND #{gene}[Title/Abstract]").count]
+      [gene, BioTCM::Databases::Medline.new("(#{term}) AND #{gene}[Title/Abstract]").fetch_pubmed_ids]
     end.to_h
   end
 
@@ -99,7 +99,7 @@ class BioTCM::Apps::PubmedGeneMiner
       end
     end
 
-    res.select { |gene| @gene_set.include?(gene) }.map { |gene, pmids| [gene, pmids.size] }.to_h
+    res.select { |gene| @gene_set.include?(gene) }
   end
 
   private

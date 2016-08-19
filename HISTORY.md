@@ -1,5 +1,8 @@
 # History
 
+- Update Apps::PubmedGeneMiner to v0.2.0
+  - Return a list of PubMed IDs instead of only the count
+
 ### v0.9.2 2016-08-17
 - Update Table to v0.6.1
   - Fix a bug when parsing tables
