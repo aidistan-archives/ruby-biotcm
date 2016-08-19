@@ -43,6 +43,8 @@ module BioTCM
   # @return [Hash]
   def meta
     @meta ||= YAML.load(curl(DEFAULT_META_FILE_URL))
+  rescue SocketError, RuntimeError
+    @meta ||= YAML.load(File.read(File.expand_path('../../docs/meta.yaml', __FILE__)))
   end
 
   # Make a path for data
