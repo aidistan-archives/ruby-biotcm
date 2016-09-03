@@ -116,7 +116,6 @@ module BioTCM
     #   @param col [String]
     #   @param val [String]
     #   @return [Table]
-    # @deprecated Use {#get_ele} and {#set_ele} instead
     def ele(row, col, val = nil)
       if val.nil?
         get_ele(row, col)
@@ -165,7 +164,6 @@ module BioTCM
     #   @param row [String]
     #   @param val [Hash, Array]
     #   @return [Table]
-    # @deprecated Use {#get_row} and {#set_row} instead
     def row(row, val = nil)
       if val.nil?
         get_row(row)
@@ -229,7 +227,6 @@ module BioTCM
     #   @param col [String]
     #   @param val [Hash, Array]
     #   @return [Table]
-    # @deprecated Use {#get_col} and {#set_col} instead
     def col(col, val = nil)
       if val.nil?
         get_col(col)
