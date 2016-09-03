@@ -1,22 +1,16 @@
 require 'rexml/document'
 
-# KEGG class is designed to build ppi networks based on KEGG pathways.
+# KEGG module is designed for building PPI networks based on KEGG pathways.
 #
 # = Example Usage
-# To get only one pathway, using class method is better than creating
-# a KEGG object.
-#   # bad
-#   BioTCM::Databases::KEGG.new("05010") # => KEGG object
-#   # good
-#   BioTCM::Databases::KEGG.get_pathway("hsa05010") # => Pathway object
+# To get a pathway, use
 #
-# Load a list of pathways in one KEGG object
-#   pathway_list = ["hsa00010", "hsa00020"]
-#   BioTCM::Databases::KEGG.new(pathway_list)
-#
-# Load all pathways of hsa and merge into one huge network
-#   BioTCM::Databases::KEGG.new(nil, 'hsa').merge.network
-#   # => [ [gene1 ,gene2], ...]
+#   BioTCM::Databases::KEGG.get_pathway('05010')
+#   # => {
+#     genes: [...],
+#     network: [...],
+#     associated_pathways: [...]
+#   }
 #
 # = About KEGG
 # KEGG is a database resource for understanding high-level functions and
@@ -29,31 +23,16 @@ require 'rexml/document'
 # 1. {http://www.genome.jp/kegg/ KEGG website}
 # 2. {http://www.ncbi.nlm.nih.gov/pubmed/22080510 Kanehisa, M., Goto, S., Sato, Y., Furumichi, M., and Tanabe, M.; KEGG for integration and interpretation of large-scale molecular datasets. Nucleic Acids Res. 40, D109-D114 (2012).}
 # 3. {http://www.ncbi.nlm.nih.gov/pubmed/10592173 Kanehisa, M. and Goto, S.; KEGG: Kyoto Encyclopedia of Genes and Genomes. Nucleic Acids Res. 28, 27-30 (2000).}
-class BioTCM::Databases::KEGG
-  # Struct for storing pathway information
-  # @attr id [String] KEGG pathway id
-  # @attr genes [Array] An *Entrez* *ID* list of genes
-  # @attr network [Array] A list of edges between genes
-  # @attr associated_pathways [Array] A list of KEGG pathway ids
-  Pathway = Struct.new(:id, :genes, :network, :associated_pathways) do
-    def inspect
-      "#<BioTCM::Databases::KEGG::Pathway @id=#{id.inspect}>"
-    end
-
-    def to_s
-      inspect
-    end
-  end
-
+module BioTCM::Databases::KEGG
   # Current version of KEGG
-  VERSION = '0.1.0'.freeze
+  VERSION = '0.2.0'.freeze
   # KEGG default organism: Homo sapiens
   DEFAULT_ORGANISM = 'hsa'.freeze
   # KEGG identifer patterns
   PATTERNS = {
     organism: /^[a-z]{3,4}$/,
     pathway: {
-      official: /^[a-z]{3,4}\d{5}$/,
+      formal: /^[a-z]{3,4}\d{5}$/,
       alternative: /^\d{5}$/
     }
   }.freeze
@@ -63,10 +42,6 @@ class BioTCM::Databases::KEGG
     pathway_list: ->(organism) { "http://rest.kegg.jp/list/pathway/#{organism}" }
   }.freeze
 
-  # Get the pathways
-  # @return [Hash] Pathway ids as keys
-  attr_reader :pathways
-
   # Validate the pathway_id
   # @param pathway_id [String]
   # @param organism [String]
@@ -75,7 +50,7 @@ class BioTCM::Databases::KEGG
   def self.validate_pathway_id(pathway_id, organism = DEFAULT_ORGANISM)
     raise ArgumentError, 'Invalid organism' unless organism =~ PATTERNS[:organism]
     case pathway_id
-    when PATTERNS[:pathway][:official]    then pathway_id
+    when PATTERNS[:pathway][:formal]      then pathway_id
     when PATTERNS[:pathway][:alternative] then organism + pathway_id
     else return nil
     end
@@ -84,7 +59,7 @@ class BioTCM::Databases::KEGG
   # Check if pathway_id is a valid KEGG pathway id
   # @return [Boolean]
   def self.valid_pathway_id?(pathway_id)
-    return true if pathway_id =~ PATTERNS[:pathway][:official]
+    return true if pathway_id =~ PATTERNS[:pathway][:formal]
     return true if pathway_id =~ PATTERNS[:pathway][:alternative]
     false
   end
@@ -95,18 +70,19 @@ class BioTCM::Databases::KEGG
   # @raise ArgumentError
   def self.get_pathway_list(organism = DEFAULT_ORGANISM)
     raise ArgumentError, 'Invalid organism' unless organism =~ PATTERNS[:organism]
+
     file_path = BioTCM.path_to("kegg/list_#{organism}.txt")
     unless File.exist?(file_path)
       fout = File.open(file_path, 'w')
       fout.puts BioTCM.curl(URLS[:pathway_list].call(organism))
       fout.close
     end
-    list = []
+
     # Yield the pattern of pathway ids
-    /\^(.+)\$/ =~ PATTERNS[:pathway][:alternative].inspect
-    pattern = Regexp.new("^path:(#{organism}" + Regexp.last_match[1] + ')')
-    File.open(file_path).each { |line| list << Regexp.last_match[1] if line.match(pattern) }
-    list
+    pattern = Regexp.new("^path:(#{organism}#{PATTERNS[:pathway][:alternative].source[1...-1]})")
+    File.open(file_path).map do |line|
+      line.match(pattern) ? Regexp.last_match[1] : nil
+    end.compact
   end
 
   # Get the pathway specified by pathway_id
@@ -125,7 +101,7 @@ class BioTCM::Databases::KEGG
       fout.close
     end
     doc = REXML::Document.new(File.open(file_path).readlines.join)
-    pathway = Pathway.new(pathway_id, [], [], [])
+    pathway = { genes: [], network: [], associated_pathways: [] }
 
     # Get entry list
     entry_list = {}
@@ -144,20 +120,21 @@ class BioTCM::Databases::KEGG
         entry_list[entry_id] = { type: :map, genes: [] }
         /path:(?<map>\w+)/ =~ entry.attributes['name']
         entry_list[entry_id][:map] = map
-        pathway.associated_pathways << map
+        pathway[:associated_pathways] << map
       end
     end
+
     # Build pathway.genes & process group entry
     entry_list.each_value do |hash|
       case hash[:type]
       when :gene
-        hash[:genes].each { |gene| pathway.genes << gene }
+        hash[:genes].each { |gene| pathway[:genes] << gene }
       when :group
         # Link genes between entries
         hash[:components].combination(2).each do |comb|
           entry_list[comb[0]][:genes].each do |gene0|
             entry_list[comb[1]][:genes].each do |gene1|
-              pathway.network << [gene0, gene1] << [gene1, gene0]
+              pathway[:network] << [gene0, gene1] << [gene1, gene0]
             end
           end
         end
@@ -166,6 +143,7 @@ class BioTCM::Databases::KEGG
         hash[:genes].uniq!
       end
     end
+
     # Get entry relation list
     entry_relation_list = []
     doc.elements.each('pathway/relation') do |relation|
@@ -185,80 +163,18 @@ class BioTCM::Databases::KEGG
         end
       end
     end
+
     # Load relation into :network
     entry_relation_list.each do |pair|
       entry_list[pair[0]][:genes].each do |gene1|
         entry_list[pair[1]][:genes].each do |gene2|
-          pathway.network.push [gene1, gene2]
+          pathway[:network].push [gene1, gene2]
         end
       end
     end
-    pathway.genes.uniq!
-    pathway.network.uniq!
+
+    pathway[:genes].uniq!
+    pathway[:network].uniq!
     pathway
-  end
-
-  # Create a new KEGG object
-  # @overload initialize(pathway_id, organism = DEFAULT_ORGANISM)
-  #   Load the pathway specified by pathway_id
-  #   @param pathway_id [String] KEGG pathway ID
-  #   @param organism [String] Default organism for unspecific pathway number
-  # @overload initialize(pathway_ids, organism = DEFAULT_ORGANISM)
-  #   Load pathways specified by pathway_ids
-  #   @param pathway_ids [Array] KEGG pathway IDs
-  #   @param organism [String] Default organism for unspecific pathway number
-  # @overload initialize(nil, organism = DEFAULT_ORGANISM)
-  #   Load all pathways of the specified organism
-  #   @param [nil]
-  #   @param organism [String] Default organism for unspecific pathway number
-  def initialize(pathway_id = nil, organism = DEFAULT_ORGANISM)
-    if pathway_id
-      pathway_ids = []
-      (pathway_id.respond_to?(:each) ? pathway_id : [pathway_id]).each do |id|
-        valid_id = self.class.validate_pathway_id(id, organism)
-        if valid_id
-          pathway_ids << valid_id
-        else
-          BioTCM.logger.warn('KEGG') { "Discard invalid pathway id #{id.inspect}" }
-        end
-      end
-    else
-      pathway_ids = self.class.get_pathway_list(organism)
-    end
-
-    BioTCM.logger.debug('KEGG') { "Start to load pathways: #{pathway_ids.inspect}" }
-    @pathways = {}
-    pathway_ids.each { |id| @pathways[id] = self.class.get_pathway(id) }
-  end
-
-  # Extend to associated pathways
-  # @return [self]
-  def extend_to_associated
-    pathway_ids = []
-    @pathways.each_value { |pathway| pathway_ids |= pathway.associated_pathways }
-    (pathway_ids - @pathways.keys).each { |id| @pathways[id] = self.class.get_pathway(id) }
-    self
-  end
-
-  # Merge pathways into one
-  # @return [Pathway]
-  def merge
-    merged = Pathway.new(:merged, [], [], [])
-    BioTCM.logger.info('KEGG') { "Generating the merged network for #{inspect}" }
-    @pathways.each_value do |pathway|
-      merged.genes |= pathway.genes
-      merged.network |= pathway.network
-    end
-    merged
-  end
-
-  # @private
-  def inspect
-    "#<BioTCM::Databases::KEGG pathways.keys=#{@pathways.keys.inspect}>"
-  end
-
-  # @private
-  def to_s
-    inspect
   end
 end
