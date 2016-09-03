@@ -1,5 +1,13 @@
 # History
 
+### v0.11.0 2016-09-03
+- Update Databases::KEGG to v0.2.0
+  - Change to a module instead of a class
+  - Return a hash instead of a Pathway instance
+  - Remove useless methods
+- Update the documents of Table
+  - Cancel 3 deprecations
+
 ### v0.10.0 2016-08-19
 - Update Apps::PubmedGeneMiner to v0.2.0
   - Return a list of PubMed IDs instead of only the count
