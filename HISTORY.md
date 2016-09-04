@@ -1,5 +1,9 @@
 # History
 
+### v0.11.1 2016-09-04
+- Update /docs/meta.yaml
+  - Change CIPHER/WEBSITE_URL to biotcm/CIPHER on GitHub
+
 ### v0.11.0 2016-09-03
 - Update Databases::KEGG to v0.2.0
   - Change to a module instead of a class
