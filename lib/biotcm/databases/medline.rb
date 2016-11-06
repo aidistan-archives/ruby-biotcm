@@ -19,7 +19,7 @@ class BioTCM::Databases::Medline
   self.last_webenv = nil
 
   # Current version of Medline
-  VERSION = '0.2.1'.freeze
+  VERSION = '0.2.2'.freeze
 
   # Perform a search of medlines
   # @param query [String] query terms

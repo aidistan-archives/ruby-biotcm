@@ -1,5 +1,8 @@
 # History
 
+- Update Databases::Medline to v0.2.2
+  - Change APIs to use HTTPS protocol
+
 ### v0.11.1 2016-09-04
 - Update /docs/meta.yaml
   - Change CIPHER/WEBSITE_URL to biotcm/CIPHER on GitHub
