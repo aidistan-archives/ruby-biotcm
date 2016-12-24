@@ -97,9 +97,9 @@ describe BioTCM::Table do
     end
 
     it 'must return elements' do
-      assert_equal(nil, @tab.get_ele(nil, nil))
-      assert_equal(nil, @tab.get_ele(nil, 'A'))
-      assert_equal(nil, @tab.get_ele('1', nil))
+      assert_nil(@tab.get_ele(nil, nil))
+      assert_nil(@tab.get_ele(nil, 'A'))
+      assert_nil(@tab.get_ele('1', nil))
       assert_equal('ab', @tab.get_ele('1', 'A'))
 
       @tab.set_ele('1', 'A', '-')
@@ -114,15 +114,15 @@ describe BioTCM::Table do
 
     it 'must return rows' do
       assert_equal('6', @tab.get_row('3')['B'])
-      assert_equal(nil, @tab.get_row('3')['D'])
-      assert_equal(nil, @tab.get_row('4'))
+      assert_nil(@tab.get_row('3')['D'])
+      assert_nil(@tab.get_row('4'))
 
       @tab.set_row('3', 'B' => '-')
       assert_equal('-', @tab.get_row('3')['B'])
       @tab.set_row('4', 'B' => '-', 'D' => '-')
       assert_equal('',  @tab.get_row('4')['A'])
       assert_equal('-', @tab.get_row('4')['B'])
-      assert_equal(nil, @tab.get_row('4')['D'])
+      assert_nil(@tab.get_row('4')['D'])
 
       @tab.set_row('4', ['-', '', '-'])
       assert_equal('-', @tab.get_row('4')['A'])
@@ -131,15 +131,15 @@ describe BioTCM::Table do
 
     it 'must return columns' do
       assert_equal('6', @tab.get_col('B')['3'])
-      assert_equal(nil, @tab.get_col('C')['4'])
-      assert_equal(nil, @tab.get_col('D'))
+      assert_nil(@tab.get_col('C')['4'])
+      assert_nil(@tab.get_col('D'))
 
       @tab.set_col('B', '3' => '-')
       assert_equal('-', @tab.get_col('B')['3'])
       @tab.set_col('D', '2' => '-', '4' => '-')
       assert_equal('',  @tab.get_col('D')['1'])
       assert_equal('-', @tab.get_col('D')['2'])
-      assert_equal(nil, @tab.get_col('D')['4'])
+      assert_nil(@tab.get_col('D')['4'])
 
       @tab.set_col('D', ['-', '', '-'])
       assert_equal('-', @tab.get_col('D')['1'])
@@ -152,9 +152,9 @@ describe BioTCM::Table do
       assert_equal(@tab.primary_key, tab.primary_key)
       assert_equal(%w(3 1), tab.row_keys)
       assert_equal(%w(C B), tab.col_keys)
-      assert_equal(nil, tab.get_ele('2', 'A'))
-      assert_equal(nil, tab.get_ele('2', 'C'))
-      assert_equal(nil, tab.get_ele('1', 'A'))
+      assert_nil(tab.get_ele('2', 'A'))
+      assert_nil(tab.get_ele('2', 'C'))
+      assert_nil(tab.get_ele('1', 'A'))
       assert_equal('6', tab.get_ele('3', 'B'))
     end
 
@@ -163,7 +163,7 @@ describe BioTCM::Table do
       refute_same(@tab, tab)
       assert_equal(%w(3 1), tab.row_keys)
       assert_equal('1', tab.get_ele('1', 'B'))
-      assert_equal(nil, tab.get_ele('2', 'B'))
+      assert_nil(tab.get_ele('2', 'B'))
       assert_equal('6', tab.get_ele('3', 'B'))
     end
 
@@ -171,16 +171,16 @@ describe BioTCM::Table do
       tab = @tab.select_col(%w(D C B))
       refute_same(@tab, tab)
       assert_equal(%w(C B), tab.col_keys)
-      assert_equal(nil, tab.get_ele('3', 'A'))
+      assert_nil(tab.get_ele('3', 'A'))
       assert_equal('6', tab.get_ele('3', 'B'))
       assert_equal('1.9', tab.get_ele('3', 'C'))
     end
 
     it 'must be merged with another table' do
-      assert_equal(nil, @tab.get_ele('4', 'A'))
-      assert_equal(nil, @tab.get_ele('2', 'D'))
+      assert_nil(@tab.get_ele('4', 'A'))
+      assert_nil(@tab.get_ele('2', 'D'))
       assert_equal('6', @tab.get_ele('3', 'B'))
-      assert_equal(nil, @tab.get_ele('4', 'B'))
+      assert_nil(@tab.get_ele('4', 'B'))
       assert_equal('1', @tab.get_ele('1', 'B'))
 
       tab = @tab.merge("ID\tB\tD\n1\tab\t1\n4\tuc\t4".to_table)

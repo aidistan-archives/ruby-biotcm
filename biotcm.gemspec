@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.test_files    = Dir['test/**/*']
 
   s.add_development_dependency 'bundler', '~> 1.7'
-  s.add_development_dependency 'rake', '~> 11.0'
+  s.add_development_dependency 'rake', '~> 12.0'
   s.add_development_dependency 'yard', '~> 0.8'
   s.add_development_dependency 'minitest', '~> 5.0'
   s.add_development_dependency 'minitest-reporters', '~> 1.0'
