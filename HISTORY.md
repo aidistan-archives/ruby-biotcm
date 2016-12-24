@@ -1,5 +1,8 @@
 # History
 
+### v0.11.3 2016-12-24
+- Update dependencies and Rakefile
+
 ### v0.11.2 2016-11-06
 - Update Databases::Medline to v0.2.2
   - Change APIs to use HTTPS protocol
