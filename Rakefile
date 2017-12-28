@@ -27,12 +27,12 @@ end
 
 namespace :release do
   desc 'Check and commit then invoke :release task'
-  task with_check: %w(release:check release:commit release)
+  task with_check: %w[release:check release:commit release]
 
   # Check before commit
   task :check do
     changed_files = `git diff-files`.split("\n").map { |l| l.split("\t").last }
-    concerned_files = %w(lib/biotcm/version.rb HISTORY.md Gemfile.lock)
+    concerned_files = %w[lib/biotcm/version.rb HISTORY.md]
 
     (concerned_files - changed_files).each do |file|
       puts "#{Rainbow(file).bright} has not been updated"
