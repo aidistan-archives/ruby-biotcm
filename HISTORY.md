@@ -1,5 +1,8 @@
 # History
 
+### v0.11.4 2017-12-28
+- Update dependencies
+
 ### v0.11.3 2016-12-24
 - Update dependencies and Rakefile
 
