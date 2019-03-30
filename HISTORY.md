@@ -1,5 +1,8 @@
 # History
 
+### v0.12.0 2019-03-30
+- Require ruby v2.5.x now
+
 ### v0.11.4 2017-12-28
 - Update dependencies
 
