@@ -1,5 +1,5 @@
 # Bundler
-Gemfile.lock
+.bundle/
 pkg/
 
 # YARD
