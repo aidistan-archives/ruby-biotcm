@@ -115,7 +115,7 @@ module BioTCM::Databases::HGNC
       unless File.exist?(file_path)
         BioTCM.logger.info('HGNC') { 'Since default HGNC table not exists, trying to download one... (This may take several minutes.)' }
         hgnc_content = BioTCM.curl(BioTCM.meta['HGNC']['DOWNLOAD_URL'])
-        File.open(file_path, 'w:UTF-8').puts hgnc_content
+        File.open(file_path, 'w:UTF-8').puts hgnc_content.force_encoding('UTF-8')
       end
     end
     parse(File.open(file_path))
