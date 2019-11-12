@@ -83,8 +83,8 @@ module BioTCM::Databases::HGNC
   # @note Single-item column comes first (at position 0) before multiple-item columns.
   IDENTIFIERS = {
     hgncid: 'HGNC ID',
-    symbol: ['Approved Symbol', 'Previous Symbols', 'Synonyms'],
-    entrez: 'Entrez Gene ID(supplied by NCBI)',
+    symbol: ['Approved symbol', 'Previous symbols', 'Synonyms'],
+    entrez: 'NCBI Gene ID(supplied by NCBI)',
     refseq: ['RefSeq(supplied by NCBI)', 'RefSeq IDs'],
     uniprot: 'UniProt ID(supplied by UniProt)',
     ensembl: 'Ensembl ID(supplied by Ensembl)'
