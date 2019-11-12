@@ -1,7 +1,6 @@
 # Ruby Gem: BioTCM
 
 [![Gem Version](https://badge.fury.io/rb/biotcm.svg)](https://rubygems.org/gems/biotcm)
-[![Dependency Status](https://gemnasium.com/badges/github.com/aidistan/ruby-biotcm.svg)](https://gemnasium.com/github.com/aidistan/ruby-biotcm)
 [![Build Status](https://travis-ci.org/aidistan/ruby-biotcm.svg?branch=master)](https://travis-ci.org/aidistan/ruby-biotcm)
 [![Docs Status](http://inch-ci.org/github/aidistan/ruby-biotcm.svg?branch=master)](http://www.rubydoc.info/gems/biotcm)
 
@@ -77,4 +76,4 @@ It's hard to decide when to test but better to write some tests for you module/c
 
 ## License
 
-Copyright (c) 2014-2016 BioTCM group under [the MIT license](https://github.com/biotcm/biotcm/blob/master/LICENSE).
+Copyright (c) 2014-2019 BioTCM group under [the MIT license](https://github.com/biotcm/biotcm/blob/master/LICENSE).
