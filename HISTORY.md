@@ -1,5 +1,9 @@
 # History
 
+### v0.13.0 2019-11-12
+- Update dependencies
+- Update Databases::HGNC::Parser
+
 ### v0.12.0 2019-03-30
 - Require ruby v2.5.x now
 
